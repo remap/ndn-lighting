@@ -1,0 +1,7 @@
+ndn-lighting
+
+This is a lighting control application based on Named Data Networking (NDN).
+In lights directory, you will find the Python code for lighting Supply/Port/Fixture discovery.
+In ndn directory, there are codes for ndn-based communication.
+In doc directory, documents including ndn lighting control payload format will be found.
+More files and funtions including lighting control and ndn security issues will be added and followed up.
