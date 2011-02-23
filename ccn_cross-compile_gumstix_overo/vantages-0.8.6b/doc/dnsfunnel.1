@@ -1,0 +1,100 @@
+.TH "dnsfunnel" "1" "Jul 20, 2009" "UCLA/CSU NetSec" "Vantages"
+
+.\"
+.\" dnsfunnel manual
+.\"
+.SH "NAME"
+.LP
+.B dnsfunnel
+\- a DNS PMTU walking tool
+
+.SH "SYNOPSIS"
+.LP
+.B dnsfunnel
+.RB [ @server ]
+.RB [ OPTIONS ]
+.RB < zone >
+.SH "DESCRIPTION"
+.LP
+.B dnsfunnel
+is a simple tool that queries each of a zone's authoritative name servers to determine what the DNS PMTU limitation is.
+The 
+.B dnsfunnel
+tool uses a binary search to determine the precise EDNS0 buffer size that can be specified before a DNS response is silently dropped 
+by the network.  
+
+The formal of the output is designed to resemble 
+.B traceroute
+in that during a PMTU walk, each request size to each name server is specified on its own line.  For example:
+
+129.82.138.19   4096B   0.000151
+.br
+129.82.138.19   2304B   0.000159
+.br
+129.82.138.19   1408B   0.000161
+.br
+129.82.138.19   960B    0.000092 (truncated)
+.br
+ ...
+
+The results of running
+.B dnsfunnel
+show what the minumum buffer size that can be specified is before a truncation bit is set (i.e. the server has more data to send but could
+not fit it in the advertized size), the maximum size that can be advertised before a network drop, and the optimal size to
+specify in order to get the most data that can fit over the path:
+
+ ...
+.br
+PMTU walking summary:
+.br
+======================================================
+.br
+Name                    Keys    Small   Largest Optimal
+.br
+Server    IP            fit?    Buffer  Buffer  Buffer
+.br
+------------------------------------------------------
+.br
+zinc.cs.ucla.edu.
+.br
+        131.179.96.160  yes     2096    4096    2096
+.br
+
+.br
+flea.netsec.colostate.edu.
+.br
+        129.82.138.19   yes     2117    4096    2117
+.br
+
+.P
+.SH "OPTIONS"
+The options are:
+.TP
+.B @server
+This options specifies what server you wish dnsfunnel to query from.
+.TP
+.B \-t  --timeout <number of seconds>
+The number of seconds before timeout.
+.TP
+.B \-r --retries <log file>
+The number of retries to an unresponsive server.
+.TP
+.B \-h --help 
+Display a helpful reminder of this information.
+.SH "SEE ALSO"
+\fIvantaged\fR,
+\fIvantaged.conf\fR, 
+\fIdnskey-grab\fR.
+.SH "AUTHORS"
+dnsfunnel was mainly developed by
+.B Eric 
+.B Osterweil,
+with help from
+.B Brendan
+.B Sheridan,
+and
+.B Dave
+.B Oko
+.SH "CONTACT"
+tools@netsec.colostate.edu
+

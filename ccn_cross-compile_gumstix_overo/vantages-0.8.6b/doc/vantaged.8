@@ -1,0 +1,107 @@
+.TH "vantaged" "8" "Jul 20, 2009" "UCLA/CSU NetSec" "Vantages"
+.\"
+.\" vantaged manual
+.\"
+.SH "NAME"
+.LP
+.B vantaged
+\- A daemon that will work to verify DNSSEC keys.
+.SH "SYNOPSIS"
+.LP
+.B vantaged
+.RB [ \-c 
+.IR cfgfile ]
+.RB [ \-r 
+.IR runs ]
+.RB [ \-p 
+.IR pidfile ]
+.RB [ \-o 
+.IR logfile ]
+.RB [ \-g ]
+.RB [ \-u 
+.IR user ]
+.RB [ \-l ]
+.RB [ \-h ]
+.SH "DESCRIPTION"
+.LP
+.B vantaged
+Vantages is a general framework for doing distributed
+monitoring and actuation.  The framework centers around a
+single daemon (called vantaged) that is designed to be run on
+an operational system.  Vantages stores all of its data in a
+SQLite database and runs an embedded web-server for
+administration and peering.  Though Vantages is a generic
+framework, its current applications focus on operational
+issues surrounding DNSSEC.  In this context, the daemon hosts
+several different operations and can be configured to help
+maintain DNSSEC operations.  The following is a short
+description of the applications in Vantages, and section 5
+(Running Vantages) of the README discusses them in more detail.
+
+The first application is called ``D-Sync'' and it monitors the
+secure delegation state between a child zone's DNSKEY(s) and
+the parent zone's DS record(s) for that child.  D-Sync uses a
+state-engine to track consistency during DNSKEY rollovers and
+DS record updates and alerts operators to various events.
+
+The second Vantages application is called the ``DNSKEY
+learning and verification'' system.  This application tracks
+the DNSKEYs for a set of DNSSEC zones that an operator may
+specify.  The current collection procedures can be over DNS or
+by scraping DNSKEYs off of web pages with custom Perl scripts.
+Each DNSKEY source (HTTP or DNS) is specified by a URL and is
+periodically polled (once a day by default).  After learning
+the keys for zones, this application uses a list of
+user-configured ``friends'' (other vantage daemons) to verify
+the consistency of the values seen.  The validity of the keys
+is determined based on consistency rules discussed below. Keys
+that are ``confirmed'' are then entered into a BIND-style
+trusted keys file that can be directly used by unbound or BIND
+resolvers.  This application can also be configured to use
+libpcap to automatically learn the DNS zones to monitor.
+.P
+.SH "OPTIONS"
+The options are:
+.TP
+.B \-c <configure file>
+This file overrides the default location of the config file (/etc/vantaged.conf)
+.TP
+.B \-r <runs>
+The number of loops before the daemons will exit.
+.TP
+.B \-p <log file>
+a file to contain the PID of the daemon process.
+.TP
+.B \-o <log file>
+a file to contain the output of the daemon process
+.TP
+.B \-g
+Run the daemon in the foreground.
+.TP
+.B \-u <user>
+Drop permissions to this user after init.
+.TP
+.B \-l
+The output message logging level.
+DEBUG | INFO | WARNING | ERROR | CRITICAL
+.TP
+.B \-h
+Display a helpful reminder of this information.
+.SH "SEE ALSO"
+\fIvantaged.conf\fR, 
+\fIdnsfunnel\fR,
+\fIdnskey-grab\fR.
+.SH "AUTHORS"
+vantaged was developed by
+.B Eric 
+.B Osterweil
+and has benefited greatly from the assistance of 
+.B Ben
+.B Tuchscher,
+.B Brendan
+.B Sheridan,
+and
+.B Dave
+.B Oko
+.SH "CONTACT"
+tools@netsec.colostate.edu

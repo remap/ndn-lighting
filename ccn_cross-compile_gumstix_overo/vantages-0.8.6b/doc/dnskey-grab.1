@@ -1,0 +1,117 @@
+.TH "dnskey-grab" "1" "Jul 20, 2009" "UCLA/CSU NetSec" "Vantages"
+.\"
+.\" dnskey-grab manual
+.\"
+.SH "NAME"
+.LP
+.B dnskey-grab
+\- tool to query authoritative name servers for DNSSEC keys.
+.SH "SYNOPSIS"
+.LP
+.B dnskeygrab
+.RB [ OPTIONS ]
+.RB < zone >
+.SH "DESCRIPTION"
+.LP
+.B dnskey-grab
+This tool takes a zone as its argument.  It then queries for the authoritative name servers for that zone, 
+queries either one or ALL of those name servers for the DNSKEY(s) for that zone, and then verifies the RRSIG(s) on that key set. 
+
+If the user specifies the -a option, only key sets that are consistent on all name servers are returned.
+
+The output is suitable for inclusion in a BIND-style trust anchors file.  For example:
+
+.P
+.SH "OPTIONS"
+The options are:
+.TP
+.B \-a
+Check all name servers of the zone and then verify that the keys are consistent on all of them
+.TP
+.B \-v
+Display verbose output, such as step-by-step queries and responses, the results of verification, etc.
+.TP
+.B \-t <number of seconds>
+The timeout (as the number of seconds) before a DNS query is considered to have failed.
+.TP
+.B \-r <number of retries>
+The number of retries that will be attempted after DNS query timeouts.
+.TP
+.B \-h
+Help
+.TP
+.B <zone> 
+The zone to query for DNSSEC keys.
+.SH "EXAMPLES"
+
+$ dnskey-grab netsec.colostate.edu
+.br
+"netsec.colostate.edu." 86400   IN      DNSKEY  256     3       5 "AwEAAYLB0jxfd+TLblH+uMlgnf9/XCFBBHd4Mftat1GF+fOBVuAbz/c9HszpKKWx3Wl0AAXN3TBbTMdcRVf91wfS9vdju25HB3AoHflqcOxw4KJRBIdM1TuAWkAQnV+kSYNC5KVzwQF2hobGIaIL0ll/pxwdIasN2nCfYijMgyB5BxtX";
+.br
+"netsec.colostate.edu." 86400   IN      DNSKEY  256     3       5 "AwEAAcqwBpOT18PYUaw0bPxQoe28mRzDeFHOrVfa+MV86beyVY405Wf/8T7ERT0PQzoDUZ7bib99OAk3rDmUBVMd3cMaQBKn03pCwLjqijn736zc9WiOoAIyOlDdN8f8sOYtEX3kZrno4CPz2jFN4NDAhXw2NIDiar1sKwg0suZClSjH";
+.br
+"netsec.colostate.edu." 86400   IN      DNSKEY  257     3       5 "AwEAAb6RHHGfXQMWGU5RK+Nfphr9xf3BS+PwIWAGUUIRH1153wUXnuKZgCPJllc+JnBPoARO5ND9IQbLnpcGbl8WA6DTknG7zaqtgGcsnDn1oO4cLirguwF7FZM5XWr6ZrZrkkl2J85B8VAFR3iWv9207i+ljy1scwZID3mQm295lO+j";
+.br
+"netsec.colostate.edu." 86400   IN      DNSKEY  257     3       5 "AwEAAbnQV1eLYPLQC1g0B6GPI9KSSwbWXWNRLWe1dQt63myG+E2g1ohmHPVrlp5LJFkV4Orz01lJrvVf2Jkpbd+5C+nBfnORytzEI3W4rxqIcCM9cof0IzG96/aDZN1xsKXUOCoSKjawiDyfIWehYx8aMqtNkpiIThptPXBFv//mm+Sv";
+.br
+
+Alternately, the tool can be run in verbose mode in order to display step-by-step output while performing this lookup:
+
+$ dnskey-grab -v netsec.colostate.edu
+.br
+Creating NS query.
+.br
+NS request pkt:
+.br
+;; ->>HEADER<<- opcode 0, status: 0, id: 59059
+.br
+;; flags: rd ; QUERY 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 0
+.br
+
+.br
+
+.br
+;; QUESTION SECTION:
+.br
+netsec.colostate.edu.   -1      1       2       
+.br
+Sending NS query.
+.br
+.br
+ ...
+.br
+.br
+Creating A query for "sec64.netsec.colostate.edu.".
+.br
+Creating response from A query.
+.br
+Got resolver IP: 129.82.138.8
+.br
+Sending DNSKEY query for zone 'netsec.colostate.edu.'.
+.br
+.br
+ ...
+.br
+.br
+VERIFIED KEYS!
+.br
+All key sets are consistent on all name servers.
+"netsec.colostate.edu." 86400   IN      DNSKEY  256     3       5 "AwEAAYLB0jxfd+TLblH+uMlgnf9/XCFBBHd4Mftat1GF+fOBVuAbz/c9HszpKKWx3Wl0AAXN3TBbTMdcRVf91wfS9vdju25HB3AoHflqcOxw4KJRBIdM1TuAWkAQnV+kSYNC5KVzwQF2hobGIaIL0ll/pxwdIasN2nCfYijMgyB5BxtX";
+.br
+"netsec.colostate.edu." 86400   IN      DNSKEY  256     3       5 "AwEAAcqwBpOT18PYUaw0bPxQoe28mRzDeFHOrVfa+MV86beyVY405Wf/8T7ERT0PQzoDUZ7bib99OAk3rDmUBVMd3cMaQBKn03pCwLjqijn736zc9WiOoAIyOlDdN8f8sOYtEX3kZrno4CPz2jFN4NDAhXw2NIDiar1sKwg0suZClSjH";
+.br
+"netsec.colostate.edu." 86400   IN      DNSKEY  257     3       5 "AwEAAb6RHHGfXQMWGU5RK+Nfphr9xf3BS+PwIWAGUUIRH1153wUXnuKZgCPJllc+JnBPoARO5ND9IQbLnpcGbl8WA6DTknG7zaqtgGcsnDn1oO4cLirguwF7FZM5XWr6ZrZrkkl2J85B8VAFR3iWv9207i+ljy1scwZID3mQm295lO+j";
+.br
+"netsec.colostate.edu." 86400   IN      DNSKEY  257     3       5 "AwEAAbnQV1eLYPLQC1g0B6GPI9KSSwbWXWNRLWe1dQt63myG+E2g1ohmHPVrlp5LJFkV4Orz01lJrvVf2Jkpbd+5C+nBfnORytzEI3W4rxqIcCM9cof0IzG96/aDZN1xsKXUOCoSKjawiDyfIWehYx8aMqtNkpiIThptPXBFv//mm+Sv";
+.br
+
+.SH "SEE ALSO"
+\fIvantaged\fR,
+\fIvantaged.conf\fR, 
+\fIdnsfunnel\fR.
+.SH "AUTHORS"
+dnskey-grab was developed by
+.B Eric 
+.B Osterweil
+.SH "CONTACT"
+tools@netsec.colostate.edu

@@ -1,0 +1,139 @@
+ #
+ # Copyright (c) 2008,2009, University of California, Los Angeles and 
+ # Colorado State University All rights reserved.
+ # 
+ # Redistribution and use in source and binary forms, with or without
+ # modification, are permitted provided that the following conditions are met:
+ # 
+ #     * Redistributions of source code must retain the above copyright notice,
+ #       this list of conditions and the following disclaimer.
+ #     * Redistributions in binary form must reproduce the above copyright
+ #       notice, this list of conditions and the following disclaimer in the
+ #       documentation and/or other materials provided with the distribution.
+ #     * Neither the name of NLnetLabs nor the names of its
+ #       contributors may be used to endorse or promote products derived from this
+ #       software without specific prior written permission.
+ # 
+ # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ # ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ # LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ # SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ # POSSIBILITY OF SUCH DAMAGE.
+ # 
+
+@SET_MAKE@
+
+PROG = vantaged
+
+CC =    @CC@
+CXX =    @CXX@
+DEFINES = @DEFS@
+CFLAGS =  @CFLAGS@ @CPPFLAGS@ $(DEFINES)
+CXXFLAGS =  @CXXFLAGS@
+LDFLAGS = @LDFLAGS@ @LIBS@
+
+CFLAGS += -Wall -Werror -D_REENTRANT
+CFLAGS += -DDEBUG -g
+
+CXXFLAGS += $(CFLAGS)
+
+RM = rm -f
+AR = @AR@
+ARFLAGS = @ARFLAGS@
+RANLIB = @RANLIB@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_MODE= -m 0755
+DOC_MODE= -m 0644
+
+libtool   = @libtool@
+LIBTOOL = $(libtool) --tag=CXX
+
+# Include some boilerplate Gnu makefile definitions.
+prefix = @prefix@
+
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+infodir = @infodir@
+includedir = @includedir@
+datarootdir = @datarootdir@
+datadir = @datadir@
+docdir = $(datadir)/doc/vantages
+localedir = $(datadir)/locale
+
+mandir = $(prefix)/man
+manpfx = man
+
+man1ext = .1
+man1dir = $(mandir)/$(manpfx)1
+man5ext = .5
+man5dir = $(mandir)/$(manpfx)5
+man8ext = .8
+man8dir = $(mandir)/$(manpfx)8
+
+htmldir = @htmldir@
+
+all:
+	-( mkdir -p bin )
+	-( mkdir -p lib )
+	-( cp ./libtool dns/ )
+	-( cp ./libtool src/ )
+	LIBS="$(LDFLAGS)" $(MAKE) unix -C shttpd-1.42/src
+	$(MAKE) -C dns
+	$(MAKE) -C src
+
+$(PROG): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LDFLAGS)
+
+clean:
+	$(MAKE) clean -C dns
+	$(MAKE) clean -C src
+	$(MAKE) clean -C shttpd-1.42/src
+
+install: installman installldconfig
+	-( mkdir -p $(DESTDIR)$(bindir) )
+	$(INSTALL_PROGRAM) $(INSTALL_MODE) bin/vantaged $(DESTDIR)$(bindir)/vantaged
+	$(INSTALL_PROGRAM) $(INSTALL_MODE) bin/dnsfunnel $(DESTDIR)$(bindir)/dnsfunnel
+	$(INSTALL_PROGRAM) $(INSTALL_MODE) bin/dnskey-grab $(DESTDIR)$(bindir)/dnskey-grab
+	$(INSTALL_PROGRAM) $(INSTALL_MODE) scripts/create-db.pl  $(DESTDIR)$(bindir)/create-db.pl
+	$(INSTALL_PROGRAM) $(INSTALL_MODE) scripts/vant-setup  $(DESTDIR)$(bindir)/vant-setup
+	$(INSTALL_PROGRAM) $(INSTALL_MODE) scripts/vant-upgrade.pl  $(DESTDIR)$(bindir)/vant-upgrade.pl
+	$(INSTALL) -m 755 -d $(DESTDIR)$(libdir)
+	$(LIBTOOL) --mode=install cp dns/libvdns.la $(DESTDIR)$(libdir)
+	$(LIBTOOL) --mode=finish $(DESTDIR)$(libdir)
+	$(INSTALL_PROGRAM) $(INSTALL_MODE) -d $(DESTDIR)$(includedir)/vantages
+	for i in `ls dns/*.h`; do $(INSTALL_PROGRAM) $(DOC_MODE) $$i $(DESTDIR)$(includedir)/vantages/; done
+	-( mkdir -p $(DESTDIR)$(docdir) )
+	-( mkdir -p $(DESTDIR)$(datarootdir)/vantages )
+	cp -RL sql $(DESTDIR)$(datarootdir)/vantages/
+	$(INSTALL_PROGRAM) $(DOC_MODE) doc/vantaged.conf.sample $(DESTDIR)$(datarootdir)/vantages/vantaged.conf.sample
+	$(INSTALL_PROGRAM) $(DOC_MODE) LICENSE $(DESTDIR)$(datarootdir)/vantages/LICENSE
+	$(INSTALL_PROGRAM) $(DOC_MODE) README $(DESTDIR)$(datarootdir)/vantages/README
+	$(INSTALL_PROGRAM) $(DOC_MODE) CHANGELOG $(DESTDIR)$(datarootdir)/vantages/CHANGELOG
+	@echo ""
+	@grep '^--' README
+
+installman:
+	$(INSTALL) -m 755 -d $(DESTDIR)$(man1dir)
+	$(INSTALL) -m 755 -d $(DESTDIR)$(man5dir)
+	$(INSTALL) -m 755 -d $(DESTDIR)$(man8dir)
+	$(INSTALL_PROGRAM) $(DOC_MODE) doc/dnsfunnel.1 $(DESTDIR)$(man1dir)/dnsfunnel.1
+	$(INSTALL_PROGRAM) $(DOC_MODE) doc/dnskey-grab.1 $(DESTDIR)$(man1dir)/dnskey-grab.1
+	$(INSTALL_PROGRAM) $(DOC_MODE) doc/vantaged.conf.5 $(DESTDIR)$(man5dir)/vantaged.conf.5
+	$(INSTALL_PROGRAM) $(DOC_MODE) doc/vantaged.8 $(DESTDIR)$(man8dir)/vantaged.8
+
+installldconfig:
+	-( if [ -e /etc/ld.so.conf ]; then if [ "x" = "x`grep '^$(libdir)' /etc/ld.so.conf`" ];then echo "$(libdir)" >> /etc/ld.so.conf; ldconfig; fi; fi )
+
+setup:
+	@echo "Seting up database..."
+	$(bindir)/vant-setup -d $(DESTDIR)$(datarootdir)/vantages/sql
+

@@ -1,0 +1,151 @@
+1) Introduction
+===================================================
+
+Vantages is a general framework for doing distributed
+monitoring and actuation.  The framework centers around a
+single daemon (called vantaged) that is designed to be run on
+an operational system.  Vantages stores all of its data in a
+SQLite database and runs an embedded webserver for
+administration and peering.  Though Vantages is a generic
+framework, its current applications focus on operational
+issues surrounding DNSSEC.  In this context, the daemon hosts
+several different operations and can be configured to help
+maintain DNSSEC operations.  The following is a short
+description of the applications in Vantages, and section 5
+(Running Vantages) discusses them in more detail.
+
+The first application is called ``D-Sync'' and it monitors the
+secure delegation state between a child zone's DNSKEY(s) and
+the parent zone's DS record(s) for that child.  D-Sync uses a
+state-engine to track consistency during DNSKEY rollovers and
+DS record updates and alerts operators to various events.
+
+The second Vantages application is called the ``DNSKEY
+learning and verification'' system.  This application tracks
+the DNSKEYs for a set of DNSSEC zones that an operator may
+specify.  The current collection procedures can be over DNS or
+by scraping DNSKEYs off of webpages with custom perl scripts.
+Each DNSKEY source (HTTP or DNS) is specified by a URL and is
+periodically polled (once a day by default).  After learning
+the keys for zones, this application uses a list of
+user-configured ``friends'' (other vantage daemons) to verify
+the consistency of the values seen.  The validity of the keys
+is determined based on consistency rules discussed below. Keys
+that are ``confirmed'' are then entered into a BIND-style
+trusted keys file that can be directly used by unbound or BIND
+resolvers.  This application can also be configured to use
+libpcap to automatically learn the DNS zones to monitor.
+
+In addition to the applications, the Vantages framework also
+has a few command-line tools for data investigation:
+  - dnsfunnel
+  - dnskey-grab
+
+2) Getting Vantages
+===================================================
+
+visit: http://www.vantage-points.com/
+
+3) Dependencies, compiling, and installing Vantages
+===================================================
+
+*** See the COMPILE file for instructions here ***
+
+4) Setting up Vantages
+===================================================
+
+---------------------------------------------------------------------
+--                                                                 --
+-- If you HAVE NOT installed Vantages before:                      --
+--                                                                 --
+-- FIRST:                                                          --
+-- Copy ''$(datarootdir)/vantages/vantaged.conf.sample'' into the  --
+-- /etc/ directory, configure it as you like (note: type           --
+-- ''man vantaged.conf'' to see the possible variables and their   --
+-- meanings                                                        --
+--                                                                 --
+-- SECOND:                                                         --
+-- Choose a user to run the daemon as (such as ''vantages''), and  --
+-- create that user if it does not already exist.                  --
+-- NOTE: Many Vantages applications need GPG keys (such as the     --
+--       DNSKEY verification app.  These applications implicitly   --
+--       require that their user environment have a home directory --
+--                                                                 --
+-- THIRD:                                                          --
+-- You must now run ''vant-setup'' as root.                        --
+--   First, vant-setup will prompt you for the user name that the  --
+--   daemon will run under.                                        --
+--   Second, initialize the database with option 1.                --
+--   Third, if you do not already have a GPG key, you may          --
+--         optionally generate one using option 2.                 --
+--                 -- OR --                                        --
+--         If you already have a key, configure it with option 3.  --
+--   Fourth, if you would like your vantaged to startup            --
+--          automatically (i.e. without user prompts) and you have --
+--          a passphrase on your GPG key, be sure to insert this   --
+--          passphrase into the database with option 4.            --
+--                                                                 --
+-- FOURTH:                                                         --
+-- To enable vantaged to startup when your system boots, do the    --
+-- following steps:                                                --
+--   - If you are going to run Vantages as a specific user (from   -- 
+--     the SECOND step above), enter that user's name into the     --
+--     config file (/etc/vantaged.conf) as:                        --
+--       ps_default_user = <user name>                             --
+--   - Then place the startup script (scripts/vantaged.sh.linux)   --
+--     into  your machine's rc system.                             --
+--                                                                 --
+-- OTHERWISE, if you HAVE installed Vantages before:               --
+--                                                                 --
+-- Run the script vant-upgrade.pl that should be installed in      --
+-- ${prefix}/bin/                                                  --
+--                                                                 --
+---------------------------------------------------------------------
+
+5) Running Vantages
+===================================================
+
+The Vantages daemon can be configured by modifying the
+/etc/vantaged.conf file.  Details of how to configure this
+file can be found in its man page.  However, each of the
+Vantages applications must be configured separately.  These
+applications generally all make use of Vantages' embedded
+webserver to offer an HTTP configuration dashboard.  This
+allows operators use their web browsers (and optional HTTP
+authentication) to interface with each Vantages application
+separately.
+
+5.1) Setting up the Vantages D-Sync application
+
+5.2) Setting up the Vantages DNSKEY learning application
+The URL for accessing the DNSKEY application is:
+  http://<your server: your port>/dnskey-admin
+
+Once on this page, the ``Friends'' link can be followed in
+order to specify a new Vantages daemon to peer with.  This
+daemon will be queried for DNSKEY values that it has seen
+whenever your own Vantages daemon polls a DNSSEC zone.
+Polling results are evaluated in a verification scheme called
+``CPUC'' in which keys are classified as: Confirmed,
+Provisional, Unknown, or in Conflict.
+  - Confirmed DNSKEYs are those keys whose values are seen as
+    the same amongst all friends (or at least 5)
+  - Provisional DNSKEYs are those keys that are seen as
+    consistent, but not by 5 friends.
+  - Unknown DNSKEYs are those keys that have only been seen by
+    the local daemon.
+  - Conflict DNSKEYs are those keys that have different values
+    reported by at least one other friend.
+
+Vantages takes a conservative approach to security and if keys
+are any other value than Confirmed, they are not added to the
+trusted-keys file.
+
+Users can use the ``Lookup Data'' link to examine the current
+list of DNSKEY values seen for a zone's name, the ``Submit
+Data'' link to add new URLs to monitor, the ``Trigger Poll''
+to specify that zones should be re-polled immediately, the
+``Monitored URLs'' link.  Finally, users can specify whether
+they would like to have the list of keys generated curtailed
+for unbound or BIND by following the ``Trust-Anchor Config''
+link.
