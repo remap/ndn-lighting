@@ -1,5 +1,5 @@
 #!/bin/bash
 ccndstart
-cd ../udpTry/Debug
+cd ../lightData/Debug
 ./udpTry
 
