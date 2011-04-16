@@ -151,7 +151,7 @@ int main(void)
 #endif
 */
 
-	printf("Event loop ...\n");
+	printf("Event loop ....\n");
 	ccn_run(ccn, -1);
 	printf("******** here... \n");
 
@@ -175,7 +175,7 @@ int udpClient(char *send_data) {
 	printf("********** send_data = %s\n", send_data);
 
 
-	host = (struct hostent *) gethostbyname((char *)"131.179.141.205"); //this IP addr must be the machine that sends out the data;
+	host = (struct hostent *) gethostbyname((char *)"192.168.0.106"); //this IP addr must be the machine that sends out the data;
 //	host = (struct hostent *) gethostbyname((char *)"172.17.5.222"); //this IP addr must be the machine that sends out the data;
 
 	if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
