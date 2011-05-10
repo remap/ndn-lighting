@@ -2,6 +2,12 @@ UAG: Upload Analyze Generate
 lighting web app
 http://bigriver.remap.ucla.edu/lighting/app/upload
 
+dependencies:
+	mongodb
+	modpy
+	apache
+	pymongo
+
 purpose:
 
 to allow crowdsourced images to drive the colors of lights at an installation.
