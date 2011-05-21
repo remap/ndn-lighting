@@ -9,18 +9,21 @@ import Image
 import imgfunctions
 import utilities
 import ImageStat
+import constants
+import mode3
+import mode4
 from namespaces import name
+import fixtureuty
 
 def imgprocess(namef, mode):
     im = Image.open(namef)
-    print namef
+    print 'image filename: ',namef, 'ch: ', im.getbands()
 
     #get 5 dominant colors
-    print im.getbands()
     l = im.getcolors(im.size[0]*im.size[1])
     dominant = (sorted(l, key=lambda l:l[0], reverse=True ))[0:150]
 
-    #print dominant
+    #print dominant[0:10]
     
     #convert RGB to HSL
     
@@ -32,6 +35,7 @@ def imgprocess(namef, mode):
     #stddev comb
     comb = (ImageStat.Stat(im).stddev)[0]+(ImageStat.Stat(im).stddev)[1]+(ImageStat.Stat(im).stddev)[2]
     #print comb
+
 
 
     if stddev_c < comb:
@@ -64,11 +68,14 @@ def imgprocess(namef, mode):
     #values to pass to the list
     
     domcontrst = maxl[1]
+
+    #create list
+    out = []
+    
     
     #mode1 -swap 2 planes
     if mode==1:
         delay=0
-        out = []
         out.append((delay,name['living-room-front'], domc, dimmerv,fade))
         out.append((delay,name['living-room-right'], domc, dimmerv,fade))
         out.append((delay,name['kitchen'], domc,dimmerv,fade))
@@ -91,9 +98,25 @@ def imgprocess(namef, mode):
         out.append((delay,name['window-left'], domc, dimmerv,fade))
         out.append((delay,name['window-right'], domc, dimmerv,fade))
 
+        #after 5sec
+        delay=5
+        out.append((delay,name['living-room-front'], nero, 0,fade))
+        out.append((delay,name['living-room-right'], nero, 0,fade))
+        out.append((delay,name['kitchen'], nero, 0,fade))
+        out.append((delay,name['stairs'], nero, 0,fade))
+        out.append((delay,name['bedroom'], nero, 0,fade))
+        out.append((delay,name['entrance-door'], nero, 0,fade))
+        out.append((delay,name['window-left'], nero, 0,fade))
+        out.append((delay,name['window-right'], nero, 0,fade))
+
+        out.append((3,name['incandescent'], (0,0,0), 1,fade))
+        out.append((1,name['incandescent'], (0,0,0), 0,fade))
+        out.append((0,name['incandescent'], (0,0,0), 1,fade))
+        out.append((1,name['incandescent'], (0,0,0), 0,fade))
+
     if mode==2:
         #uses 8 most dominant colors
-        out=list((delay,name['living-room-front'], dominant[0][1], dimmerv,fade))
+        out.append((delay,name['living-room-front'], dominant[0][1], dimmerv,fade))
         out.append((delay,name['living-room-right'], dominant[1][1], dimmerv,fade))
         out.append((delay,name['kitchen'], dominant[2][1], dimmerv,fade))
         out.append((delay,name['stairs'], dominant[3][1], dimmerv,fade))
@@ -101,7 +124,14 @@ def imgprocess(namef, mode):
         out.append((delay,name['entrance-door'], dominant[5][1], dimmerv,fade))
         out.append((delay,name['window-left'], dominant[6][1], dimmerv,fade))
         out.append((delay,name['window-right'], dominant[7][1], dimmerv,fade))
-        
+
+    if mode==3:
+        mode3.iterone(out,domc,domcontrst)
+
+    if mode==4:
+        mode4.dominantcluster(out,dominant,domc,domcontrst)
+
+    fixtureuty.alloff(0,out,0)
     #print out
     return out
 
