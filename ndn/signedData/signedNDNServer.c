@@ -112,8 +112,7 @@ static char *ccn_name_comp_to_str(
 
 // Our test content URI; the code appends a nonce.
 //const char* TEST_URI = "ccnx:/data_for_a_signed_interest";
-//const char* TEST_URI = "/ucla.edu/cens/nano/lights";
-const char* TEST_URI = "/ucla.edu/";
+const char* TEST_URI = "/ucla.edu/building/boelter/floor/3/room/3551/lights/";
 #define NUM_LIGHTS '4'
 
 int main(int argc, char** argv) {
@@ -329,6 +328,7 @@ packet_handler(struct ccn_closure *selfp,
     return (CCN_UPCALL_RESULT_ERR);
 }
 
+// udpClient for ColorBlast lights
 int udpClient(char *send_data) {
     
 	printf("********** in udpClient\n");
@@ -343,7 +343,7 @@ int udpClient(char *send_data) {
 	printf("********** send_data = %s\n", send_data);
     
     
-	host = (struct hostent *) gethostbyname((char *)"192.168.0.106"); //this IP addr must be the machine that sends out the data;
+	host = (struct hostent *) gethostbyname((char *)"127.0.0.1"); //this IP addr must be the machine that sends out the data;
     //	host = (struct hostent *) gethostbyname((char *)"172.17.5.222"); //this IP addr must be the machine that sends out the data;
     
 	if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
@@ -385,6 +385,50 @@ int udpClient(char *send_data) {
     
 }
 
+// udpClient2 for ArtNet lights
+int udpClient2(char *send_data) {
+	
+	printf("********** in udpClient2\n");
+	int sock;
+	struct sockaddr_in server_addr;
+	struct hostent *host;
+	int count = 1;
+	char *prev_data;
+	
+	printf("********** after assign the send_data\n");
+	printf("********** send_data = %s\n", send_data);
+	
+	
+	host = (struct hostent *) gethostbyname((char *)"127.0.0.1"); //this IP addr must be the machine that sends out the data;
+	
+	if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+		perror("socket");
+		exit(1);
+	}
+	
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_port = htons(50010);
+	server_addr.sin_addr = *((struct in_addr *)host->h_addr);
+	bzero(&(server_addr.sin_zero),8);
+	
+	if (count == 1) {
+		sendto(sock, send_data, strlen(send_data), 0, (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+		printf("********* sent... \n");
+		
+		count++;
+		char *prev_data = send_data;
+	}
+	else if (prev_data == send_data) {
+		sendto(sock, send_data, strlen(send_data), 0, (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+		printf("********* sent... \n");
+		printf("******** count %d\n", count);
+		
+		count++;
+		char *prev_data = send_data;
+	}
+	
+}
+
 
 int processInterestForLighting(enum ccn_upcall_kind kind, struct ccn_upcall_info* info){
     
@@ -392,7 +436,8 @@ int processInterestForLighting(enum ccn_upcall_kind kind, struct ccn_upcall_info
     printf("Received request (kind: %d).\n", kind);
     
     char suffix[4098] = "";  // starts with NUM LIGHTS = 4;
-    suffix[0] = NUM_LIGHTS;  //NUM_LIGHTS;
+	char *fixType;
+    //suffix[0] = NUM_LIGHTS;  //NUM_LIGHTS; **
     int i;
     //      if (ccn_name_comp_to_str(info->interest_ccnb, info->interest_comps, 10) == 1) {
     // URI start from index 0
@@ -405,10 +450,27 @@ int processInterestForLighting(enum ccn_upcall_kind kind, struct ccn_upcall_info
         //if (strcmp(str, fix) == 0) {
         if (strcmp(str, "fixture") == 0) {
             printf("****** in if fixture\n ");
-            strcat(suffix, "|");
-            char *temp;
-            temp = ccn_name_comp_to_str(info->interest_ccnb, info->interest_comps, i+1);
-            strcat(suffix, temp);
+			//suffix[0] = NUM_LIGHTS;  //NUM_LIGHTS; **
+			
+			//add by Chenni on May 19
+			char *temp;
+			fixType = ccn_name_comp_to_str(info->interest_ccnb, info-> interest_comps, i+1);
+			
+			if (strcmp(fixType, "ColorBlast") == 0) {
+                suffix[0] = NUM_LIGHTS;  //NUM_LIGHTS; **
+                strcat(suffix, "|");
+				temp = ccn_name_comp_to_str(info->interest_ccnb, info->interest_comps, i+2);
+				strcat(suffix, temp);
+			}
+			else if (strcmp(fixType, "ArtNet") == 0) {
+				char *ch;
+				char *d;
+				ch = ccn_name_comp_to_str(info->interest_ccnb, info->interest_comps, i+2);
+				d = ccn_name_comp_to_str(info->interest_ccnb, info->interest_comps, i+3);
+				strcat(suffix, ch);
+				strcat(suffix, "|");
+				strcat(suffix, d);
+			}
         }
         
         //if (strcmp(str, rgb8) == 0) {
@@ -475,7 +537,13 @@ int processInterestForLighting(enum ccn_upcall_kind kind, struct ccn_upcall_info
     
     char *data = suffix;
     int res;
-    res = udpClient(data);
+	
+	//add
+	if (strcmp(fixType, "ColorBlast") == 0)
+		res = udpClient(data);
+	else if (strcmp(fixType, "ArtNet") == 0)
+		res = udpClient2(data);
+
     printf("************ res = %d\n", res);
     
     
