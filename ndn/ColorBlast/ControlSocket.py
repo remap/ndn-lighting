@@ -13,9 +13,10 @@ from ColorBlast import *
 # Control socket info
 DEFAULT_PORT = 50009
 
-SRC_IP = '131.179.141.205'
-
-DATA_ENABLER_IP = '131.179.141.254'
+#SRC_IP = '131.179.141.35'
+SRC_IP = '127.0.0.1'
+ 
+DATA_ENABLER_IP = '131.179.141.50'
 NUM_PORTS   = 1
 NUM_LIGHTS  = 4  #was 2
 
@@ -93,7 +94,7 @@ class ControlSocket(Thread):
         try:
             self._log.info('run(): Binding to port %d', self._port)
 #            self._sock.bind(('', self._port))
-	    self._sock.bind(('131.179.141.205', self._port))
+	    self._sock.bind(('127.0.0.1', self._port))
             self._log.info('run(): Listening for connections..')
 #            self._sock.listen(1)
             self._sock.settimeout(2.0)

@@ -1,5 +1,5 @@
 #!/bin/bash
-ccndstart
-cd ../lightData/Debug
-./udpTry
+cd ../signedLightData/
+./signedNDNServer
+
 

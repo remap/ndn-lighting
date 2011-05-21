@@ -142,7 +142,7 @@ if __name__ == '__main__':
     Z = ColorBlast(NUM_PORTS, NUM_LIGHTS, logging.getLogger('ColorBlast'))
 #    K = KinetSender.KinetSender("131.179.143.102", "131.179.143.99", NUM_PORTS,
 #            3*NUM_LIGHTS, logging.getLogger('KinetSender'))
-    K = KinetSender.KinetSender("131.179.141.203", "131.179.141.254", NUM_PORTS,
+    K = KinetSender.KinetSender("127.0.0.1", "131.179.141.50", NUM_PORTS,
             3*NUM_LIGHTS, logging.getLogger('KinetSender'))
 
     N1=-1

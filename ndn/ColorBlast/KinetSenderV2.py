@@ -170,7 +170,7 @@ def finish(kinetsender):
 if __name__ == '__main__':  
     
     logging.basicConfig(filename="KinetSender.log", filemode='w', level=logging.CRITICAL)
-    kinetsender = KinetSender("172.17.5.222", "172.17.5.10", 1, 6, logging.getLogger('KinetSender'))
+    kinetsender = KinetSender("127.0.0.1", "131.179.141.51", 1, 6, logging.getLogger('KinetSender'))
     
     N=-1
     while (N<255):
