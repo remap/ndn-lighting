@@ -291,24 +291,32 @@ packet_handler(struct ccn_closure *selfp,
         fprintf(stderr, "CCN_UPCALL_CONSUMED_INTEREST\n");
         return (CCN_UPCALL_RESULT_OK);
     case CCN_UPCALL_INTEREST:
-    	fprintf(stderr, "CCN_UPCALL_INTEREST, (matched comps == %d)\n", info->matched_comps);
-    	int res = 0;
-
-        fprintf(stderr,"great, got interest... let's verify\n");
+        fprintf(stderr, "CCN_UPCALL_INTEREST, (matched comp  == %d)\n", info->matched_comps);
+        fprintf(stderr, "                     (interest comps == %zu)\n", info->interest_comps->n);
+        int res = 0;
+        // Corrected 20-May-2011 to support interests with additional components after prefix
+        //
+        if (info->interest_comps->n < 3) {	// Name + signature + implicit digest, minimum
+            fprintf(stderr, "\tnot enough components, %zu<3\n", info->interest_comps->n);
+        } else {
+            // Verify the interest
+            res = verify_signed_interest(info->interest_ccnb, info->interest_comps,
+                                             info->interest_comps->n-2, info->interest_comps->buf[0], info->interest_comps->buf[info->interest_comps->n-2],
+                                             (*h_data->public_key));
+            fprintf(stderr, "\tverify_signed_interest == %d (%s)\n", res, (res==1)?"verified":"unverified");
+        }
             
-    	// Verify the interest
-    	res = verify_signed_interest(info->interest_ccnb, info->interest_comps,
-    								 info->matched_comps, info->interest_comps->buf[0], info->interest_comps->buf[info->matched_comps],
-    						 		   (*h_data->public_key));
-		fprintf(stderr, "\tverify_signed_interest == %d (%s)\n", res, (res==1)?"verified":"unverified");
-            
-        processInterestForLighting(upcall_kind, info);
+            if (res==1){ 
+                processInterestForLighting(upcall_kind, info);
+            } else {
+                fprintf(stderr,"Unverified interest, not processing for lighting...");
+            }
 
 		// Based on the results,
 		// create and send a reply using default key & algorithm for the receiving handle
 		// to sign the content object.
 		//
-		char* reply_data = (res==1) ? "OK" : "AUTH_FAIL";	// A modest content.
+        char* reply_data = (res==1) ? "OK" : "AUTH_FAIL";	// A modest content.
 		struct ccn_charbuf* reply = ccn_charbuf_create();
 		struct ccn_charbuf* name = ccn_charbuf_create();
 		struct ccn_signing_params sp = CCN_SIGNING_PARAMS_INIT;
