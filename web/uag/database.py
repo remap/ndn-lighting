@@ -1,9 +1,3 @@
-# store
-
-# get last record
-
-
-
 import re
 import sys
 import pymongo
@@ -75,6 +69,11 @@ def getAllUnanalyzed():
 	# or something like that 
 	
 	return
+
+
+def getAllAnalyzed():
+	#get all entries that have been analyzed
+	return collection.find( { "analysis" : { "$exists" : "true"} } );
 
 	
 def getLastEntry():

@@ -12,7 +12,7 @@ import process
 def histogram(id, mode):
 	imageFileName = cfg.imageFilePath+data.getFilenameFrom(id);
 	aName = "histogram_"+str(mode)
-	data.insertAnalysisWithID(id, aName, json.dumps(process.imgprocess(imageFileName, mode)))
+	data.insertAnalysisWithID(id, aName, process.imgprocess(imageFileName, mode))
 	return data.getEntryFromID(id)
 	
 	
