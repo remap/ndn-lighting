@@ -2,6 +2,7 @@ import database as data
 import os
 import analyze
 import config as cfg
+import image
 
 # if not auth
 	# return apache.HTTP_FORBIDDEN
@@ -65,12 +66,14 @@ def uploadAndInput(req, name, email, title, comment):
 		# build absolute path to files directory
 		dir_path = os.path.join(os.path.dirname(req.filename), 'files')
 		open(os.path.join(dir_path, fname), 'wb').write(fileitem.file.read())
-		obj = analyze.histogram(last['_id'])
+		#obj = analyze.histogram(last['_id'])
+		obj = image.resize(last['_id'])
+		obj = analyze.histogram(last['_id'], 1)
 		message = "in future, this will be a confirmation, with perhaps the live status / webcam view... \n\nfor now, debug of db object:\n\n"
 		for x in obj:
 			message +=(x+": "+str(obj[x])+"\n")
 		message += "\n"
-		message += 'The file "%s" was uploaded & analyzed successfully' % fname
+		message += 'The file "%s" was uploaded, resized, and analyzed successfully' % fname
 	else:
 		message = 'No file was uploaded'
 	
