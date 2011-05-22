@@ -22,10 +22,10 @@ CFLAGS = -Wall -g
 #INCLUDES = -I/home/root/ccn/ccnx/include/ -I/home/root/ccn/ccnx/include/ccn/
 
 #nanobook
-#INCLUDES = -I/Users/nano/NDN/ccnx/include -I/Users/nano/NDN/ccnx/include/ccn
+INCLUDES = -I/Users/nano/NDN/ccnx/include -I/Users/nano/NDN/ccnx/include/ccn
 
 #bigriver
-INCLUDES = -I/Users/ccnx/ccnx/include -I/Users/ccnx/ccnx/include/ccn
+#INCLUDES = -I/Users/ccnx/ccnx/include -I/Users/ccnx/ccnx/include/ccn
 
 # define library paths in addition to /usr/lib
 
@@ -33,10 +33,10 @@ INCLUDES = -I/Users/ccnx/ccnx/include -I/Users/ccnx/ccnx/include/ccn
 #LFLAGS = -L../lib -L/home/root/ccn/ccnx/lib -L/home/root/ccn/ccnx/csrc
 
 #nanobook
-#LFLAGS = -L/Users/nano/NDN/ccnx/lib -L/Users/nano/NDN/ccnx/csrc
+LFLAGS = -L/Users/nano/NDN/ccnx/lib -L/Users/nano/NDN/ccnx/csrc
 
 #bigriver
-LFLAGS = -L/Users/ccnx/ccnx/include -L/Users/ccnx/ccnx/csrc
+#LFLAGS = -L/Users/ccnx/ccnx/include -L/Users/ccnx/ccnx/csrc
 
 # define any libraries to link into executable:
 #  link in libraries (libx.so or libx.a) use the -llibname 

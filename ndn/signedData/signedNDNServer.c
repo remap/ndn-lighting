@@ -112,7 +112,7 @@ static char *ccn_name_comp_to_str(
 
 // Our test content URI; the code appends a nonce.
 //const char* TEST_URI = "ccnx:/data_for_a_signed_interest";
-const char* TEST_URI = "/ucla.edu/building/boelter/floor/3/room/3551/lights/";
+const char* TEST_URI = "/ucla.edu/apps/lighting/TV1/";
 #define NUM_LIGHTS '4'
 
 int main(int argc, char** argv) {
