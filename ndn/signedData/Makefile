@@ -19,7 +19,7 @@ CFLAGS = -Wall -g
 # define any directories containing header files other than /usr/include
 
 #gumstix
-INCLUDES = -I/home/root/ccn/ccnx/include/ -I/home/root/ccn/ccnx/include/ccn/
+INCLUDES = -I/home/lighting/ccn/ccnx/include/ -I/home/lighting/ccn/ccnx/include/ccn/
 
 #nanobook
 #INCLUDES = -I/Users/nano/NDN/ccnx/include -I/Users/nano/NDN/ccnx/include/ccn
@@ -30,7 +30,7 @@ INCLUDES = -I/home/root/ccn/ccnx/include/ -I/home/root/ccn/ccnx/include/ccn/
 # define library paths in addition to /usr/lib
 
 #gumstix
-LFLAGS = -L../lib -L/home/root/ccn/ccnx/lib -L/home/root/ccn/ccnx/csrc
+LFLAGS = -L../lib -L/home/lighting/ccn/ccnx/lib -L/home/lighting/ccn/ccnx/csrc
 
 #nanobook
 #LFLAGS = -L/Users/nano/NDN/ccnx/lib -L/Users/nano/NDN/ccnx/csrc
