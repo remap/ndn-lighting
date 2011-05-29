@@ -24,6 +24,9 @@ eMail:
 	visit https://www.google.com/accounts/UnlockCaptcha
 	also note there is some undocumented gmail IMAP data rate limit, seems to be around 50/MB pull an hr. 
 	upload requires manual moderation of images - tag them 'tftinstall' and they'll end up in the sequencer.
+	currently email account is uclaremap@gmail.com
+	u: uclaremap
+	p: l!ghting2011
 
 analyze:
 	to find unanalyzed records, analyze them, and store result in db object

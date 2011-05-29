@@ -68,7 +68,7 @@ def uploadAndInput(req, name, email, title, comment):
 		open(os.path.join(dir_path, fname), 'wb').write(fileitem.file.read())
 		#obj = analyze.histogram(last['_id'])
 		obj = image.resize(last['_id'])
-		obj = analyze.histogram(last['_id'], 1)
+		obj = analyze.histogram(last['_id'], 4)
 		message = "in future, this will be a confirmation, with perhaps the live status / webcam view... \n\nfor now, debug of db object:\n\n"
 		for x in obj:
 			message +=(x+": "+str(obj[x])+"\n")

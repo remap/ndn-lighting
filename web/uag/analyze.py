@@ -7,6 +7,7 @@ import config as cfg
 
 import sys
 sys.path.append("/var/www/html/lighting/app/process")
+
 import process
 
 def histogram(id, mode):
