@@ -9,7 +9,7 @@ from RGBLamp import RGBLamp
 import traceback, time
 import types
 from ctypes import c_ubyte
-import KinetSenderV2
+import KinetSender
 
 # Logging support
 import logging
@@ -300,7 +300,7 @@ if __name__ == '__main__':
             print p,c,"=>", Z.payload[p][3*c], Z.payload[p][3*c+1], Z.payload[p][3*c+2]
     
 #    kinetsender = KinetSender.KinetSender("127.0.0.1", "131.179.141.51", 2, 3*50, logging.getLogger('KinetSender'))  # here, 2 is the # of ports
-    K  = KinetSenderV2.KinetSender("127.0.0.1", "131.179.145.51", 2, 3*50, logging.getLogger('KinetSender'))
+    K  = KinetSender.KinetSender("127.0.0.1", "131.179.145.51", 2, 3*50, logging.getLogger('KinetSender'))
 
     Z.setRGB(100, 100, 100)
     K.setPayload(1, Z.payload[0])
@@ -319,7 +319,7 @@ if __name__ == '__main__':
             time.sleep(2)
         except KeyboardInterrupt, k:
             print 'Interrupted by user.'
-            KinetSenderV2.finish(K)
+            KinetSender.finish(K)
         except Exception, e:
             print 'Program generated some Exception.'
             traceback.print_exc()
