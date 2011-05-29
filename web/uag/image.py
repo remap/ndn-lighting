@@ -16,8 +16,7 @@ def histogram(id):
 	
 	#note for pattern generation:
 	#json.loads(result) to reconsistute newline (or just explode on \\n)
- 
-
+	
 def resize(id):
 	imageFileName = cfg.imageFilePath+data.getFilenameFrom(id);
 	result = commands.getoutput("convert "+imageFileName+" -resize 640x "+imageFileName)
