@@ -6,12 +6,14 @@
 
 
 from RGBLamp import RGBLamp
+import traceback, time
 import types
 from ctypes import c_ubyte
+import KinetSenderV2
 
 # Logging support
 import logging
-from BeaconLogging import BeaconLogging
+#from BeaconLogging import BeaconLogging
 
 class IColorFlex(object):
     
@@ -31,7 +33,8 @@ class IColorFlex(object):
         if log:
             self.log = log
         else:
-            self.log = BeaconLogging("Beacon-beta", "IColorFlex", "IColorFlex.log", logging.WARNING,logging.WARNING, None)
+	    self.log = log
+#            self.log = BeaconLogging("Beacon-beta", "IColorFlex", "IColorFlex.log", logging.WARNING,logging.WARNING, None)
         if portorder:
             self._portorder = portorder
         else:
@@ -295,3 +298,32 @@ if __name__ == '__main__':
     for p in xrange(2):
         for c in xrange(3):
             print p,c,"=>", Z.payload[p][3*c], Z.payload[p][3*c+1], Z.payload[p][3*c+2]
+    
+#    kinetsender = KinetSender.KinetSender("127.0.0.1", "131.179.141.51", 2, 3*50, logging.getLogger('KinetSender'))  # here, 2 is the # of ports
+    K  = KinetSenderV2.KinetSender("127.0.0.1", "131.179.145.51", 2, 3*50, logging.getLogger('KinetSender'))
+
+    Z.setRGB(100, 100, 100)
+    K.setPayload(1, Z.payload[0])
+
+    N1=-1
+    N2=256
+    kintr=0
+    while (N1<255):
+        try:
+            N1+=1
+            N2-=1
+            Z.setRGB(N1, N1, N1, [1])
+            Z.setRGB(N2, N2, N2, [0])
+            K.setPayload(1, Z.payload[0])  # Port = 0 in ColorBlast.py, equivalent to Port = 1 in KinetSender.py   
+            print str(K.getPayload(1))
+            time.sleep(2)
+        except KeyboardInterrupt, k:
+            print 'Interrupted by user.'
+            KinetSenderV2.finish(K)
+        except Exception, e:
+            print 'Program generated some Exception.'
+            traceback.print_exc()
+            KinetSenderV2.finish(K)
+
+#    KinetSender.finish(K)
+

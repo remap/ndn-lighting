@@ -1,18 +1,15 @@
-##
-
-# To do:  Add exception handling 
 # And add logging
 # Borrow PEIR status, logging, and exception handling mechanisms
 ##
 
 import random
+import traceback
 import sys, time, socket, types 
 from ctypes import *
 from threading import Thread, Lock, Event
 
 # Logging support
 import logging
-from BeaconLogging import BeaconLogging
 
 # Sends to one IP
 #
@@ -26,91 +23,75 @@ class KinetSender(Thread):
     fixturePorts = 0      
     fixtureLength = None   
     dataPackets = None
-    dataLocks = None
     syncPacket = None
     sock = None
-    payloadobjs = []
     log = None
     stop = False
     complete = Event()
 
     # set srcip="" for all available interfaces
     # pass array as fixtureLength for varying lengths, integer if all the same
-    def __init__(self, srcip, destip, fixtureports, fixtureLength, log=None, start=True):
+    def __init__(self, srcip, destip, fixtureports, fixtureLength, log, start=True):
         Thread.__init__(self)
-        if log:
-            self.log = log
-        else:
-            self.log = BeaconLogging("Beacon-beta", "KinetSender", "KinetSender.log", logging.WARNING,logging.WARNING, None)       
+        self.log = log
         self.srcIP = srcip
         self.destIP = destip
         self.fixturePorts = fixtureports
-        self.name = "KinetSender_" + self.destIP  # threadname
         self.fixtureLength = []
         if type(fixtureLength)==types.IntType:
             for k in range(0, self.fixturePorts):
                 self.fixtureLength.append(fixtureLength)
+        else:
+            self.fixtureLength = fixtureLength
         self.syncPacket = KinetPktSync()
         self.dataPackets = []
         for k in range(1, self.fixturePorts+1):
-            self.dataPackets.append(KinetPktPortOut(k, self.fixtureLength[k-1]))
+            self.dataPackets.append(KinetPktPortOut(k))
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        try:
-            self.sock.bind((self.srcIP, self.srcPort))
-        except Exception, e:
-            self.log.log(logging.ERROR, "KinetSender.__init__()", "Exception binding socket", exception=e)
-        else:     
-            if start:
-            	self.start()
+        if start:
+            self.start()
     
-    def addPayloadObject(self, obj):
-        #TODO Check object has payload attribute
-        #TODO a delete object!
-        self.payloadobjs.append(obj)
-        
     def getPayload(self, port):
         if port<1 or port>self.fixturePorts:
             return None
         self.dataPackets[port-1].payloadLock.acquire()
-        retval = self.dataPackets[port-1].payload
+        retval = self.dataPackets[port-1]
         self.dataPackets[port-1].payloadLock.release()
         return retval
     
     def setPayload(self, port, payload):
         if port<1 or port>self.fixturePorts:
             return None
-        for k in range(0, self.dataPackets[port-1].length):
+        self.dataPackets[port-1].payloadLock.acquire()
+        self.dataPackets[port-1].touched = True
+        for k in range(0, self.fixtureLength[port-1]):
             try:
-                self.dataPackets[port-1].payloadLock.acquire()
                 self.dataPackets[port-1].payload[k] = payload[k]
             except Exception, e:
-                self.log.log(logging.ERROR, "KinetSender.setPayload()", "Exception", exception=e)
-            finally:
-                self.dataPackets[port-1].payloadLock.release()
+                self.log.error('setPayload(): Exception - %s', str(e))
+        self.dataPackets[port-1].payloadLock.release()
         
     def run(self):
-        # Print out what we're doing
         if self.srcIP == "": host="any" 
         else: host=self.srcIP
-        self.log.log(logging.INFO, "KinetSender:run()", "Init thread to send from " + host + " to " + self.destIP+":"+str(self.destPort) + " fixturePorts " + str(self.fixturePorts) + "fixtureLength" + str(self.fixtureLength))        
+        self.log.info('run(): Init thread to send from ' + host + ' to ' + self.destIP + ':' + str(self.destPort) + ' fixturePorts ' + str(self.fixturePorts) + ' fixtureLength ' + str(self.fixtureLength))        
         
         # Begin
         while(not self.stop):
-            # check our payload hooks:
-            if len(self.payloadobjs)>0:
-                for p in self.payloadobjs:
-                    for n in xrange(len(p.payload)):
-                        #print "get payload", p, n
-                        self.setPayload(n + p.portstart, p.payload[n])
+            send_sync = False
             for k in range(0,self.fixturePorts):
-                #print "PORT ", k
-                #print str(self.dataPackets[k])
                 try:
+                    #self.log.debug('run(): Trying to acquire lock')
                     self.dataPackets[k].payloadLock.acquire()     
+                    #self.log.debug('run(): Acquired lock')
                     self.sock.sendto(self.dataPackets[k], (self.destIP, self.destPort))
-                    self.dataPackets[k].touched = False
+                    #self.log.debug('run(): Sent port packet')
+                    if self.dataPackets[k].touched:
+                        self.log.error(str(self.dataPackets[k].payload[0])+':'+str(time.time()))
+                        self.dataPackets[k].touched = False
+                    #send_sync = True
                 except Exception, e:
-                    self.log.log(logging.ERROR, "KinetSender.run()", "Exception sending data packet", exception=e)
+                    self.log.error('run(): Exception sending data packet - %s', str(e))
                 finally: 
                     self.dataPackets[k].payloadLock.release()
 
@@ -118,15 +99,14 @@ class KinetSender(Thread):
             	# Guard the sync packet with some delay
             	# This seems to produce the most reliable sync between ports
             	# Sending sync immediately after the data packets above 
-            	# sometimes fails. 
+            	# sometimes fails.
                 time.sleep(self.PACKET_INTERVAL_SECONDS * 0.5)
+                #if send_sync:
                 self.sock.sendto(self.syncPacket, (self.destIP, self.destPort))
+                #self.log.debug('run(): Sent sync packet')
                 time.sleep(self.PACKET_INTERVAL_SECONDS * 0.5)
-            except KeyboardInterrupt:
-                sys.exit(1)
             except Exception, e:
-                self.log.log(logging.ERROR, "KinetSender.run()", "Exception sending sync packet", exception=e)     
-        print "kinetsender thread stopped"                
+                self.log.error('run(): Exception sending sync packet - %s', str(e))
         self.complete.set()
 		
 # What's ugly about this is that the length of the various data types
@@ -134,7 +114,8 @@ class KinetSender(Thread):
 # on both linux and windows python 2.6 so far
 class KinetPktPortOut(LittleEndianStructure):
 
-    MAX_PAYLOAD = 150  # iColor specific!!
+    MAX_PAYLOAD = 512   # ColorBlast PowerCore specific!!
+    START_CODE = 0x0FFF # ColorBlast PowerCore: Non-ChromASIC light; iFlex: ChromASIC light
 
     _fields_ = [("magic", c_int), 
                 ("version", c_short), 
@@ -146,20 +127,20 @@ class KinetPktPortOut(LittleEndianStructure):
                 ("flags", c_short), 
                 ("length", c_short), 
                 ("startcode", c_short),
-                ("payload", c_ubyte * MAX_PAYLOAD )]    ## Need to do this dynamically based on length??    
+                ("payload", c_ubyte * MAX_PAYLOAD )]
     payloadLock = Lock()
-    def __init__(self, port, length):
-        self.magic = 0x4ADC0104
-        self.version = 0x0002
-        self.type = 0x0108
-        self.universe = 0xFFFFFFFF
-        self.seqnum = 0x0000
-        self.universe = 0xFFFFFFFF
-        self.length=length # probably could do this dynamically
-        self.startcode = 0x0FFF
-        self.port = port # 
+    def __init__(self, port):
+        self.magic      = 0x4ADC0104
+        self.version    = 0x0002
+        self.type       = 0x0108
+        self.seqnum     = 0x0000 # is it 0x00000000?? 4 bytes
+        self.universe   = 0xFFFFFFFF
+        self.length     = self.MAX_PAYLOAD
+        self.startcode  = self.START_CODE
+        self.port       = port # 
+        self.touched    = False
     def __str__(self):
-        return "KinetPktPortOut{ port=" + str(self.port) + "; length=" + str(self.length) + "; len(payload)=" + str(len(self.payload))+"payload=" + str([str(D) for D in self.payload]) + " }"
+        return "KinetPktPortOut{ port=" + str(self.port) + "; len(payload)=" + str(len(self.payload))+"; payload=" + str([str(D) for D in self.payload]) + "; }"
                  
 class KinetPktSync(LittleEndianStructure): 
     _fields_ = [("magic", c_int), 
@@ -168,30 +149,43 @@ class KinetPktSync(LittleEndianStructure):
                 ("seqnum", c_int),
                 ("pad", c_ulong)]
     def __init__(self): 
-        self.magic = 0x4ADC0104
-        self.version = 0x0002
-        self.type = 0x0108
-        self.seqnum = 0x0000                
+        self.magic      = 0x4ADC0104
+        self.version    = 0x0002
+        self.type       = 0x0109
+        self.seqnum     = 0x0000  # is it 0x00000000?? 4 bytes
     def __str__(self):
         return "KinetPktSyncOut"
     
+def finish(kinetsender):
+    kinetsender.stop = True
+    if kinetsender.isAlive():
+        kinetsender.log.info('finish(): Waiting for thread to finish')
+        kinetsender.complete.wait()			
+    kinetsender.log.info('finish(): Thread stopped')
+    sys.exit(1)
+
 if __name__ == '__main__':  
     
-    kinetsender = KinetSender("192.168.42.2", "192.168.42.10", 12, 150)
+    logging.basicConfig(filename="KinetSender.log", filemode='w', level=logging.CRITICAL)
+    kinetsender = KinetSender("127.0.0.1", "131.179.145.51", 2, 150, logging.getLogger('KinetSender'))
     
-    N=0
-    while (True):
+    N=-1
+    while (N<255):
     	try:
 			N+=1
-			bob = range(1,151)
-			for i in range(0,150):
+			bob = range(50)
+			for i in range(50):
 				bob[i]=N        
-			for i in range(1,13):
+			for i in range(1,2):
 				kinetsender.setPayload(i, bob)    
-			#print kinetsender.getPayload(12)
-			time.sleep(0.050)  # half of packet interval
-    	except KeyboardInterrupt, k:
-    		kinetsender.stop = True
-    		kinetsender.complete.wait()			
-    		sys.exit(1)
-			
+			print str(kinetsender.getPayload(1))
+			time.sleep(2)
+        except KeyboardInterrupt, k:
+            print 'Interrupted by user.'
+            finish(kinetsender)
+        except Exception, e:
+            print 'Program generated some Exception.'
+            traceback.print_exc()
+            finish(kinetsender)
+    finish(kinetsender)
+
