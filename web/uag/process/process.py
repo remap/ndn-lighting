@@ -19,9 +19,9 @@ def imgprocess(namef, mode):
     im = Image.open(namef)
     print 'image filename: ',namef, 'ch: ', im.getbands()
 
-    #get 5 dominant colors
+    #get dominant colors
     l = im.getcolors(im.size[0]*im.size[1])
-    dominant = (sorted(l, key=lambda l:l[0], reverse=True ))[0:150]
+    dominant = (sorted(l, key=lambda l:l[0], reverse=True ))[0:550]
 
     #print dominant[0:10]
     
@@ -34,7 +34,7 @@ def imgprocess(namef, mode):
 
     #stddev comb
     comb = (ImageStat.Stat(im).stddev)[0]+(ImageStat.Stat(im).stddev)[1]+(ImageStat.Stat(im).stddev)[2]
-    #print comb
+    print comb
 
 
 
@@ -50,20 +50,22 @@ def imgprocess(namef, mode):
   
     #select the most contrastant color vs the dominant
 
-    if stddev_c > comb:
-        #if low contrast apply gaussian filter
-        from imgfunctions import filterg 
-        medim = filterg(im)
-        #medim.show()
-        mediml = medim.getcolors(medim.size[0]*medim.size[1])
-        dominant = (sorted(l, key=lambda mediml:mediml[0], reverse=True ))[0:150]
-    
-    #get the most distant color from the dominant
+    from imgfunctions import filterg 
+    medim = filterg(im)
+    #medim.show()
+    mediml = medim.getcolors(medim.size[0]*medim.size[1])
+    dominant = (sorted(l, key=lambda mediml:mediml[0], reverse=True ))[0:150]
+
+    #filter threshold
+    appdf=[elem for elem in dominant if elem[0] > 5]
+    df=[e for e in appdf if (e[1][0]+e[1][1]+e[1][2])>30]
+    #print df
+    #get the most distant color (brightness) from the dominant
     domvalue = dominant[0][1][0]+dominant[0][1][1]+dominant[0][1][2]
     maxl = 0, dominant[0][1]
-    for color in dominant:
-      if maxl[0] < abs(dominant[0][1][0] - color[1][0]) :
-          maxl = abs(dominant[0][1][0] - color[1][0]) , color[1]
+    for color in df:
+      if maxl[0] < abs(df[0][1][0] - color[1][0]) :
+          maxl = abs(df[0][1][0] - color[1][0]) , color[1]
 
     #values to pass to the list
     
@@ -109,9 +111,9 @@ def imgprocess(namef, mode):
         out.append((delay,name['window-left'], nero, 0,fade))
         out.append((delay,name['window-right'], nero, 0,fade))
 
-        out.append((3,name['incandescent'], (0,0,0), 1,fade))
+        out.append((3,name['incandescent'], (0,0,0), 230,fade))
         out.append((1,name['incandescent'], (0,0,0), 0,fade))
-        out.append((0,name['incandescent'], (0,0,0), 1,fade))
+        out.append((0,name['incandescent'], (0,0,0), 230,fade))
         out.append((1,name['incandescent'], (0,0,0), 0,fade))
 
     if mode==2:
@@ -129,7 +131,7 @@ def imgprocess(namef, mode):
         mode3.iterone(out,domc,domcontrst)
 
     if mode==4:
-        mode4.dominantcluster(out,dominant,domc,domcontrst)
+        mode4.dominantcluster(out,df,domc,domcontrst)
 
     fixtureuty.alloff(0,out,0)
     #print out

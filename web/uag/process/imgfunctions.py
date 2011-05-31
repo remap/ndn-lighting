@@ -135,7 +135,7 @@ class GAUSSIAN(ImageFilter.BuiltinFilter):
 
 def filterg(im):
     im1 = im.filter(GAUSSIAN)
-    for x in range(40):
+    for x in range(3):
         im1 = im1.filter(GAUSSIAN)
     return im1
 
