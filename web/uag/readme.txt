@@ -7,6 +7,7 @@ dependencies:
 	modpy
 	apache
 	pymongo
+        pil and numpy for the img analysis
 
 purpose:
 
