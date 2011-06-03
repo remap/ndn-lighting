@@ -8,7 +8,7 @@ import time
 
 import config as cfg
 
-connection = Connection()
+connection = Connection(cfg.mongoHost, 27017)
 #db = connection.test
 #collection = db.test
 
@@ -31,7 +31,7 @@ def writeDatabase(name, email, title, comment):
 	#db = connection.test
 	#collection = db.test
 	
-	data = post={"author":name, "title":title, "text":comment, "email":email, "tags":["anything","to help","with query"],"date":datetime.datetime.utcnow()}
+	data = post={"author":name, "title":title, "text":comment, "email":email, "tags":["UCLA","TFT","festival", "test"],"date":datetime.datetime.utcnow()}
 	
 	lastID = collection.insert(data)
 	

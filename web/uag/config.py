@@ -18,6 +18,9 @@ imageWebPath = "http://bigriver.remap.ucla.edu/lighting/app/files/"
 # mongodb collection name
 colName = "lighting"
 
+#mongodb IP address
+mongoHost = "bigriver.remap.ucla.edu"
+
 #with trailing slash
 interestPrefix = "/ucla.edu/apps/lighting/TV1/fixture/"
 # seperate prefix for colorflex (PARC Demo)
