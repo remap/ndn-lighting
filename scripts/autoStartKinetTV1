@@ -1,0 +1,5 @@
+#!/bin/bash
+/usr/bin/python /home/lighting/ndn-lighting/lights/ColorBlast/ControlSocket.py &
+/usr/bin/python /home/lighting/ndn-lighting/lights/ColorBlaze1/ControlSocket.py &
+/usr/bin/python /home/lighting/ndn-lighting/lights/ColorBlaze2/ControlSocket.py &
+/usr/bin/python /home/lighting/ndn-lighting/lights/ArtNet.py 127.0.0.1 131.179.141.17

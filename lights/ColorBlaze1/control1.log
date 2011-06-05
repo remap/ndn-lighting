@@ -1,0 +1,291 @@
+Event loop ...
+Received request (kind: 1).
+*** before good, i = 0, str = ucla.edu
+*** good here, i = 0
+*** before good, i = 1, str = building
+*** good here, i = 1
+*** before good, i = 2, str = boelter
+*** good here, i = 2
+*** before good, i = 3, str = floor
+*** good here, i = 3
+*** before good, i = 4, str = 3
+*** good here, i = 4
+*** before good, i = 5, str = room
+*** good here, i = 5
+*** before good, i = 6, str = 3551
+*** good here, i = 6
+*** before good, i = 7, str = lights
+*** good here, i = 7
+*** before good, i = 8, str = fixture
+****** in if fixture
+ *** good here, i = 8
+*** before good, i = 9, str = 2
+*** good here, i = 9
+*** before good, i = 10, str = rgb-8bit-hex
+****** in if rgb-8bit-hex
+****** rgb = FA00B0
+***** r = FA, g = 00/@, b= B0/@à≤
+****** r = 250, g = 0, b = 176
+***** r = 250, g = 0, b = 176 
+***** suffix = 4|2|250|0|176
+*** good here, i = 10
+*** before good, i = 11, str = FA00B0
+*** good here, i = 11
+suffix is 4|2|250|0|176
+*********** here...
+********** in udpClient
+********** after assign the send_data
+********** send_data = 4|2|250|0|176
+********* sent... 
+************ res = 19
+Received request (kind: 1).
+*** before good, i = 0, str = ucla.edu
+*** good here, i = 0
+*** before good, i = 1, str = building
+*** good here, i = 1
+*** before good, i = 2, str = boelter
+*** good here, i = 2
+*** before good, i = 3, str = floor
+*** good here, i = 3
+*** before good, i = 4, str = 3
+*** good here, i = 4
+*** before good, i = 5, str = room
+*** good here, i = 5
+*** before good, i = 6, str = 3551
+*** good here, i = 6
+*** before good, i = 7, str = lights
+*** good here, i = 7
+*** before good, i = 8, str = fixture
+****** in if fixture
+ *** good here, i = 8
+*** before good, i = 9, str = 2
+*** good here, i = 9
+*** before good, i = 10, str = rgb-8bit-hex
+****** in if rgb-8bit-hex
+****** rgb = FA00B0
+***** r = FA, g = 00/@l, b= B0/@ê
+****** r = 250, g = 0, b = 176
+***** r = 250, g = 0, b = 176 
+***** suffix = 4|2|250|0|176
+*** good here, i = 10
+*** before good, i = 11, str = FA00B0
+*** good here, i = 11
+suffix is 4|2|250|0|176
+*********** here...
+********** in udpClient
+********** after assign the send_data
+********** send_data = 4|2|250|0|176
+********* sent... 
+************ res = 19
+Received request (kind: 1).
+*** before good, i = 0, str = ucla.edu
+*** good here, i = 0
+*** before good, i = 1, str = building
+*** good here, i = 1
+*** before good, i = 2, str = boelter
+*** good here, i = 2
+*** before good, i = 3, str = floor
+*** good here, i = 3
+*** before good, i = 4, str = 3
+*** good here, i = 4
+*** before good, i = 5, str = room
+*** good here, i = 5
+*** before good, i = 6, str = 3551
+*** good here, i = 6
+*** before good, i = 7, str = lights
+*** good here, i = 7
+*** before good, i = 8, str = fixture
+****** in if fixture
+ *** good here, i = 8
+*** before good, i = 9, str = 2
+*** good here, i = 9
+*** before good, i = 10, str = rgb-8bit-hex
+****** in if rgb-8bit-hex
+****** rgb = FA00B0
+***** r = FA, g = 00, b= B0
+****** r = 250, g = 0, b = 176
+***** r = 250, g = 0, b = 176 
+***** suffix = 4|2|250|0|176
+*** good here, i = 10
+*** before good, i = 11, str = FA00B0
+*** good here, i = 11
+suffix is 4|2|250|0|176
+*********** here...
+********** in udpClient
+********** after assign the send_data
+********** send_data = 4|2|250|0|176
+********* sent... 
+************ res = 19
+Received request (kind: 1).
+*** before good, i = 0, str = ucla.edu
+*** good here, i = 0
+*** before good, i = 1, str = building
+*** good here, i = 1
+*** before good, i = 2, str = boelter
+*** good here, i = 2
+*** before good, i = 3, str = floor
+*** good here, i = 3
+*** before good, i = 4, str = 3
+*** good here, i = 4
+*** before good, i = 5, str = room
+*** good here, i = 5
+*** before good, i = 6, str = 3551
+*** good here, i = 6
+*** before good, i = 7, str = lights
+*** good here, i = 7
+*** before good, i = 8, str = fixture
+****** in if fixture
+ *** good here, i = 8
+*** before good, i = 9, str = 2
+*** good here, i = 9
+*** before good, i = 10, str = rgb-8bit-hex
+****** in if rgb-8bit-hex
+****** rgb = FA00B0
+***** r = FA, g = 00, b= B0
+****** r = 250, g = 0, b = 176
+***** r = 250, g = 0, b = 176 
+***** suffix = 4|2|250|0|176
+*** good here, i = 10
+*** before good, i = 11, str = FA00B0
+*** good here, i = 11
+suffix is 4|2|250|0|176
+*********** here...
+********** in udpClient
+********** after assign the send_data
+********** send_data = 4|2|250|0|176
+********* sent... 
+************ res = 19
+Received request (kind: 1).
+*** before good, i = 0, str = ucla.edu
+*** good here, i = 0
+*** before good, i = 1, str = building
+*** good here, i = 1
+*** before good, i = 2, str = boelter
+*** good here, i = 2
+*** before good, i = 3, str = floor
+*** good here, i = 3
+*** before good, i = 4, str = 3
+*** good here, i = 4
+*** before good, i = 5, str = room
+*** good here, i = 5
+*** before good, i = 6, str = 3551
+*** good here, i = 6
+*** before good, i = 7, str = lights
+*** good here, i = 7
+*** before good, i = 8, str = fixture
+****** in if fixture
+ *** good here, i = 8
+*** before good, i = 9, str = 2
+*** good here, i = 9
+*** before good, i = 10, str = rgb-8bit-hex
+****** in if rgb-8bit-hex
+****** rgb = FA00B0
+***** r = FA, g = 00, b= B0
+****** r = 250, g = 0, b = 176
+***** r = 250, g = 0, b = 176 
+***** suffix = 4|2|250|0|176
+*** good here, i = 10
+*** before good, i = 11, str = FA00B0
+*** good here, i = 11
+suffix is 4|2|250|0|176
+*********** here...
+********** in udpClient
+********** after assign the send_data
+********** send_data = 4|2|250|0|176
+********* sent... 
+************ res = 19
+Received request (kind: 1).
+*** before good, i = 0, str = ucla.edu
+*** good here, i = 0
+*** before good, i = 1, str = building
+*** good here, i = 1
+*** before good, i = 2, str = boelter
+*** good here, i = 2
+*** before good, i = 3, str = floor
+*** good here, i = 3
+*** before good, i = 4, str = 3
+*** good here, i = 4
+*** before good, i = 5, str = room
+*** good here, i = 5
+*** before good, i = 6, str = 3551
+*** good here, i = 6
+*** before good, i = 7, str = lights
+*** good here, i = 7
+*** before good, i = 8, str = fixture
+****** in if fixture
+ *** good here, i = 8
+*** before good, i = 9, str = 2
+*** good here, i = 9
+*** before good, i = 10, str = rgb-8bit-hex
+****** in if rgb-8bit-hex
+****** rgb = FA00B0
+***** r = FA, g = 00, b= B0
+****** r = 250, g = 0, b = 176
+***** r = 250, g = 0, b = 176 
+***** suffix = 4|2|250|0|176
+*** good here, i = 10
+*** before good, i = 11, str = FA00B0
+*** good here, i = 11
+suffix is 4|2|250|0|176
+*********** here...
+********** in udpClient
+********** after assign the send_data
+********** send_data = 4|2|250|0|176
+********* sent... 
+************ res = 19
+Received request (kind: 1).
+*** before good, i = 0, str = ucla.edu
+*** good here, i = 0
+*** before good, i = 1, str = building
+*** good here, i = 1
+*** before good, i = 2, str = boelter
+*** good here, i = 2
+*** before good, i = 3, str = floor
+*** good here, i = 3
+*** before good, i = 4, str = 3
+*** good here, i = 4
+*** before good, i = 5, str = room
+*** good here, i = 5
+*** before good, i = 6, str = 3551
+*** good here, i = 6
+*** before good, i = 7, str = lights
+*** good here, i = 7
+*** before good, i = 8, str = fixture
+****** in if fixture
+ *** good here, i = 8
+*** before good, i = 9, str = 2
+*** good here, i = 9
+*** before good, i = 10, str = rgb-8bit-hex
+****** in if rgb-8bit-hex
+****** rgb = FA00B0
+***** r = FA, g = 00, b= B0
+****** r = 250, g = 0, b = 176
+***** r = 250, g = 0, b = 176 
+***** suffix = 4|2|250|0|176
+*** good here, i = 10
+*** before good, i = 11, str = FA00B0
+*** good here, i = 11
+suffix is 4|2|250|0|176
+*********** here...
+********** in udpClient
+********** after assign the send_data
+********** send_data = 4|2|250|0|176
+********* sent... 
+************ res = 19
+Received request (kind: 1).
+*** before good, i = 0, str = ucla.edu
+*** good here, i = 0
+*** before good, i = 1, str = building
+*** good here, i = 1
+*** before good, i = 2, str = boelter
+*** good here, i = 2
+*** before good, i = 3, str = floor
+*** good here, i = 3
+*** before good, i = 4, str = 3
+*** good here, i = 4
+*** before good, i = 5, str = room
+*** good here, i = 5
+*** before good, i = 6, str = 3551
+*** good here, i = 6
+*** before good, i = 7, str = lights
+*** good 

@@ -1,6 +1,11 @@
 UAG: Upload Analyze Generate
 lighting web app
-http://bigriver.remap.ucla.edu/lighting/app/upload
+
+to allow crowdsourced images to drive the colors of lights at an installation.
+
+Features:
+
+	upload image, email image, resize, analyze, pattern generation
 
 dependencies:
 	mongodb
@@ -9,9 +14,7 @@ dependencies:
 	pymongo
         pil and numpy for the img analysis
 
-purpose:
-
-to allow crowdsourced images to drive the colors of lights at an installation.
+Overview:
 
 5 main components (parameters of which are controlled in config.py)
 
@@ -46,13 +49,17 @@ sequence:
 	(use screen so it can run in bg when logged out)
 	current state can be seen at http://bigriver.remap.ucla.edu/lighting/status.html
 
-notes:
+
+how to clear patterns:
+
+	delete all documents in database
+	
+	use db admin tool at http://bigriver.remap.ucla.edu/lighting/db/
+	u/p: admin/l!ghting2011
+
+Notes:
 
 The application/data analysis object is an array of objects, each differentiated by a name that is written at time of analysis. This allows multiple analysis to be run on each image.
 
 also note the config.py imported as cfg - please place any constants in here.
 
-also, we have a db admin tool at 
-http://bigriver.remap.ucla.edu/lighting/db/
-user: admin
-pwd: l!ghting2011

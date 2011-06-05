@@ -1,8 +1,0 @@
-INFO:KinetSender:run(): Init thread to send from 127.0.0.1 to 131.179.141.50:6038 fixturePorts 1 fixtureLength [12]
-INFO:ControlSocket:run(): Binding to port 50009
-INFO:ControlSocket:run(): Listening for connections..
-INFO:ControlSocket:killAll(): Waiting for thread to finish
-INFO:ControlSocket:run(): Cleaning up thread
-INFO:ControlSocket:killAll(): Thread stopped
-INFO:KinetSender:finish(): Waiting for thread to finish
-INFO:KinetSender:finish(): Thread stopped

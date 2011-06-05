@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# subscribe to UCLA ndn node namespace
+
+/home/lighting/ccn/ccnx/bin/ccndc add /ucla.edu/apps/lighting tcp borges.metwi.ucla.edu
+
+# send any interest in namespace to ensure ccndc bi-directional if behind NAT
+
+/home/lighting/ndn-lighting/ndn/signedInterest/signedNDNClient /ucla.edu/apps/lighting/test
+
+# we'd start kinet here if it wasn't already auto-started at boot via /etc/rc5.d/S89Kinet
+
+echo "sequencer running... tail -f interests.log in other shell for output"
+
+#listen for interests
+/home/lighting/ndn-lighting/ndn/signedData/signedNDNServer &> /home/lighting/interests.log

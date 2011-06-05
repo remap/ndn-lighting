@@ -1,7 +1,63 @@
-ndn-lighting
+ndn-lighting 
+
+git@github.com:remap/ndn-lighting.git
 
 This is a lighting control application based on Named Data Networking (NDN).
-In lights directory, you will find the Python code for lighting Supply/Port/Fixture discovery.
-In ndn directory, there are codes for ndn-based communication.
-In doc directory, documents including ndn lighting control payload format will be found.
-More files and funtions including lighting control and ndn security issues will be added and followed up.
+
+This is the third major iteration, result of initial development and two installations (PARC demo and TV1) May-June 2011.
+
+Features:
+
+	web: upload image, email image, resize, analyze (histogram), pattern generation, sequencer
+	ndn: control lights w/ verified signed interests
+
+To Do:
+	multiple app-key generation & exchange
+	auto-config of kinet protocol IP
+
+Overview:
+
+lights/
+	Python code for lighting Supply/Port/Fixture discovery.
+ndn/
+	ndn stack for lighting control
+web/
+	public image upload, email, and analysis
+doc/ 
+	system diagram (also at http://goo.gl/jtzzW)
+	ndn lighting control payload format
+	application naming convention
+
+config:
+	
+	/web/uag/config.py
+	/ndn/lights/config.py
+
+Getting Started:
+
+	First, ensure /web is working somewhere. This ensures mongodb is populated with image analysis.
+	Note we can assume Kinet & ccndc are auto-started on gumstik (via /etc/rc5.d/)
+	Also ensure /ndn is on the gumstik.
+
+	Then, play sequencer:
+		go to /web host (borges at install), and type:
+		./startSequencer
+		./stopSequencer
+
+	Of course this assumes everything is set up correctly! 
+
+	make sure all params in above config files are accurate for your app instance.
+
+TV1:
+	As of writing, the public URLS for this are:
+
+	http://bigriver.remap.ucla.edu/lighting/status u/p: TV1
+	http://bigriver.remap.ucla.edu/lighting/devices (gumstix report on boot)
+	http://bigriver.remap.ucla.edu/lighting/app/upload
+	ssh://remap.is-very-good.org is TV1 gumstix (via router port 22 fwd & dyndns)
+
+	gmail account for submission curation:
+		u/p: uclaremap@gmail.com, l!ghting2011
+	
+	gumstik acct:
+		u/p: lighting, l!ghting2011

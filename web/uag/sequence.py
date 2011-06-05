@@ -2,9 +2,12 @@ import database as data
 import subprocess
 import os
 import commands
-import json
 import config as cfg
 import time
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 current = 0
 
