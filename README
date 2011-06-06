@@ -35,29 +35,37 @@ config:
 
 Getting Started:
 
-	First, ensure /web is working somewhere. This ensures mongodb is populated with image analysis.
+	background: ensure /web is working somewhere. This ensures mongodb is populated with image analysis.
 	Note we can assume Kinet & ccndc are auto-started on gumstik (via /etc/rc5.d/)
-	Also ensure /ndn is on the gumstik.
+
+	Also ensure /ndn is on the gumstik, and that it's listening for interests:
+		ssh lighting@131.179.141.47
+		cd ndn-lighting/scripts
+		./autoStartLightingTV1
 
 	Then, play sequencer:
-		go to /web host (borges at install), and type:
+		go to /web host (lighting@borges at install) cd into ~/ndn-lighting/scripts/
+		and type:
 		./startSequencer
-		./stopSequencer
 
-	Of course this assumes everything is set up correctly! 
+	Of course this assumes everything is set up correctly! (it was as of writing ;)
 
 	make sure all params in above config files are accurate for your app instance.
+
+Notes:
+	gmail account for submission curation:
+		u/p: uclaremap@gmail.com, l!ghting2011
+	
+	gumstik and borges lighting acct:
+		u/p: lighting, l!ghting2011
+
+	to stop sequencer, ctrl-c
+	to run sequencer with terminal closed / after logging out, use screen
 
 TV1:
 	As of writing, the public URLS for this are:
 
-	http://bigriver.remap.ucla.edu/lighting/status u/p: TV1
+	http://borges.metwi.ucla.edu/lighting/status.html u/p: TV1
 	http://bigriver.remap.ucla.edu/lighting/devices (gumstix report on boot)
 	http://bigriver.remap.ucla.edu/lighting/app/upload
 	ssh://remap.is-very-good.org is TV1 gumstix (via router port 22 fwd & dyndns)
-
-	gmail account for submission curation:
-		u/p: uclaremap@gmail.com, l!ghting2011
-	
-	gumstik acct:
-		u/p: lighting, l!ghting2011
