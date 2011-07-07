@@ -100,6 +100,8 @@ int build_keylocator_from_key(struct ccn_charbuf** keylocator, struct ccn_pkey* 
 	return (res);
 }
 
+// get_default_keys(ccn_pub, &p, &keystore, &public_key, &public_key_digest, &public_key_digest_length, &private_key);
+
 int get_default_keys(struct ccn* h, struct ccn_signing_params* p, struct ccn_keystore** keystore, struct ccn_pkey** public_key,
 		unsigned char** public_key_digest, size_t* public_key_digest_length, struct ccn_pkey** private_key) {
 	// These structures are supposed to be internal to the libs but
