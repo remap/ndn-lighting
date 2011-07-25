@@ -9,15 +9,17 @@ appURI = "/ucla.edu/apps"
 # but that is in itself a hack / temporary, so for now we put them here & can extend python in future
 
 deviceList = (
-'00:1c:42:00:00:08', '169.192.0.13', 
-'00:1c:42:00:00:04', '169.192.0.14',
-'00:1c:42:00:00:06', '169.192.0.12',
+'00:1c:42:00:00:08', '169.192.0.13', 'phillips/ColorBlast/',
+'00:1c:42:00:00:04', '169.192.0.14', 'phillips/ColorBlaze',
+'00:1c:42:00:00:06', '169.192.0.12', 'gumstix/overo/fire'
 )
 
 # to allow expansion of list if needed
 # change if change above list schema
-numValPerKey = 2
-# right now just MAC, IP
+numValPerKey = 3
+# right now just MAC, IP, typeComponent
+
+# may need to expand to include default namespace
 
 	
 # also note IP address is for Kinet and is to be auto-detected and written *after* ccnx cfg handshake

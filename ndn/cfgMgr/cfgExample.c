@@ -26,12 +26,22 @@ int main(){
     
     printf("num devices: %i \n", getMfrDeviceCount());
     
-    printf("cfgName of ith device: %s \n", getMfrDeviceID(1));
-    // note index count starts from 1. 
-    printf("cfgName of ith device: %s \n", getMfrDeviceID(2));
+    // note index count starts from 1
     // 0 works, but is changed to 1 internally.
-    printf("cfgName of ith device: %s \n", getMfrDeviceID(0));
     
+    printf("MAC ADDR of ith device: %s \n", getMfrDeviceID(0));
+    printf("MAC ADDR of ith device: %s \n", getMfrDeviceID(2));
+    printf("MAC ADDR of ith device: %s \n", getMfrDeviceID(3));
+       
+    printf("IP of ith device: %s \n", getMfrDeviceIP(1));
+    printf("IP of ith device: %s \n", getMfrDeviceIP(2));
+    printf("IP of ith device: %s \n", getMfrDeviceIP(3));
+
+    printf("Type of ith device: %s \n", getMfrDeviceType(1));
+    printf("Type of ith device: %s \n", getMfrDeviceType(2));
+    printf("Type of ith device: %s \n", getMfrDeviceType(3));
+    
+   // printf("typeComponent of ith device %s \n", getMfrTypeComponent(0));
     
     return 0;
 }

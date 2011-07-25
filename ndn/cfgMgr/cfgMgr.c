@@ -112,6 +112,37 @@ char * getMfrDeviceID(int id){
     return strRet;
 }
 
+char * getMfrDeviceIP(int id){
+    
+    initConfigModule();
+    printf("getting IP from %i\n",id);
+    char *strRet = NULL;
+    PyObject *temp = Py_BuildValue("i",id);
+    // TODO: add error handling for calling null param
+    pFunc = PyDict_GetItemString(pDict, "getDeviceIP");
+    pValue = PyObject_CallFunctionObjArgs(pFunc, temp, NULL);
+    PyArg_Parse(pValue, "s", &strRet);
+    
+    closeConfigModule();
+    
+    return strRet;
+}
+
+char * getMfrDeviceType(int id){
+    
+    initConfigModule();
+    printf("getting IP from %i\n",id);
+    char *strRet = NULL;
+    PyObject *temp = Py_BuildValue("i",id);
+    // TODO: add error handling for calling null param
+    pFunc = PyDict_GetItemString(pDict, "getDeviceType");
+    pValue = PyObject_CallFunctionObjArgs(pFunc, temp, NULL);
+    PyArg_Parse(pValue, "s", &strRet);
+    
+    closeConfigModule();
+    
+    return strRet;
+}
 
 /// this is a 'scratchpad' function - derived / permanent functions are above. 
 

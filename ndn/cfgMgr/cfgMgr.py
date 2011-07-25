@@ -1,10 +1,11 @@
 import config as cfg
 
 def main():
-	#print("this is the config for app "+)
-	print("returning appName "+getConfigParam("appName"))
-	print(getTotalDeviceCount())
-	print(getDeviceID(1))
+    print("this is the config for app "+getConfigParam("appName"))
+    print(getTotalDeviceCount())
+    print(getDeviceID(1))
+    print(getDeviceIP(1))
+    print(getDeviceType(1))
 
 def appName():
 	return cfg.__dict__['appName']
@@ -28,7 +29,21 @@ def getDeviceID(n):
 	id = n*cfg.numValPerKey-cfg.numValPerKey
 	#print("returning device idx %i ",id)
 	return cfg.deviceList[id]
-	
+
+# will get device id from nth of deviceList		
+def getDeviceIP(n):
+	if(n==0): n=1
+	id = n*cfg.numValPerKey-cfg.numValPerKey+1;
+	#print("returning device idx %i ",id)
+	return cfg.deviceList[id]
+
+# will get device TypeComponent from nth of deviceList		
+def getDeviceType(n):
+    if(n==0): n=1
+    id = n*cfg.numValPerKey-cfg.numValPerKey+2;
+    #print("returning device idx %i ",id)
+    return cfg.deviceList[id]
+
 	
 # will over-write the IP of the device at key ID
 #def setDeviceIP(ID):

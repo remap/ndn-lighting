@@ -6,3 +6,7 @@ char * getConfigString(char *paramName);
 int getMfrDeviceCount();
 
 char * getMfrDeviceID(int id);
+
+char * getMfrDeviceIP(int id);
+
+char * getMfrDeviceType(int id);
