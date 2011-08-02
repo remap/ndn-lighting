@@ -37,12 +37,8 @@ Getting Started:
 
 	background: ensure /web is working somewhere. This ensures mongodb is populated with image analysis.
 	Note we can assume Kinet & ccndc are auto-started on gumstik (via /etc/rc5.d/)
-
-	Also ensure /ndn is on the gumstik, and that it's listening for interests:
-		ssh lighting@131.179.141.47
-		cd ndn-lighting/scripts
-		./autoStartLightingTV1
-
+	(if you don't think they are, just power cycle the gstix)
+	
 	Then, play sequencer:
 		go to /web host (lighting@borges at install) cd into ~/ndn-lighting/scripts/
 		and type:
