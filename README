@@ -40,13 +40,13 @@ Getting Started:
 	(if you don't think they are, just power cycle the gstix)
 	
 	Then, play sequencer:
-		go to /web host (lighting@borges at install) cd into ~/ndn-lighting/scripts/
+		go to web host (lighting@borges at install) cd into ~/ndn-lighting/scripts/
 		and type:
 		./startSequencer
-
-	Of course this assumes everything is set up correctly! (it was as of writing ;)
-
-	make sure all params in above config files are accurate for your app instance.
+		
+		also, ./stopSequencer 
+		(if you've accidentally started multiple sequencers, and/or lost track of the shell that you started it with)
+		and ./turnOffAllLights will send 0 to all lights.
 
 Notes:
 	gmail account for submission curation:
