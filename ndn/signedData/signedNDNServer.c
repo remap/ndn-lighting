@@ -309,7 +309,7 @@ packet_handler(struct ccn_closure *selfp,
             if (res==1){ 
                 processInterestForLighting(upcall_kind, info);
             } else {
-                processInterestForLighting(upcall_kind, info); 
+                //processInterestForLighting(upcall_kind, info); 
                 fprintf(stderr,"Unverified interest, not processing for lighting...");
             }
             

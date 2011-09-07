@@ -21,27 +21,6 @@
 #include "signed_interest.h"
 #include "ccn_internal_structs.h" // To use hashtable of keystore via ccn handle - we should not need this
 
-//#define URI "/ucla.edu/building/boelter/floor/3/room/3551/supply/1/fixture/1/R/250/G/000/B/000"
-//#define URI "/ucla.edu/cens/nano/light/1/fixture/1/R/250/G/000/B/000"
-
-//#define URI "/ucla.edu/cens/nano/lights/1/fixture/1/rgb-8bit-hex/FA00B0"
-
-// 10 byte
-//#define URI "/ucla.edu/"
-// 100 byte
-//#define URI "/ucla.edu/cens/nano/lights/1/fixture/1/rgb-8bit-hex/FAFAFA/123456789/123456789/123456789/123456789/"
-// 1000 byte
-	//#define URI "/ucla.edu/cens/nano/lights/1/fixture/1/rgb-8bit-hex/FAFAFA/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/123456789/"
-
-//#define URI "/ucla.edu/building/boelter/floor/3/room/3551/lights/fixture/ColorBlast/1/rgb-8bit-hex/FA00B0"
-//#define URI "/ucla.edu/building/boelter/floor/3/room/3551/lights/fixture/ArtNet/*/200"
-
-//#define URI "/ucla.edu/cens/nano/lights"
-//#define URI "/ucla.edu/building/boelter/floor/3/room/3551/lights/fixture/1/rgb-8bit-hex/FA00B0"
-//#define SK1 "magickey13893"
-
-//#define UNUSED(expr) UNUSED_ ## expr __attribute__((unused))
-
 static enum ccn_upcall_res
 incoming_handler(
 		struct ccn_closure* selfp,
@@ -52,37 +31,30 @@ incoming_handler(
 	int res;
 	const unsigned char *ptr;
 	size_t length;
-
 	printf("Received response (kind: %d)\n", kind);
 	switch(kind) {
 		case CCN_UPCALL_FINAL:
 			printf("deregistering handler\n");
 			return CCN_UPCALL_RESULT_OK;
-
 		case CCN_UPCALL_CONTENT:
 			printf("received content\n");
 			res = ccn_content_get_value(info->content_ccnb, info->pco->offset[CCN_PCO_E], info->pco, &ptr, &length);
-
 			printf("Output: ");
 			for (i = 0; i < length; i++) {
 				putchar(ptr[i]);
 			}
 			break;
-
 		case CCN_UPCALL_INTEREST_TIMED_OUT:
 			printf("request timed out - retrying\n");
 			return CCN_UPCALL_RESULT_REEXPRESS;
-
 		case CCN_UPCALL_CONTENT_UNVERIFIED:
 		case CCN_UPCALL_CONTENT_BAD:
 			printf("error\n");
 			return CCN_UPCALL_RESULT_ERR;
-
 		default:
 			printf("Unexpected response\n");
 			return CCN_UPCALL_RESULT_ERR;
 	}
-
 	return CCN_UPCALL_RESULT_OK;
 }
 
@@ -138,14 +110,7 @@ int main(int argc, char *argv[])
 	//argv[1];	
 	name = ccn_charbuf_create();
 	strcat(URI,argv[1]);
-	//char *URI;
-	//URI = (char *) malloc(1024*sizeof(char));
-	/*
-	char URI[1024] = "";
-	printf("Please enter your light control interest command:");
-	scanf("%s", URI);
-	printf("The light control interest command is: %s\n", URI);
-	*/
+
 	res = ccn_name_from_uri(name, URI);
 
 	if (res < 0) {
@@ -160,7 +125,7 @@ int main(int argc, char *argv[])
 	struct ccn* ccn_pub;
 	struct ccn* ccn_rec;
 
-	// Will hold the public/private key used for signing
+	// Will hold the public/private key used for signing   
 	struct ccn_pkey* public_key = NULL;
 	struct ccn_pkey* private_key = NULL;
 
@@ -181,23 +146,12 @@ int main(int argc, char *argv[])
         return(1);
     }	
 	
-	// using original callback instead of struct in test_signed_interest (for now)
+	// using original callback instead of struct in test_signed_interest
 	incoming = calloc(1, sizeof(*incoming));
 	incoming->p = incoming_handler;
 	
-	// Setup our one test name without signature
-    //struct ccn_charbuf* name;
-    //name = ccn_charbuf_create();
-    //ccn_name_from_uri(name, URI);
     ccn_name_append_nonce(name);
-    //fprintf(stderr, "Our name: %s/<nonce>\n", URI);
-	/*
-	res = ccn_set_interest_filter(ccn_pub, name, incoming);
-    if (res < 0) {
-        fprintf(stderr, "Failed to register interest (res == %d)\n", res);
-        return(1);
-    }
-    */
+
 	// Get our default keys -- Why do we have to do all this work??
     // Borrowed from ccn_client.c
     struct ccn_signing_params name_sp = CCN_SIGNING_PARAMS_INIT;
@@ -241,36 +195,6 @@ int main(int argc, char *argv[])
     outstanding_interests++;
 	
 	fprintf(stderr,"Signed interested sent.\n");
-	/* 
-	// chenni's original 
-	// create & express non-signed interest 
-	ccn = ccn_create();
-
-	res = ccn_connect(ccn, NULL);
-	if (res < 0) {
-		fprintf(stderr, "can't connect: %d\n", res);
-		ccn_perror(ccn, "ccn_connect");
-		exit(1);
-	}
-
-	incoming = calloc(1, sizeof(*incoming));
-	incoming->p = incoming_handler;
-	res = ccn_express_interest(ccn, name, incoming, NULL);
-
-	printf("Waiting for response to interest packet\n");
-
-	while (res >= 0) {
-		printf("running ccn_run...\n");
-		res = ccn_run(ccn, -1);
-	}
-
-	if (res < 0) {
-		ccn_perror(ccn, "ccn_run");
-		exit(1);
-	}
-
-	ccn_charbuf_destroy(&name);
-	ccn_destroy(&ccn);
-	*/
-	return 0;
+	
+    return 0;
 }

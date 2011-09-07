@@ -6,16 +6,17 @@ def main():
     print(getDeviceID(1))
     print(getDeviceIP(1))
     print(getDeviceType(1))
+    enumerateControlNamespace()
 
 def appName():
 	return cfg.__dict__['appName']
 	
-def appURI():
-	return cfg.appURI
+def appPrefix():
+	return cfg.appPrefix
 
 def appPath():
     #print "app Path..."
-	return cfg.appURI+cfg.appName
+	return cfg.appPrefix+cfg.appName
 
 def testValue():
     return 4
@@ -47,6 +48,12 @@ def getDeviceType(n):
 	
 # will over-write the IP of the device at key ID
 #def setDeviceIP(ID):
+
+# for auto-generation of namespace from capabilities and devices
+def enumerateControlNamespace():
+    for capability in cfg.capabilities:
+        for deviceName in cfg.appDeviceNames:
+            print(cfg.appPrefix+deviceName+"/"+capability)
 
 def getConfigParam(param):
 	return cfg.__dict__[param]
