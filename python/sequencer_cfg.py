@@ -1,7 +1,68 @@
-## human configuration for application signing:
+#legacy control cfg:
+# mongodb collection name
+colName = "lighting"
+
+#mongodb IP address
+dbHost = "localhost" #if dev local and no mongodb, just forward the borges port. ie:
+# ssh -v -L 27016:localhost:27016 borges.metwi.ucla.edu
+dbPort = 27016
+
+#with trailing slash
+interestPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/"
+# seperate prefix for colorflex (PARC Demo)
+flexPrefix = "/ucla.edu/apps/lighting/fixture/"
+
+
+## for SSH interests (legacy)
+
+# NDN node & user with signedLightInterest command
+# (sequencer was running as www-data from bigriver)
+lightHost = "ssh nano@borges.metwi.ucla.edu"
+
+# full path to interest executable on host
+signedInterestCommand = "/home/nano/ndn-lighting/ndn/signedInterest/signedNDNClient"
+
+#temporary translation until finalized / moved elsewhere
+names = {
+"living-room-front":"ColorBlast/1",
+"living-room-right":"ColorBlast/1",
+"entrance-door":"ColorBlast/2",
+"window-right":"ColorBlast/3",
+"stairs":"ColorBlast/4",
+"bedroom":"ColorBlast/2",
+"kitchen":"ColorBlast/2",
+"window-left":"ColorBlast/3",
+"incandescent":"ArtNet"}
+
+nameFromAnalysis = {'living-room-front': 'living-room-front-wall',
+        'living-room-right': 'living-room-right-wall',
+        'kitchen':'kitchen',
+        'stairs':'stairs',
+        'bedroom':'bedroom',
+        'entrance-door':'entrance-door',
+        'window-left':'window-left',
+        'window-right':'window-right',
+        'incandescent':'incandescent',
+        'living-room-left/fill':'living-room-left/fill',
+        'living-room-right/fill':'living-room-right/fill',
+        #'colorflex':'colorflex',
+        2: 'living-room-front-wall',
+        3: 'living-room-right-wall',
+        1:'kitchen',
+        6:'stairs',
+        5:'bedroom',
+        7:'entrance-door',
+        4:'window-left',
+        8:'window-right',
+        9:'living-room-left/fill',
+        10:'living-room-right/fill',
+
+        }
+###################
+# new control cfg:
 
 appName = "TV1Sequencer"
-appPrefix = "/ndn/ucla.edu/apps/lighting/TV1"
+appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1"
 appDescription = "Sequencer for TV1."
 keyFile = "sequencer.pem"
 
@@ -9,12 +70,12 @@ capabilities = {"setRGB", "readRGB"}
 appDeviceNames = {"living-room-front","living-room-right","window-left"}
 
 controlNameSpace = {
-"/ndn/ucla.edu/apps/lighting/TV1/living-room-right/readRGB",
-"/ndn/ucla.edu/apps/lighting/TV1/window-left/readRGB",
-"/ndn/ucla.edu/apps/lighting/TV1/living-room-front/readRGB",
-"/ndn/ucla.edu/apps/lighting/TV1/living-room-right/setRGB",
-"/ndn/ucla.edu/apps/lighting/TV1/window-left/setRGB",
-"/ndn/ucla.edu/apps/lighting/TV1/living-room-front/setRGB"}
+"ccnx:/ndn/ucla.edu/apps/lighting/TV1/living-room-right/readRGB",
+"ccnx:/ndn/ucla.edu/apps/lighting/TV1/window-left/readRGB",
+"ccnx:/ndn/ucla.edu/apps/lighting/TV1/living-room-front/readRGB",
+"ccnx:/ndn/ucla.edu/apps/lighting/TV1/living-room-right/setRGB",
+"ccnx:/ndn/ucla.edu/apps/lighting/TV1/window-left/setRGB",
+"ccnx:/ndn/ucla.edu/apps/lighting/TV1/living-room-front/setRGB"}
 
 # simulation of burned in names
 #

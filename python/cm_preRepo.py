@@ -64,11 +64,11 @@ class cm():
 			# make key servers
 			# first let's do control namespace
 			#<controlURI><key>
-			keyServers.append(KeyServer(self.key, self.appKey, name+"/key"))
+			keyServers.append(KeyServer(self.key, self.appKey, "ccnx:"+name+"/key"))
 			
 			# now let's do trust namespace
 			#<appPrefix><appName><authority><controlURI>			
-			trustName = self.cfg.appPrefix+self.appCfg.appName+"/"+self.cfg.appName+name
+			trustName = "ccnx:"+self.cfg.appPrefix+self.appCfg.appName+"/"+self.cfg.appName+name
 			#print "Trust name is:"+ trustName
 			keyServers.append(KeyServer(self.key, self.appKey, trustName+"/key"))
 
@@ -80,20 +80,16 @@ class cm():
 
 		for name in self.appCfg.controlNameSpace:
 			# express interests for keys in control namespace
-			n = Name.Name(name+"/key")
+			n = Name.Name("ccnx:"+name+"/key")
 			i = Interest.Interest()
 			co = self.handle.get(n,i,5000)
-			if not not co: 
-				#if co is not empty,  print result for debugging
-				print "Key published for "+str(co.name)
+			print "Keyserved for ccnx:"+str(co.name)
 
-			trustName = self.cfg.appPrefix+self.appCfg.appName+"/"+self.cfg.appName+name
+			trustName = "ccnx:"+self.cfg.appPrefix+self.appCfg.appName+"/"+self.cfg.appName+name
 			n = Name.Name(trustName+"/key")
 			i = Interest.Interest()
 			co = self.handle.get(n,i,5000)
-			if not not co: 
-				#if co is not empty,  print result for debugging
-				print "Key published for "+str(co.name)
+			print "Key published for ccnx:"+str(co.name)
 
 
 class KeyServer(Closure.Closure):
@@ -107,8 +103,6 @@ class KeyServer(Closure.Closure):
 		self.name = Name.Name(name)
 		self.co = self.makeSignedKey()
 		print "Keyserver for "+self.URI+" initialized"
-		#upload to repo ? 
-		#upload = RepoUpload(self.handle, self.name, [self.co])
 
 	def listen(self):
 		#listen to requests in namespace
@@ -141,16 +135,6 @@ class KeyServer(Closure.Closure):
 		if kind != Closure.UPCALL_INTEREST:
 			return Closure.RESULT_OK
 		#print "sending signed key at "+str(info.Interest.name)
-		
-		# publish to repo (tho for now we are just publishing to ccnd's cache)
-		#
-		#versioned_name is name that includes version, content is a list of
-		#already prepared content objects.
-		#It actually is not mandatory to use versions segments. You can just
-		#provide one object (without version and segment), it just needs to be
-		#passed as a list.
-
-		# respond to interest, implicitly publish to ccnd cache
 		self.handle.put(self.co) # send the prepared data
 		self.handle.setRunTimeout(0) # finish run()
 
