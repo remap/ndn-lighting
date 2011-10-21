@@ -3,8 +3,11 @@ from pyccn import CCN,Name,Interest,ContentObject,Key,Closure
 from multiprocessing import Process
 import ssl
 
-# configuration manager 
-# trusted authority that signs application namespaces for control
+# UDP client
+import socket
+
+# controller
+# fixture application that receives interests & controls lights
 
 class controller(Closure.Closure):
 	
@@ -14,6 +17,10 @@ class controller(Closure.Closure):
 		self.handle = CCN.CCN()
 		self.sendHandle = CCN.CCN()
 		self.getApplicationKey()
+		self.iFlex_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+	def __del__(self):
+		self.iflex_socket.close()
 		
 	def loadConfigFile(self):
 		command = "import "+self.appConfigFileName+" as appCfg"
@@ -42,7 +49,7 @@ class controller(Closure.Closure):
 		self.name = Name.Name([self.appCfg.appPrefix])
 		self.co = self.makeDefaultContent()
 		print "controller init & listening within "+self.appCfg.appPrefix
-		print "controller init & listening within "+str(self.name)
+		#print "controller init & listening within "+str(self.name)
 		self.listen()
 
 	def listen(self):
@@ -75,6 +82,10 @@ class controller(Closure.Closure):
 
 		# parse command & send to correct driver/IP
 
+		self.parseAndSendToKinet(info.Interest.name)
+		
+		#ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/
+		
 		# return content object 
 		# (ideally based on success/fail - yet that's not implicitly supported by current kinet
 		# so perhaps we put a self-verification of new driver state process here
@@ -84,7 +95,54 @@ class controller(Closure.Closure):
 		# self.sendHandle.setRunTimeout(0) # finish run()
 		# self.handle.setRunTimeout(0) # finish run()
 		return Closure.RESULT_INTEREST_CONSUMED
+
+	def parseAndSendToKinet(self, name):
+		print "length of interest name is "+ str(len(name))
+		iMax = len(name)
+		#print "length of prefix name is "+ str(len(Name.Name([self.appCfg.appPrefix])))
+		#ideally, derive algorithmically...
+		# meanwhile we're using config params to get first ver working
+		print "length of interest name is "+ str(name[(iMax-self.appCfg.deviceNameDepth)])
+
+		rgbVal = str(name[iMax-self.appCfg.deviceNameDepth+3])
+		command = str(name[iMax-self.appCfg.deviceNameDepth+2])
+		devNum = str(name[iMax-self.appCfg.deviceNameDepth+1])
+		devName = str(name[iMax-self.appCfg.deviceNameDepth])
+		
+		print " device "+devName+" ID : "+devNum+" color "+rgbVal +" plus command " + command
+
+		#devNum = "0"
+		r = str(int(rgbVal[0:2],16))
+		g = str(int(rgbVal[2:4],16))
+		b = str(int(rgbVal[4:6],16))
+		
+		print " r is "+r+" g is "+g+" b is "+b
+		newData = self.cfg.numLights+"|"+devNum+"|"+r+"|"+g+"|"+b
+		print "like to put data "+newData+" to port "+ str(self.getPortFromDevName(devName))
+		myPort = self.getPortFromDevName(devName)
+		self.sendData(newData,myPort)
+    	
+
+	    # NUM LIGHTS | ID1 | R | G | B | ID2 | R | ...
+    	# send_data = "4|1|250|086|100";
+    
+		
+		#data = "4|1|250|086|100"
 	
+		
+		# port 50010 = artnet
+		# port 50009 = colorblast
+		# port 50012 = colorblaze
+		
+	def sendData(self, data, port):
+		self.iFlex_socket.sendto(data, ("localhost", port))
+
+	def getPortFromDevName(self,devName):
+		ports = {'ArtNet': 50010, 'ColorBlast': 50009, 'ColorBlaze1':50012,'ColorBlaze2':50013}
+		if not devName in ports:
+			print "error, no port"
+			exit
+		return ports[devName]
 
 def usage():
 	print("Usage: %s <Application configFileName>" % sys.argv[0])

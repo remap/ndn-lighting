@@ -82,9 +82,9 @@ class sequencer():
 						#flexCommand = /ucla.edu/apps/lighting/fixture/iColorFlex/2/*/rgb-8bit-hex/10101
 						flexCommand = "iColorFlex/2/*/rgb-8bit-hex/"+"%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
 						oldRGB = newRGB
-				else:
+				#else:
 					#ARTNET/*/INTENSITY
-					CLIcommand = replaceNameWithID(line[1])+"/*/"+str(line[3])
+					#CLIcommand = replaceNameWithID(line[1])+"/*/"+str(line[3])
 				#/ucla.edu/cens/nano/lights/1/fixture/1/rgb-8bit-hex/FAFAFA
 				#print CLIcommand
 				#time.sleep(float(line[0])/5)

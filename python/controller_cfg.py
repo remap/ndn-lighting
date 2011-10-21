@@ -2,13 +2,21 @@
 ## human configuration for control application
 
 appName = "controller"
-appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/"
+#real
+#appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/"
+#temp
+appPrefix = "/ucla.edu/apps/lighting/TV1/fixture/"
 appDescription = "lighting controller"
 
 keyFile = "controller.pem"
 
+numLights = "4"
+
 capabilities = {"setRGB", "readRGB"}
 appDeviceNames = {"living-room-front","living-room-right","window-left"}
+
+#depth (from right) of device name
+deviceNameDepth = 6
 
 controlNameSpace = {
 "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-right/readRGB",
@@ -16,7 +24,10 @@ controlNameSpace = {
 "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-front/readRGB",
 "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-right/setRGB",
 "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/window-left/setRGB",
-"ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-front/setRGB"}
+"ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-front/setRGB"
+}
+
+
 
 # simulation of burned in names
 #
@@ -27,6 +38,7 @@ deviceList = (
 '00:1c:42:00:00:08', '169.192.0.13', 'phillips/ColorBlast/',
 '00:1c:42:00:00:04', '169.192.0.14', 'phillips/ColorBlaze',
 '00:1c:42:00:00:06', '169.192.0.12', 'gumstix/overo/fire'
+'00:0A:C5:23:82:55', '169.192.0.51', 'phillips/ColorFlex'
 )
 # to allow expansion of list if needed
 # change if change above list schema
@@ -40,6 +52,17 @@ numValPerKey = 3
 # application device name (alias) mapping to default/config device name
 
 deviceNames = {
+"living-room-front":"ColorBlast/1",
+"living-room-right":"ColorBlast/1",
+"entrance-door":"ColorBlast/2",
+"window-right":"ColorBlast/3",
+"stairs":"ColorBlast/4",
+"bedroom":"ColorBlast/2",
+"kitchen":"ColorBlast/2",
+"window-left":"ColorBlast/3",
+"incandescent":"ArtNet"}
+
+deviceNamesToDriverPort = {
 "living-room-front":"ColorBlast/1",
 "living-room-right":"ColorBlast/1",
 "entrance-door":"ColorBlast/2",
