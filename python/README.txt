@@ -1,4 +1,4 @@
-NDN Lighting v2.07 - Python
+NDN Lighting v2.1 - Python
 
 There are three parts to the lighting application:
 
@@ -32,9 +32,9 @@ There are three parts to the lighting application:
 
 Status:
 
-as of writing - 1,2 are complete.
+as of writing -  1,2,3 are complete, with exception:
 
-3 functions in NDN, but is pending kinet driver control (revision) and signed interests.
+no signed interests (yet). Or, rather - there are signed interests, but we're not yet verifying.
 
 note first draft is just raw function, future todo:
 
