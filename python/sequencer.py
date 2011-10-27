@@ -78,20 +78,23 @@ class sequencer():
 				#print str(i) + " : " + str(command)
 				#i = i + 1
 				if(line[1] != "incandescent"):
-					#CLIcommand = replaceNameWithID(line[1])+"/rgb-8bit-hex/"+"%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
-					CLIcommand = line[1]+"/rgb-8bit-hex/"+"%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
-					newRGB = "%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
-					if(newRGB != oldRGB):
-						#flexCommand = /ucla.edu/apps/lighting/fixture/iColorFlex/2/*/rgb-8bit-hex/10101
-						flexCommand = "iColorFlex/2/*/rgb-8bit-hex/"+"%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
-						oldRGB = newRGB
+					try:
+						#CLIcommand = replaceNameWithID(line[1])+"/rgb-8bit-hex/"+"%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
+						CLIcommand = line[1]+"/rgb-8bit-hex/"+"%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
+						newRGB = "%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
+						if(newRGB != oldRGB):
+							#flexCommand = /ucla.edu/apps/lighting/fixture/iColorFlex/2/*/rgb-8bit-hex/10101
+							flexCommand = "iColorFlex/2/*/rgb-8bit-hex/"+"%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
+							oldRGB = newRGB
+					except:
+						print "bad form, skipping"
 				#else:
 					#ARTNET/*/INTENSITY
 					#CLIcommand = replaceNameWithID(line[1])+"/*/"+str(line[3])
 				#/ucla.edu/cens/nano/lights/1/fixture/1/rgb-8bit-hex/FAFAFA
 				#print CLIcommand
 				#time.sleep(float(line[0])/5)
-				time.sleep(1)
+				#time.sleep(1)
 				#self.sendInterest(CLIcommand)
 				self.sendSignedInterest(CLIcommand)
 				#self.actutallySendInterest(CLIcommand)
@@ -112,7 +115,7 @@ class sequencer():
 		co = self.handle.get(n,i,20)
 		if not not co: 
 			#if co is not empty,  print result for debugging
-			print("interest "+str(co.content))
+			print("content: "+str(co.content))
 			
 	def sendSignedInterest(self,command):
 		fullURI = self.cfg.interestPrefix + command
@@ -133,6 +136,10 @@ class sequencer():
 		if not not co: 
 			#if co is not empty,  print result for debugging
 			print("interest "+str(co.content))
+		# for profiling - quit when the controller quits
+		else:
+			print "it's done"
+			sys.exit(1)
 	
 	# executes interest on remote host (legacy)
 	def sendInterestSSH(command):

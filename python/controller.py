@@ -5,6 +5,9 @@ import ssl
 # UDP client
 import socket
 
+# profiler
+import cProfile
+
 # controller
 # fixture application that receives interests & controls lights
 
@@ -56,7 +59,7 @@ class controller(Closure.Closure):
 		print "key server thread, listening for "+self.URI
 		self.co = self.makeDefaultContent(self.URI, "default Content")
 		self.handle.setInterestFilter(Name.Name(self.URI), self)
-		self.handle.run(-1)
+		self.handle.run(60000)
 
 	def makeDefaultContent(self, name, content):
 		co = ContentObject.ContentObject()
