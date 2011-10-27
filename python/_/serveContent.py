@@ -6,21 +6,21 @@ from pyccn import CCN, Name, Interest, ContentObject, Key, Closure
 class test(Closure.Closure):
 	def __init__(self):
 		self.handle = CCN.CCN()
-		self.name = Name.Name("ccnx:/Foo/key")
+		self.name = Name.Name("ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/")
 
 		self.k = Key.Key()
 		self.k.generateRSA(1024)
 
 	# this is so we don't have to do signing each time someone requests data
-	def prepareContent(self):
+	def prepareContent(self,name):
 		co = ContentObject.ContentObject()
 
 		# since they want us to use versions and segments append those to our name
-		co.name = Name.Name(self.name) # making copy, so any changes to co.name won't change self.name
+		co.name = Name.Name(name) # making copy, so any changes to co.name won't change self.name
 		co.name.appendVersion() # timestamp which is our version
 		co.name += b'\x00' # first segment
 
-		co.content = "Hello"
+		co.content = "Content Served - Test OK"
 
 		si = ContentObject.SignedInfo()
 		si.publisherPublicKeyDigest = self.k.publicKeyID
@@ -38,19 +38,23 @@ class test(Closure.Closure):
 	def upcall(self, kind, info):
 		if kind != Closure.UPCALL_INTEREST:
 			return Closure.RESULT_OK
-		print(info.Interest.name)
-		self.handle.put(self.content) # send the prepared data
-		self.handle.setRunTimeout(0) # finish run()
-
+		#print(info.Interest.name)
+		#self.handle.put(self.content) # send the prepared data
+		self.handle.put(self.prepareContent(info.Interest.name)) # send the dynamic data (to match interest name)
+		#self.handle.setRunTimeout(-1) # finish run()
+		print("published content object at "+str(info.Interest.name))
 		return Closure.RESULT_INTEREST_CONSUMED
 
 	def start(self):
 		
-		self.content = self.prepareContent()
+		#self.content = self.prepareContent(self.name)
 
 		# register our name, so upcall is called when interest arrives
 		self.handle.setInterestFilter(self.name, self)
 
+
+		print "\nlistening at "+str(self.name)
+		
 		# express interests for own keys, so they're netcached
 
 		# enter ccn loop (upcalls won't be called without it, get
