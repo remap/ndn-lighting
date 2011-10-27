@@ -3,12 +3,14 @@
 
 appName = "controller"
 #real
-#appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/"
-#temp
-appPrefix = "/ucla.edu/apps/lighting/TV1/fixture/"
+appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/"
+#temp (old int)
+#appPrefix = "/ucla.edu/apps/lighting/TV1/fixture/"
 appDescription = "lighting controller"
 
 keyFile = "controller.pem"
+# for namecrypto
+fixtureKey = "1234"
 
 numLights = "4"
 
@@ -27,7 +29,8 @@ controlNameSpace = {
 "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-front/setRGB"
 }
 
-
+#mappings from name to driver port
+ports = {'ArtNet': 50010, 'ColorBlast': 50009, 'ColorBlaze1':50012,'ColorBlaze2':50013}
 
 # simulation of burned in names
 #

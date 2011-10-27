@@ -12,7 +12,6 @@ interestPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/"
 # seperate prefix for colorflex (PARC Demo)
 flexPrefix = "/ucla.edu/apps/lighting/fixture/"
 
-
 ## for SSH interests (legacy)
 
 # NDN node & user with signedLightInterest command
@@ -61,7 +60,11 @@ nameFromAnalysis = {'living-room-front': 'living-room-front-wall',
 ###################
 # new control cfg:
 
+# for namecrypto
+fixtureKey = "1234"
+
 appName = "TV1Sequencer"
+#appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/"
 appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1"
 appDescription = "Sequencer for TV1."
 keyFile = "sequencer.pem"

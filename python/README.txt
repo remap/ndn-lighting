@@ -1,4 +1,4 @@
-NDN Lighting v2.1 - Python
+NDN Lighting v2.7 - Python
 
 There are three parts to the lighting application:
 
@@ -32,14 +32,15 @@ There are three parts to the lighting application:
 
 Status:
 
-as of writing -  1,2,3 are complete, with exception:
+as of writing -  1,2,3 are complete.
 
-no signed interests (yet). Or, rather - there are signed interests, but we're not yet verifying.
+Signed interests verify, and content objects w/ state of verification are returned. 
 
-note first draft is just raw function, future todo:
 
-1) will need to be rewritten w/ two handles replacing the N processes
-2) will have to not just issue interests, but listen for the returned status objects
+future todo:
+
+* CM will need to be rewritten w/ two handles replacing the N processes
+
 
 misc notes:
 

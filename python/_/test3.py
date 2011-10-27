@@ -6,7 +6,7 @@ from pyccn import CCN, Name, Interest, ContentObject, Key, Closure
 class test(Closure.Closure):
 	def __init__(self):
 		self.handle = CCN.CCN()
-		self.name = Name.Name("ccnx:/Foo/key")
+		self.name = Name.Name("ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/")
 
 		self.k = Key.Key()
 		self.k.generateRSA(1024)
@@ -40,7 +40,7 @@ class test(Closure.Closure):
 			return Closure.RESULT_OK
 		print(info.Interest.name)
 		self.handle.put(self.content) # send the prepared data
-		self.handle.setRunTimeout(0) # finish run()
+		#self.handle.setRunTimeout(-1) # finish run()
 
 		return Closure.RESULT_INTEREST_CONSUMED
 
@@ -51,6 +51,9 @@ class test(Closure.Closure):
 		# register our name, so upcall is called when interest arrives
 		self.handle.setInterestFilter(self.name, self)
 
+
+		print "listening ..."
+		
 		# express interests for own keys, so they're netcached
 
 		# enter ccn loop (upcalls won't be called without it, get
