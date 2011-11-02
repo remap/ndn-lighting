@@ -23,6 +23,14 @@ controlNameSpace = {
 "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-front/setRGB"
 }
 
+# list of authorized applications - used to determine interest priority. 
+authorizedApplications = {
+"alarm",
+"TV1webSequecner",
+"TV1ArtNetFader",
+"TV1Sequencer"
+}
+
 # simulation of burned in names
 #
 # these could be pulled in from external server via https or ccnx

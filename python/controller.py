@@ -1,6 +1,7 @@
 import sys
 from pyccn import CCN,Name,Interest,ContentObject,Key,Closure,_pyccn,NameCrypto
 import ssl
+from time import time
 
 # UDP client
 import socket
@@ -21,6 +22,9 @@ class controller(Closure.Closure):
 		self.iFlex_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		
 		self.state = NameCrypto.new_state()
+		self.cryptoKey = NameCrypto.generate_application_key(self.cfg.fixtureKey, self.cfg.appName)
+		self.symmKey = Key.Key().generateRSA(512)
+		#self.symmKey = self.symmKey.generateRSA()
 
 	def __del__(self):
 		self.iflex_socket.close()
@@ -76,17 +80,22 @@ class controller(Closure.Closure):
 		si.keyLocator = self.keyLocator
 		co.signedInfo = si
 		co.sign(self.key)
+		#co.sign(self.cryptoKey)
+		#co.sign(self.symmKey)
 		return co
 
 	def upcall(self, kind, info):
+		t0 = time()
+
 		#print self.appCfg.appName +" upcall..."
 		if kind != Closure.UPCALL_INTEREST:
 			return Closure.RESULT_OK
 	
-		#print "received interest "+str(info.Interest.name)
+		print "received interest "+str(info.Interest.name)
 		#print info.Interest.name.components
 		#print "interest has "+str(len(info.Interest.name))+" components"
-			
+		
+	
 		# verify interest
 		n = info.Interest.name
 		keyLocStr2 = n[-2]
@@ -95,28 +104,32 @@ class controller(Closure.Closure):
 		#try:
 		capsule = _pyccn.new_charbuf('KeyLocator_ccn_data', keyLocStr2)
 		keyLoc2 = _pyccn.KeyLocator_obj_from_ccn(capsule)
-		result = NameCrypto.verify_command(self.state, n, 10000, fixture_key=self.cfg.fixtureKey, pub_key=keyLoc2.key)
+		result = NameCrypto.verify_command(self.state, n, 10000, fixture_key=self.cfg.fixtureKey) #, pub_key=keyLoc2.key)
 		content = result
 		if(result == True):
 			print "Verify "+str(result)
 		else:
 			content = "Verify False : "+str(result)
 			print "Verify False : "+ str(result)
-	
+
+
 		# parse command & send to correct driver/IP
-		#self.parseAndSendToKinet(info.Interest.name)
+		self.parseAndSendToLight(info.Interest.name)
+
 
 		# return content object 
 		# (ideally based on success/fail - yet that's not implicitly supported by current kinet
 		# so perhaps we put a self-verification of new driver state process here
 		# meanwhile just return 'ok'
-		self.handle.put(self.makeDefaultContent(info.Interest.name, content)) # send the prepared data
+		#self.handle.put(self.makeDefaultContent(info.Interest.name, content)) # send the prepared data
 		#print("published content object at "+str(info.Interest.name)+"\n")
+		
+		t1 = time()
 		
 		# self.handle.setRunTimeout(-1) # finish run()
 		return Closure.RESULT_INTEREST_CONSUMED
 
-	def parseAndSendToKinet(self, name):
+	def parseAndSendToLight(self, name):
 		#print "length of interest name is "+ str(len(name))
 		iMax = len(name)
 		#print "length of prefix name is "+ str(len(Name.Name([self.appCfg.appPrefix])))
@@ -129,26 +142,40 @@ class controller(Closure.Closure):
 		dName = str(name[iMax-self.appCfg.deviceNameDepth])
 		DMXPort = self.getDMXFromName(dName)
 		
-		print " device "+dName+" ID : "+DMXPort+" color "+rgbVal +" plus command " + command
+		#print " device "+dName+" ID : "+DMXPort+" color "+rgbVal +" plus command " + command
 		
 		UDPPort = self.getUDPFromName(dName)
 		#UDPPort = 99999
-
+		
 		#devNum = "0"
-		r = str(int(rgbVal[0:2],16))
-		g = str(int(rgbVal[2:4],16))
-		b = str(int(rgbVal[4:6],16))
+
+		if(command=="setRGB"):
+
+			r = str(int(rgbVal[0:2],16))
+			g = str(int(rgbVal[2:4],16))
+			b = str(int(rgbVal[4:6],16))
+			
+			#print " r is "+r+" g is "+g+" b is "+b
+			newData = self.cfg.numLights+"|"+DMXPort+"|"+r+"|"+g+"|"+b
+			
+			#print "like to put data "+newData+" to port "+ str(UDPPort)
+	    	
+		    # NUM LIGHTS | ID1 | R | G | B | ID2 | R | ...
+	    	# send_data = "4|1|250|086|100";
+			#data = "4|1|250|086|100"
+			self.sendData(newData,UDPPort)
+			
+		elif (command=="setBrightness"):
 		
-		#print " r is "+r+" g is "+g+" b is "+b
-		newData = self.cfg.numLights+"|"+DMXPort+"|"+r+"|"+g+"|"+b
+			r = str(int(rgbVal[0:2],16))
+			newData = "*|"+r
+			#print "artNet Data: "+ newData
+			self.sendData(newData,UDPPort)
 		
-		print "like to put data "+newData+" to port "+ str(UDPPort)
-    	
-	    # NUM LIGHTS | ID1 | R | G | B | ID2 | R | ...
-    	# send_data = "4|1|250|086|100";
-		#data = "4|1|250|086|100"
+		else:
+			print"command unknown"
 		
-		self.sendData(newData,UDPPort)
+		
 		
 	def sendData(self, data, port):
 		self.iFlex_socket.sendto(data, ("localhost", int(port)))
@@ -171,7 +198,7 @@ class controller(Closure.Closure):
 			if(n['name']==devName):
 				udp = n['UDP']
 				return str(udp)
-		print "error - no UDP port matches names"
+		print "error - no UDP port matches name "+devName
 		return str(1000)
 
 def usage():
