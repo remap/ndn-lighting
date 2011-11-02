@@ -59,7 +59,7 @@ class controller(Closure.Closure):
 		print "key server thread, listening for "+self.URI
 		self.co = self.makeDefaultContent(self.URI, "default Content")
 		self.handle.setInterestFilter(Name.Name(self.URI), self)
-		self.handle.run(60000)
+		self.handle.run(self.cfg.runtimeDuration)
 
 	def makeDefaultContent(self, name, content):
 		co = ContentObject.ContentObject()
@@ -83,22 +83,25 @@ class controller(Closure.Closure):
 		if kind != Closure.UPCALL_INTEREST:
 			return Closure.RESULT_OK
 	
-		print "received interest "+str(info.Interest.name)
+		#print "received interest "+str(info.Interest.name)
 		#print info.Interest.name.components
 		#print "interest has "+str(len(info.Interest.name))+" components"
 			
 		# verify interest
 		n = info.Interest.name
 		keyLocStr2 = n[-2]
-		try:
-			capsule = _pyccn.new_charbuf('KeyLocator_ccn_data', keyLocStr2)
-			keyLoc2 = _pyccn.KeyLocator_obj_from_ccn(capsule)
-			result = NameCrypto.verify_command(self.state, n, 10000, fixture_key=self.cfg.fixtureKey, pub_key=keyLoc2.key)
-			content = result
-			print result
-		except:
-			content = "Not an authenticated interest"
-			print "Not an authenticated interest"
+		
+		#print "\n ncrypt: "+ keyLocStr2 + "\n"
+		#try:
+		capsule = _pyccn.new_charbuf('KeyLocator_ccn_data', keyLocStr2)
+		keyLoc2 = _pyccn.KeyLocator_obj_from_ccn(capsule)
+		result = NameCrypto.verify_command(self.state, n, 10000, fixture_key=self.cfg.fixtureKey, pub_key=keyLoc2.key)
+		content = result
+		if(result == True):
+			print "Verify "+str(result)
+		else:
+			content = "Verify False : "+str(result)
+			print "Verify False : "+ str(result)
 	
 		# parse command & send to correct driver/IP
 		#self.parseAndSendToKinet(info.Interest.name)
@@ -108,49 +111,68 @@ class controller(Closure.Closure):
 		# so perhaps we put a self-verification of new driver state process here
 		# meanwhile just return 'ok'
 		self.handle.put(self.makeDefaultContent(info.Interest.name, content)) # send the prepared data
-		print("published content object at "+str(info.Interest.name)+"\n")
+		#print("published content object at "+str(info.Interest.name)+"\n")
 		
 		# self.handle.setRunTimeout(-1) # finish run()
 		return Closure.RESULT_INTEREST_CONSUMED
 
 	def parseAndSendToKinet(self, name):
-		print "length of interest name is "+ str(len(name))
+		#print "length of interest name is "+ str(len(name))
 		iMax = len(name)
 		#print "length of prefix name is "+ str(len(Name.Name([self.appCfg.appPrefix])))
 		#ideally, derive algorithmically...
 		# meanwhile we're using config params to get first ver working
-		print "length of interest name is "+ str(name[(iMax-self.appCfg.deviceNameDepth)])
+		#print "length of interest name is "+ str(name[(iMax-self.appCfg.deviceNameDepth)])
 		
-		rgbVal = str(name[iMax-self.appCfg.deviceNameDepth+3])
-		command = str(name[iMax-self.appCfg.deviceNameDepth+2])
-		devNum = str(name[iMax-self.appCfg.deviceNameDepth+1])
-		devName = str(name[iMax-self.appCfg.deviceNameDepth])
+		rgbVal = str(name[iMax-(self.appCfg.deviceNameDepth-2)])
+		command = str(name[iMax-(self.appCfg.deviceNameDepth-1)])
+		dName = str(name[iMax-self.appCfg.deviceNameDepth])
+		DMXPort = self.getDMXFromName(dName)
 		
-		print " device "+devName+" ID : "+devNum+" color "+rgbVal +" plus command " + command
+		print " device "+dName+" ID : "+DMXPort+" color "+rgbVal +" plus command " + command
+		
+		UDPPort = self.getUDPFromName(dName)
+		#UDPPort = 99999
 
 		#devNum = "0"
 		r = str(int(rgbVal[0:2],16))
 		g = str(int(rgbVal[2:4],16))
 		b = str(int(rgbVal[4:6],16))
 		
-		print " r is "+r+" g is "+g+" b is "+b
-		newData = self.cfg.numLights+"|"+devNum+"|"+r+"|"+g+"|"+b
-		print "like to put data "+newData+" to port "+ str(self.getPortFromDevName(devName))
-		myPort = self.getPortFromDevName(devName)
-		self.sendData(newData,myPort)
+		#print " r is "+r+" g is "+g+" b is "+b
+		newData = self.cfg.numLights+"|"+DMXPort+"|"+r+"|"+g+"|"+b
+		
+		print "like to put data "+newData+" to port "+ str(UDPPort)
     	
 	    # NUM LIGHTS | ID1 | R | G | B | ID2 | R | ...
     	# send_data = "4|1|250|086|100";
 		#data = "4|1|250|086|100"
 		
+		self.sendData(newData,UDPPort)
+		
 	def sendData(self, data, port):
-		self.iFlex_socket.sendto(data, ("localhost", port))
+		self.iFlex_socket.sendto(data, ("localhost", int(port)))
+		
 
-	def getPortFromDevName(self,devName):
-		if not devName in self.cfg.ports:
-			print "error, no port"
-			exit
-		return self.cfg.ports[devName]
+	def getDMXFromName(self,devName):
+		dmx = 1
+		for n in self.cfg.names:
+			#print "DMX comparing "+devName+" to "+n['name']
+			if(n['name']==devName):
+				dmx = n['DMX']
+				return str(dmx)
+		print "error - no DMX port matches names"
+		return str(dmx)
+
+	def getUDPFromName(self,devName):
+		udp = -1
+		for n in self.cfg.names:
+			#print "UDP comparing "+devName+" to "+n['name']
+			if(n['name']==devName):
+				udp = n['UDP']
+				return str(udp)
+		print "error - no UDP port matches names"
+		return str(1000)
 
 def usage():
 	print("Usage: %s <Application configFileName>" % sys.argv[0])

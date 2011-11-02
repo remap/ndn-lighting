@@ -2,7 +2,11 @@ import database as data
 import subprocess
 import os
 import commands
-import json
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 import config as cfg
 
 # this is a utility module for processing image (at moment system calls to imagemagick)

@@ -2,7 +2,7 @@ import database as data
 import subprocess
 import os
 import commands
-import json
+import simplejson #json - if python 2.6 or greater
 import config as cfg
 
 import sys

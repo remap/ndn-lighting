@@ -1,10 +1,20 @@
+import sys
+sys.path.append("/var/www/html/lighting/app/process")
+
 from namespaces import name
 import math
+import constants
 import operator
 def dominantcluster(out,dl,dom,domc):
     dimmer=1
     fade=0
     templist = dl[:]
+
+    numberoffixture = 10
+    
+    nero = (0,0,0)
+    bianco = (255,255,255)
+
     
     #d = (sorted(dominant, key=lambda dominant:dominant[1][0], reverse=True ))
     #sorted(d, key=lambda d:d[1][0], reverse=True )
@@ -26,26 +36,14 @@ def dominantcluster(out,dl,dom,domc):
     #print 'after filter=================',dl, '-----',len(dl)
     print('1st: ',dom, '   2nd constr: ', domc, '    3rd: ', rddom)
   
-    """
-    out.append((0,name['living-room-front-wall'], dom, dimmer,fade))
-    out.append((0,name['living-room-right-wall'], rddom, dimmer,fade))
-    out.append((0,name['kitchen'], dom, dimmer,fade))
-    out.append((0,name['stairs'], domc, dimmer,fade))
-    out.append((0,name['bedroom'], domc, dimmer,fade))
-    out.append((0,name['entrance-door'], domc, dimmer,fade))
-    out.append((0,name['window-left'], domc, dimmer,fade))
-    out.append((0,name['window-right'], domc, dimmer,fade))
-    out.append((0,name['living-room-left/fill'], dom, dimmer,fade))
-    out.append((0,name['living-room-right/fill'], rddom, dimmer,fade))
-    """
-
+ 
     #fill up all the fixtures with one color at the time
-    for x in range(1,10):
-        out.append((0.5,name[x], dom, 1,fade))
-    for x in range(1,8):
-        out.append((0.5,name[x], domc, 1,fade))
-    for x in range(1,10):
-        out.append((0.5,name[x], rddom, 1,fade))
+    for x in range(1,numberoffixture):
+        out.append((3,name[x], dom, 1,fade))
+    for x in range(1,numberoffixture):
+        out.append((3,name[x], domc, 1,fade))
+    for x in range(1,numberoffixture):
+        out.append((3,name[x], rddom, 1,fade))
 
 
     
@@ -61,57 +59,50 @@ def dominantcluster(out,dl,dom,domc):
 
     #random n 0-50
     import random
-    n=random.randrange(1,50)
+    rrange = 25
+    n=random.randrange(1,rrange)
     print n
     
-    for x in range(1,50):
-        newc = (operator.mod(dom[0]+fib[operator.mod(n+x,50)],256),
-                operator.mod(dom[1]+fib[operator.mod(n+x,50)],256),
-                operator.mod(dom[2]+fib[operator.mod(n+x,50)],256))
-        #each 0.3sec
-        out.append((0.3,name[operator.mod(x,10)+1],newc, dimmer,fade))
+    #for x in range(1,rrange):
+    #    newc = (operator.mod(dom[0]+fib[operator.mod(n+x,rrange)],256),
+     #           operator.mod(dom[1]+fib[operator.mod(n+x,rrange)],256),
+     #           operator.mod(dom[2]+fib[operator.mod(n+x,rrange)],256))
+        #each 1sec
+     #   out.append((1,name[operator.mod(x,numberoffixture)+1],newc, dimmer,fade))
        
     
                    
         
-        
-    """
-    delay=4
-    for x in range(1,10):
-        delay = delay / math.sqrt(x)
-        out.append((delay,name[x], dom, 1,fade))
-    delay=4
-    for x in range(1,10):
-        delay = delay / math.sqrt(x)
-        out.append((delay,name[x], domc, 1,fade))
-    delay=5
-    for x in range(1,10):
-        delay = delay / math.sqrt(x)
-        out.append((delay,name[x], rddom, 1,fade))
-    """
-
+  
     #risoluzione
-    delay=5
-    for x in range(1,10):
-        delay = delay / math.sqrt(x)
-        out.append((delay,name[operator.mod(x,10)+1], dom, dimmer,fade))
-        out.append((delay,name[operator.mod(x+8,10)+1], rddom, dimmer,fade))
-        out.append((delay,name[operator.mod(x+2,10)+1], dom, dimmer,fade))
-        out.append((delay,name[operator.mod(x+3,10)+1], domc, dimmer,fade))
-        out.append((delay,name[operator.mod(x+4,10)+1], domc, dimmer,fade))
-        out.append((delay,name[operator.mod(x+5,10)+1], domc, dimmer,fade))
-        out.append((delay,name[operator.mod(x+6,10)+1], domc, dimmer,fade))
-        out.append((delay,name[operator.mod(x+7,10)+1], domc, dimmer,fade))
-        out.append((delay,name[operator.mod(x+1,10)+1], domc, dimmer,fade))
-        out.append((delay,name[operator.mod(x,10)], domc, dimmer,fade))
+    #delay=5
+    #for x in range(0,numberoffixture):
+    #    delay = delay / math.sqrt(x)
+    #    out.append((delay,name[operator.mod(x+9,numberoffixture)+1], dom, dimmer,fade))
+    #    out.append((delay,name[operator.mod(x+8,numberoffixture)+1], rddom, dimmer,fade))
+    #    out.append((delay,name[operator.mod(x+7,numberoffixture)+1], rddom, dimmer,fade))
+    #    out.append((delay,name[operator.mod(x+6,numberoffixture)+1], dom, dimmer,fade))
+    #    out.append((delay,name[operator.mod(x+5,numberoffixture)+1], dom, dimmer,fade))
+    #    out.append((delay,name[operator.mod(x+4,numberoffixture)+1], dom, dimmer,fade))
+    #    out.append((delay,name[operator.mod(x+3,numberoffixture)+1], dom, dimmer,fade))
+    #    out.append((delay,name[operator.mod(x+2,numberoffixture)+1], domc, dimmer,fade))
+    #    out.append((delay,name[operator.mod(x+1,numberoffixture)+1], domc, dimmer,fade))
+    #    out.append((delay,name[operator.mod(x,numberoffixture)+1],   domc, dimmer,fade))
 
-    #finale    
+
+    #finale
+    for x in range(0,10):
+        n=random.randrange(1,numberoffixture)
+        out.append((0,name[n], bianco, 1,fade))
+        out.append((0,name[n], nero, 1,fade))
+       
+        
     for x in range(0,180,10):
        out.append((0,name['incandescent'], (0,0,0), x,fade))
-    out.append((0,name['incandescent'], (0,0,0), 0,fade))
-    out.append((0,name['incandescent'], (0,0,0), 180,fade))
     out.append((1,name['incandescent'], (0,0,0), 0,fade))
-    out.append((0,name['incandescent'], (0,0,0), 80,fade))
+    out.append((1,name['incandescent'], (0,0,0), 180,fade))
+    out.append((1,name['incandescent'], (0,0,0), 0,fade))
+    out.append((1,name['incandescent'], (0,0,0), 80,fade))
     out.append((1,name['incandescent'], (0,0,0), 0,fade))
     
     

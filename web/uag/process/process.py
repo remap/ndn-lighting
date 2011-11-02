@@ -4,6 +4,8 @@
 # threshold for contrast img combined stddev = 250
 stddev_c = 250
 
+#import sys
+#sys.path.append("/var/www/html/lighting/app")
 
 import Image
 import imgfunctions

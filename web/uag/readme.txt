@@ -1,11 +1,16 @@
 UAG: Upload Analyze Generate
 lighting web app
-
-to allow crowdsourced images to drive the colors of lights at an installation.
+v1.5 11/04/2011
 
 Features:
 
-	upload image, email image, resize, analyze, pattern generation
+
+1) to allow crowdsourced images to drive the colors of lights at an installation:
+		upload image, email image, resize, analyze, pattern generation
+2) to allow always-on web control of sequencer:
+		turn on / turn off sequencer on borges
+3) to allow expression of interests from web client
+
 
 dependencies:
 	mongodb
@@ -13,12 +18,22 @@ dependencies:
 	apache
 	pymongo
         pil and numpy for the img analysis
+	pyCCN
 
 Overview:
 
 5 main components (parameters of which are controlled in config.py)
 
+
+control:
+	http://borges.metwi.ucla.edu/lighting/app/control.html
+	to upload a single image
+	to clear a pattern
+	to stop & start the sequencer on brogues
+	
+
 upload:
+	http://borges.metwi.ucla.edu/lighting/app/upload
 	to upload, rename, save, and create metadata object in database
 	right now it's a web form.
 
@@ -35,7 +50,7 @@ eMail:
 analyze:
 	to find unanalyzed records, analyze them, and store result in db object
 	this has been extended with the 'process' directory - analyze.py is now an interface to methods in process dir
-	and combines analysis with generation
+	and combines analysis with generation.
 
 (pattern) generator:
 	to find analysis output, and generate command sequence for lights
@@ -44,18 +59,24 @@ analyze:
 
 sequence:
 	to 'play' a playlist (of sequences) to the lighting installation.
-	sequencer is a command line NDN application, and not a web app.
-	it is currently run manually by typing 'python sequencer.py' from web app dire
-	(use screen so it can run in bg when logged out)
-	current state can be seen at http://bigriver.remap.ucla.edu/lighting/status.html
+	
+	two ways - use 'upload' function of control or upload above. 
+	if one does not 'clear database' it will just add the image to the DB (playing newly uploaded analysis next in the queue)
+	if cleared/just one in the DB, will just loop that one image analysis.
+
+	start/stop sequencer using 'control', above.
+
+	current state can be seen at http://borges.metwi.ucla.edu/lighting/status.html
 
 
 how to clear patterns:
 
-	delete all documents in database
+	delete all documents in database manually:
 	
-	use db admin tool at http://bigriver.remap.ucla.edu/lighting/db/
+	use db admin tool at http://borges.meti.ucla.edu/lighting/db/
 	u/p: admin/l!ghting2011
+
+	can also be done by using 'control.html' above
 
 Notes:
 
@@ -63,3 +84,17 @@ The application/data analysis object is an array of objects, each differentiated
 
 also note the config.py imported as cfg - please place any constants in here.
 
+
+
+
+VERSION HISTORY
+
+
+v1   5/21/2011
+
+had upload/analyze/generate/email/sequencer in advance of PARC demo
+
+v1.5 11/04/2011
+
+sequence now uses python version
+added web control UI to start & stop it

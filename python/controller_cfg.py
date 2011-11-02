@@ -1,24 +1,18 @@
-
-## human configuration for control application
+###########################
+# NDN Application Configuration
+###########################
+# this section is needed for configuration manager to authorize the app's namespace
 
 appName = "controller"
-#real
-appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/"
-#temp (old int)
-#appPrefix = "/ucla.edu/apps/lighting/TV1/fixture/"
+appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/"
 appDescription = "lighting controller"
-
 keyFile = "controller.pem"
+
 # for namecrypto
 fixtureKey = "1234"
 
-numLights = "4"
-
 capabilities = {"setRGB", "readRGB"}
 appDeviceNames = {"living-room-front","living-room-right","window-left"}
-
-#depth (from right) of device name
-deviceNameDepth = 6
 
 controlNameSpace = {
 "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-right/readRGB",
@@ -29,100 +23,71 @@ controlNameSpace = {
 "ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-front/setRGB"
 }
 
-#mappings from name to driver port
-ports = {'ArtNet': 50010, 'ColorBlast': 50009, 'ColorBlaze1':50012,'ColorBlaze2':50013}
-
 # simulation of burned in names
 #
 # these could be pulled in from external server via https or ccnx
-# but that is in itself a hack / temporary, so for now we put them here & can extend python in future
-
+# but that is in itself a hack / temporary, so for now we put them here & can extend in future
+# note this was built to also be read from C -
+# thus if expanded, change to match per-item param count:
+numValPerKey = 4 # right now just MAC/UID, IP, MfrTypeComponent, KINET UDP Port
 deviceList = (
-'00:1c:42:00:00:08', '169.192.0.13', 'phillips/ColorBlast/',
-'00:1c:42:00:00:04', '169.192.0.14', 'phillips/ColorBlaze',
-'00:1c:42:00:00:06', '169.192.0.12', 'gumstix/overo/fire'
-'00:0A:C5:23:82:55', '169.192.0.51', 'phillips/ColorFlex'
+'00:1c:42:00:00:00', '192.168.3.52', 'phillips/ColorBlast', 50009,
+'00:1c:42:00:00:02', '192.168.3.53', 'phillips/ColorBlastTRX', 50011,
+'00:1c:42:00:00:04', '192.168.3.51', 'phillips/ColorBlaze', 50012,
+'00:1c:42:00:00:08', '169.192.0.50', 'phillips/ColorBlaze', 50013,
+'00:1c:42:00:00:10', '131.179.141.17', 'ArtNet', 50010
 )
-# to allow expansion of list if needed
-# change if change above list schema
-numValPerKey = 3
-# right now just MAC, IP, MfrTypeComponent
 
-
-# linkage of deviceList to application aliases
-#
-#not used in this file (yet), but in web/config.py (for UAG / sequencer / analyzer)
-# application device name (alias) mapping to default/config device name
-
-deviceNames = {
-"living-room-front":"ColorBlast/1",
-"living-room-right":"ColorBlast/1",
-"entrance-door":"ColorBlast/2",
-"window-right":"ColorBlast/3",
-"stairs":"ColorBlast/4",
-"bedroom":"ColorBlast/2",
-"kitchen":"ColorBlast/2",
-"window-left":"ColorBlast/3",
-"incandescent":"ArtNet"}
-
-deviceNamesToDriverPort = {
-"living-room-front":"ColorBlast/1",
-"living-room-right":"ColorBlast/1",
-"entrance-door":"ColorBlast/2",
-"window-right":"ColorBlast/3",
-"stairs":"ColorBlast/4",
-"bedroom":"ColorBlast/2",
-"kitchen":"ColorBlast/2",
-"window-left":"ColorBlast/3",
-"incandescent":"ArtNet"}
-
-
-# this is for TV1 - not used @ mo, just for notes
-kinetDeviceList = (
-'192.168.3.52', 'colorBlast',
-'192.168.3.51', 'colorBlaze1',
-'192.168.3.50', 'colorBlaze2',
-'131.179.141.17', 'ArtNet'
-)
 # also note IP address is for Kinet and is to be auto-detected and written *after* ccnx cfg handshake
 # the only thing humans should enter to this file is the serial of the devices & the typeComponent
 # the serial field could be populated with MAC address for now.
 # as well as anything necessary for application signing
 
 
-#temporary translation until finalized / moved elsewhere
-names = {
-"living-room-front":"ColorBlast/1",
-"living-room-right":"ColorBlast/1",
-"entrance-door":"ColorBlast/2",
-"window-right":"ColorBlast/3",
-"stairs":"ColorBlast/4",
-"bedroom":"ColorBlast/2",
-"kitchen":"ColorBlast/2",
-"window-left":"ColorBlast/3",
-"incandescent":"ArtNet"}
+############################
+# Application Runtime:
+############################
+# the following are not NDN specific / not required for CM 
+# yet still required by app
 
-nameFromAnalysis = {'living-room-front': 'living-room-front-wall',
-        'living-room-right': 'living-room-right-wall',
-        'kitchen':'kitchen',
-        'stairs':'stairs',
-        'bedroom':'bedroom',
-        'entrance-door':'entrance-door',
-        'window-left':'window-left',
-        'window-right':'window-right',
-        'incandescent':'incandescent',
-        'living-room-left/fill':'living-room-left/fill',
-        'living-room-right/fill':'living-room-right/fill',
-        #'colorflex':'colorflex',
-        2: 'living-room-front-wall',
-        3: 'living-room-right-wall',
-        1:'kitchen',
-        6:'stairs',
-        5:'bedroom',
-        7:'entrance-door',
-        4:'window-left',
-        8:'window-right',
-        9:'living-room-left/fill',
-        10:'living-room-right/fill',
+# MongoDB (for image analysis)
+# collection name
+colName = "lighting"
+dbHost = "localhost"
+dbPort = 27016
+#if dev on localhost w/o mongodb, just forward the borges port. ie:
+# ssh -v -L 27016:localhost:27016 borges.metwi.ucla.edu
 
-        }
+#temporary runtime block (also for use by analysis)
+#technically all we need here is name, UDP, and DMX channel
+#yet until we decide how/where to merge it:
+
+names=[
+
+{'name':'living-room-left' , 'DMX':1,'TYPE':"ColorBlazeL", 'UDP':50013},
+{'name':'living-room-right', 'DMX':1,'TYPE':"ColorBlazeR", 'UDP':50012},
+{'name':'window-right'     , 'DMX':1,'TYPE':"ColorBlast", 'UDP':50009},
+{'name':'entrance-door'    , 'DMX':2,'TYPE':"ColorBlast", 'UDP':50009},
+{'name':'stairs'           , 'DMX':3,'TYPE':"ColorBlast", 'UDP':50009},
+{'name':'bedroom'          , 'DMX':4,'TYPE':"ColorBlast", 'UDP':50009},
+{'name':'incandescent'     , 'DMX':1,'TYPE':"ArtNet"    , 'UDP':50010},
+{'name':'pastel-right-c'   , 'DMX':1,'TYPE':"ColorBlastTRX", 'UDP':50011},
+{'name':'pastel-left-b'    , 'DMX':2,'TYPE':"ColorBlastTRX", 'UDP':50011},
+{'name':'pastel-right-d'   , 'DMX':3,'TYPE':"ColorBlastTRX", 'UDP':50011},
+{'name':'pastel-left-a'    , 'DMX':4,'TYPE':"ColorBlastTRX", 'UDP':50011}
+
+]
+
+#max number of lights per Data Enabler
+#needed by driver but legacy/to be depricated
+numLights = "4"
+
+
+#depth (from right) of device name
+deviceNameDepth = 5
+#ccnx:/ndn/ucla.edu/apps/lighting/TV1/pastel-left-b/setRGB/000000
+# ideally this should be derived during runtime (once)
+
+# in seconds: -1 is forver
+# for main ccnx run, useful for profiling
+runtimeDuration = -1

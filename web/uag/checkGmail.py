@@ -15,9 +15,9 @@ def getEmail():
 	m.select(cfg.emailLabel) # here you a can choose a mail box like INBOX instead
 	# use m.list() to get all the mailboxes
 	#print m.list()
-	#resp, items = m.search(None, "ALL") 
+	resp, items = m.search(None, "ALL") 
 	# you could filter using the IMAP rules here (check http://www.example-code.com/csharp/imap-search-critera.asp)
-	resp, items = m.search(None, '(FROM "ucla.edu")')
+	#resp, items = m.search(None, '(FROM "ucla.edu")')
 	
 	authorName = ""
 	authorEmail = ""

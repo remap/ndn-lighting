@@ -59,7 +59,7 @@ class sequencer():
 			everythingAndMore = data.getAllAnalyzed()
 			if(everythingAndMore.count()>max):
 				print " play first image, then return to former loop"
-				sendImageSequence(everythingAndMore[max])
+				self.sendImageSequence(everythingAndMore[max])
 			if(current >= max):
 				current = 0
 

@@ -6,9 +6,11 @@ from pymongo.errors import CollectionInvalid
 import datetime
 import time
 
+
+
 import config as cfg
 
-connection = Connection(cfg.mongoHost, 27017)
+connection = Connection('localhost', cfg.dbPort)
 #db = connection.test
 #collection = db.test
 
@@ -37,6 +39,9 @@ def writeDatabase(name, email, title, comment):
 	
 	return lastID
 
+def clearDatabase():
+	# clear collection
+	db.drop_collection(cfg.colName)
 
 def getEntryFromID(id):
 	return(collection.find_one({"_id":id}))
