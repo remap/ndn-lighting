@@ -85,7 +85,7 @@ class sequencer(Closure.Closure):
 					CLIcommand = line[1]+"/setBrightness/"+str(line[3])
 				#print CLIcommand
 				#time.sleep(float(line[0])/5)
-				time.sleep(1)
+				time.sleep(self.cfg.refreshInterval)
 				#self.sendInterest(CLIcommand)
 				self.sendSignedInterest(CLIcommand)
 				#sendFlexInterest(flexCommand)
@@ -112,6 +112,7 @@ class sequencer(Closure.Closure):
 		print fullURI
 		i = Interest.Interest()
 		
+		self.state = NameCrypto.new_state()
 		#build keyLocator to append to interest for NameCrypto on upcall
 		#
 		keyLoc = Key.KeyLocator(self.key)

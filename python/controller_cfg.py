@@ -66,6 +66,10 @@ dbPort = 27016
 #if dev on localhost w/o mongodb, just forward the borges port. ie:
 # ssh -v -L 27016:localhost:27016 borges.metwi.ucla.edu
 
+#length of time (in ms) that 
+window = 30000
+
+
 #temporary runtime block (also for use by analysis)
 #technically all we need here is name, UDP, and DMX channel
 #yet until we decide how/where to merge it:

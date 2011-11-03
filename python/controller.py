@@ -23,7 +23,7 @@ class controller(Closure.Closure):
 		
 		self.state = NameCrypto.new_state()
 		self.cryptoKey = NameCrypto.generate_application_key(self.cfg.fixtureKey, self.cfg.appName)
-		self.symmKey = Key.Key().generateRSA(512)
+		#self.symmKey = Key.Key().generateRSA(512)
 		#self.symmKey = self.symmKey.generateRSA()
 
 	def __del__(self):
@@ -90,11 +90,15 @@ class controller(Closure.Closure):
 		#print self.appCfg.appName +" upcall..."
 		if kind != Closure.UPCALL_INTEREST:
 			return Closure.RESULT_OK
+		
+		#ignore timeouts
+		if kind == Closure.UPCALL_INTEREST_TIMED_OUT:
+			return Closure.RESULT_OK
 	
-		print "received interest "+str(info.Interest.name)
+		#print "received interest "+str(info.Interest.name)
 		#print info.Interest.name.components
 		#print "interest has "+str(len(info.Interest.name))+" components"
-		
+		self.state = NameCrypto.new_state()
 	
 		# verify interest
 		n = info.Interest.name
@@ -104,13 +108,14 @@ class controller(Closure.Closure):
 		#try:
 		capsule = _pyccn.new_charbuf('KeyLocator_ccn_data', keyLocStr2)
 		keyLoc2 = _pyccn.KeyLocator_obj_from_ccn(capsule)
-		result = NameCrypto.verify_command(self.state, n, 10000, fixture_key=self.cfg.fixtureKey) #, pub_key=keyLoc2.key)
+		result = NameCrypto.verify_command(self.state, n, self.cfg.window, fixture_key=self.cfg.fixtureKey) #, pub_key=keyLoc2.key)
 		content = result
 		if(result == True):
 			print "Verify "+str(result)
 		else:
-			content = "Verify False : "+str(result)
-			print "Verify False : "+ str(result)
+			if (result != -4):
+				content = "Verify False : "+str(result)
+				print "Verify False : "+ str(result)+" for "+str(info.Interest.name)
 
 
 		# parse command & send to correct driver/IP
