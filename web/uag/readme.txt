@@ -30,6 +30,8 @@ control:
 	to upload a single image
 	to clear a pattern
 	to stop & start the sequencer on brogues
+	to stap & start the fader
+	to turn off all lights
 	
 
 upload:
@@ -97,4 +99,5 @@ had upload/analyze/generate/email/sequencer in advance of PARC demo
 v1.5 11/04/2011
 
 sequence now uses python version
-added web control UI to start & stop it
+added web control UI to start & stop sequencer & faders
+added web control to turn off lights
