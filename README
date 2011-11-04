@@ -1,67 +1,19 @@
-ndn-lighting 
+ndn-lighting v2.0
 
-git@github.com:remap/ndn-lighting.git
+massive overhaul 5.2011 -> 10.2011
 
-This is a lighting control application based on Named Data Networking (NDN).
+/ndn/ 
+	is C - great for reference, but basically depricated as we've focused on python.
 
-This is the third major iteration, result of initial development and two installations (PARC demo and TV1) May-June 2011.
+/python 
+	is where the current TV1 build is.
 
-Features:
+/lights	
+	are the kinet drivers, used for controlling LEDs from NDN
 
-	web: upload image, email image, resize, analyze (histogram), pattern generation, sequencer
-	ndn: control lights w/ verified signed interests
-
-To Do:
-	multiple app-key generation & exchange
-	auto-config of kinet protocol IP
-
-Overview:
-
-lights/
-	Python code for lighting Supply/Port/Fixture discovery.
-ndn/
-	ndn stack for lighting control
-web/
-	public image upload, email, and analysis
-doc/ 
-	system diagram (also at http://goo.gl/jtzzW)
-	ndn lighting control payload format
-	application naming convention
-
-config:
+/scripts 
+	a collection of scripts used on the various platforms to automate things
 	
-	/web/uag/config.py
-	/ndn/lights/config.py
-
-Getting Started:
-
-	background: ensure /web is working somewhere. This ensures mongodb is populated with image analysis.
-	Note we can assume Kinet & ccndc are auto-started on gumstik (via /etc/rc5.d/)
-	(if you don't think they are, just power cycle the gstix)
-	
-	Then, play sequencer:
-		go to web host (lighting@borges at install) cd into ~/ndn-lighting/scripts/
-		and type:
-		./startSequencer
-		
-		also, ./stopSequencer 
-		(if you've accidentally started multiple sequencers, and/or lost track of the shell that you started it with)
-		and ./turnOffAllLights will send 0 to all lights.
-
-Notes:
-	gmail account for submission curation:
-		u/p: uclaremap@gmail.com, l!ghting2011
-	
-	gumstik and borges lighting acct:
-		u/p: lighting, l!ghting2011
-
-	to stop sequencer, ctrl-c
-	to run sequencer with terminal closed / after logging out, use screen
-
-TV1:
-	As of writing, the public URLS for this are:
-
-	http://borges.metwi.ucla.edu/lighting/status.html u/p: TV1
-	http://bigriver.remap.ucla.edu/lighting/devices (gumstix report on boot)
-	http://bigriver.remap.ucla.edu/lighting/app/upload
-	ssh://remap.is-very-good.org is TV1 gumstix (via router port 22 fwd & dyndns)
+/web
+	is the 'upload analyze generate' and 'control' web applications
+	http://borges.metwi.ucla.edu/lighting/app/control.html controls TV1 sequencer
