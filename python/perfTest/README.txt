@@ -31,7 +31,7 @@ interface_unsigned.py
 log into machines & execute each script, in this order:
 
 user: lighting
-pass: l!ghting2011
+pass: l!ghting2012
 
 on borges:
 	cd /home/lighting/ndn-lighting/python/perfTest
