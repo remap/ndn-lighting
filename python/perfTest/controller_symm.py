@@ -267,19 +267,13 @@ class sequencer(Closure.Closure):
 		nameAndKeyLoc += keyLocStr
 		#print("there are "+str(len(nameAndKeyLoc))+" components after adding keyLocStr")
 		
-		
-		
-		#THIS TOGGLES SYMMETRIC / ASYMMETRIC - CHOOSE ONE:
-		
 		#symmetric
-		#authName = NameCrypto.authenticate_command(self.state, nameAndKeyLoc, self.cfg.appName, self.cryptoKey)
-
+		authName = NameCrypto.authenticate_command(self.state, nameAndKeyLoc, self.cfg.appName, self.cryptoKey)
+		
 		#asymmetric
-		authName = NameCrypto.authenticate_command_sig(self.state, nameAndKeyLoc, self.cfg.appName, self.key)
+		#authName = NameCrypto.authenticate_command_sig(self.state, nameAndKeyLoc, self.cfg.appName, self.key)
 		
 		#print authName.components
-		
-		#ALSO MAKE SURE THE RECEIVING CONTROLLER SCRIPT HAS THE CORRESPONDING CHECKED
 		
 		
 		co = self.handle.expressInterest(authName,self)

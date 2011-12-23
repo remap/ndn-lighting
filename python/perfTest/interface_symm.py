@@ -71,7 +71,7 @@ class controller(Closure.Closure):
 
 	def listen(self):
 		#listen to requests in namespace
-		print "key server thread, listening for "+self.URI
+		print "listening for "+self.URI
 		self.co = self.makeDefaultContent(self.URI, "default Content")
 		self.handle.setInterestFilter(Name.Name(self.URI), self)
 		self.startTime = time()
@@ -91,7 +91,7 @@ class controller(Closure.Closure):
 		si.finalBlockID = b'\x00' # no more segments available
 		si.keyLocator = self.keyLocator
 		co.signedInfo = si
-		#co.sign(self.key)
+		co.sign(self.key)
 		#co.sign(self.cryptoKey)
 		#co.sign(self.symmKey)
 		return co
@@ -110,16 +110,16 @@ class controller(Closure.Closure):
 		#print "received interest "+str(info.Interest.name)
 		#print info.Interest.name.components
 		#print "interest has "+str(len(info.Interest.name))+" components"
-		#self.state = NameCrypto.new_state()
+		self.state = NameCrypto.new_state()
 	
 		# verify interest
 		n = info.Interest.name
-		#keyLocStr2 = n[-2]
+		keyLocStr2 = n[-2]
 		
 		#print "\n ncrypt: "+ keyLocStr2 + "\n"
 		#try:
-		#capsule = _pyccn.new_charbuf('KeyLocator_ccn_data', keyLocStr2)
-		#keyLoc2 = _pyccn.KeyLocator_obj_from_ccn(capsule)
+		capsule = _pyccn.new_charbuf('KeyLocator_ccn_data', keyLocStr2)
+		keyLoc2 = _pyccn.KeyLocator_obj_from_ccn(capsule)
 		
 		### if we know the key
 		### use the state for it
@@ -134,15 +134,15 @@ class controller(Closure.Closure):
 		self.send = False
 		
 		#symmetric
-		#result = NameCrypto.verify_command(self.state, n, self.cfg.window, fixture_key=self.cfg.fixtureKey)
+		result = NameCrypto.verify_command(self.state, n, self.cfg.window, fixture_key=self.cfg.fixtureKey)
 		
 		#asymmetric
 		#result = NameCrypto.verify_command(self.state, n, self.cfg.window, pub_key=keyLoc2.key)
 		
-		#content = result
-		#if(result == True):
+		content = result
+		if(result == True):
 			#print "Verify "+str(result)
-		#	self.send = True
+			self.send = True
 		#else:
 			# we don't care about duplicates right now
 			#if (result != -4):
@@ -153,16 +153,14 @@ class controller(Closure.Closure):
 		#if self.send:
 			# parse command & send to correct driver/IP
 			# must ignore right now, still get too many false / 'outside window'
-		#self.parseAndSendToLight(info.Interest.name)
-		self.parseAndSendToLight_Unsigned(info.Interest.name)
+		self.parseAndSendToLight(info.Interest.name)
 
 
 		# return content object 
 		# (ideally based on success/fail - yet that's not implicitly supported by current kinet
 		# so perhaps we put a self-verification of new driver state process here
 		# meanwhile just return 'ok'
-		content = "ok"
-		self.handle.put(self.makeDefaultContent(info.Interest.name, content)) # send the prepared data
+		#self.handle.put(self.makeDefaultContent(info.Interest.name, content)) # send the prepared data
 		#print("published content object at "+str(info.Interest.name)+"\n")
 		
 		t1 = time()
@@ -228,68 +226,7 @@ class controller(Closure.Closure):
 		else:
 		
 			print"command unknown: "+command
-
-# UNSIGNED VERSION - PERFORMANCE BASELINE
-	
-	def parseAndSendToLight_Unsigned(self, name):
-		#print "length of interest name is "+ str(len(name))
-		iMax = len(name)-1
-		#print name.components
-		#print "length of prefix name is "+ str(len(Name.Name([self.appCfg.appPrefix])))
-		#ideally, derive algorithmically...
-		# meanwhile we're using config params to get first ver working
-		#print "length of interest name is "+ str(name[(iMax-self.appCfg.deviceNameDepth)])
 		
-		#self.appCfg.deviceNameDepth = self.appCfg.deviceNameDepth+2;
-		
-		rgbVal = str(name[iMax])
-		command = str(name[iMax-1])
-		dName = str(name[iMax-2])
-		DMXPort = self.getDMXFromName(dName)
-		
-		#print " device "+dName+" ID : "+DMXPort+" color "+rgbVal +" plus command " + command
-		
-		UDPPort = self.getUDPFromName(dName)
-		#UDPPort = 99999
-		
-		#devNum = "0"
-
-		if(command=="setRGB"):
-
-			r = str(int(rgbVal[0:2],16))
-			g = str(int(rgbVal[2:4],16))
-			b = str(int(rgbVal[4:6],16))
-			
-			#print " r is "+r+" g is "+g+" b is "+b
-			newData = self.cfg.numLights+"|"+DMXPort+"|"+r+"|"+g+"|"+b
-			
-			#print "like to put data "+newData+" to port "+ str(UDPPort)
-	    	
-		    # NUM LIGHTS | ID1 | R | G | B | ID2 | R | ...
-	    	# send_data = "4|1|250|086|100";
-			#data = "4|1|250|086|100"
-			self.sendData(newData,UDPPort)
-			
-		elif (command=="setBrightness"):
-		
-			r = str(int(rgbVal[0:2],16))
-			newData = "*|"+r
-			#print "artNet Data: "+ newData
-			self.sendData(newData,UDPPort)
-		
-		#for profile testing	
-		elif (command=="profileStop"):
-			self.endTime = time()
-			print "avg upcall time ",self.avgTime
-			print "total interests ", self.count
-			print "total time ",(self.endTime - self.startTime)
-			print "avg time per int ",((self.endTime - self.startTime)/self.count)
-			self.handle.setRunTimeout(0) # finish run()
-			return
-					
-		else:
-		
-			print"command unknown: "+command
 		
 		
 	def sendData(self, data, port):
