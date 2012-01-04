@@ -53,6 +53,32 @@ class sequencer(Closure.Closure):
 		#self.allBlack()
 		#self.spazz()
 		
+	def upcall(self, kind, info):
+			#t0 = time()
+			
+			#ignore interests
+			if kind == Closure.UPCALL_INTEREST:
+				return Closure.RESULT_OK
+			
+			#ignore timeouts
+			if kind == Closure.UPCALL_INTEREST_TIMED_OUT:
+				return Closure.RESULT_OK
+			
+			# make sure content has verified
+			if kind == Closure.UPCALL_CONTENT_BAD:
+				print "content bad"
+				return Closure.RESULT_OK
+		
+			# handle verified content object
+			if kind == Closure.UPCALL_CONTENT:
+				print "upcall received ", info.ContentObject.content
+				return Closure.RESULT_OK
+		
+			
+		
+			return Closure.RESULT_INTEREST_CONSUMED
+			
+		
 	def spazz(self):
 		for i in range(1,500000):
 			self.allWhite()
@@ -274,9 +300,11 @@ class sequencer(Closure.Closure):
 		#authName = NameCrypto.authenticate_command_sig(self.state, nameAndKeyLoc, self.cfg.appName, self.key)
 		
 		#print authName.components
-		
+		self.handle.setInterestFilter(Name.Name(authName), self)
 		
 		co = self.handle.expressInterest(authName,self)
+		
+		self.handle.run(0)
 		#co = self.handle.get(authName,i,200)
 		#if not not co: 
 			#if co is not empty,  print result for debugging

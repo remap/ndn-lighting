@@ -141,13 +141,14 @@ class controller(Closure.Closure):
 		
 		content = result
 		if(result == True):
-			#print "Verify "+str(result)
+			print "Verify "+str(result)
+			content = "Verify True"
 			self.send = True
-		#else:
+		else:
 			# we don't care about duplicates right now
-			#if (result != -4):
-				#content = "Verify False : "+str(result)
-			#	print "Verify False : "+ str(result)+" for "+str(info.Interest.name)
+			if (result != -4):
+				content = "Verify False : "+str(result)
+				#print "Verify False : "+ str(result)+" for "+str(info.Interest.name)
 
 		# if verified, send interest
 		#if self.send:
@@ -160,7 +161,7 @@ class controller(Closure.Closure):
 		# (ideally based on success/fail - yet that's not implicitly supported by current kinet
 		# so perhaps we put a self-verification of new driver state process here
 		# meanwhile just return 'ok'
-		#self.handle.put(self.makeDefaultContent(info.Interest.name, content)) # send the prepared data
+		self.handle.put(self.makeDefaultContent(info.Interest.name, content)) # send the prepared data
 		#print("published content object at "+str(info.Interest.name)+"\n")
 		
 		t1 = time()
