@@ -12,6 +12,9 @@ try:
 except ImportError:
     import simplejson as json
 
+from trace import trace
+from trace import writeOut
+
 current = 0
 
 class sequencer(Closure.Closure):
@@ -54,7 +57,7 @@ class sequencer(Closure.Closure):
 		#self.spazz()
 		
 	def upcall(self, kind, info):
-			#t0 = time()
+			t0 = str(time.time())
 			
 			#ignore interests
 			if kind == Closure.UPCALL_INTEREST:
@@ -67,14 +70,16 @@ class sequencer(Closure.Closure):
 			# make sure content has verified
 			if kind == Closure.UPCALL_CONTENT_BAD:
 				print "content bad"
+				#trace("now","voila","data")
+				trace(t0,str(info.ContentObject.name),"Content Verify Fail")
 				return Closure.RESULT_OK
 		
 			# handle verified content object
 			if kind == Closure.UPCALL_CONTENT:
 				print "upcall received ", info.ContentObject.content
+				trace(t0,str(info.ContentObject.name),info.ContentObject.content)
 				return Closure.RESULT_OK
 		
-			
 		
 			return Closure.RESULT_INTEREST_CONSUMED
 			
@@ -155,6 +160,7 @@ class sequencer(Closure.Closure):
 		print "total time is ",(self.endTime - self.startTime)
 		print "number of interests is ",self.count
 		print "average time per interest is ",((self.endTime - self.startTime)/self.count)
+		writeOut("server")
 		return
 		
 	def mobileDisco(self):
@@ -282,7 +288,7 @@ class sequencer(Closure.Closure):
 		self.count = self.count +1
 		#time.sleep(self.cfg.refreshInterval)
 		fullURI = self.cfg.appPrefix + command
-		print fullURI
+		#print fullURI
 		i = Interest.Interest()
 		#self.state = NameCrypto.new_state()
 		#build keyLocator to append to interest for NameCrypto on upcall
@@ -301,6 +307,8 @@ class sequencer(Closure.Closure):
 		
 		#print authName.components
 		self.handle.setInterestFilter(Name.Name(authName), self)
+		
+		trace(str(time.time()),str(authName),"expressed")
 		
 		co = self.handle.expressInterest(authName,self)
 		
