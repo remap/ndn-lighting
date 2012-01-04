@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# subscribe to UCLA ndn node namespace
+
+/home/lighting/ccn/ccnx/bin/ccndc add /ucla.edu/apps/lighting tcp borges.metwi.ucla.edu &
+
+sleep 5s
+
+# send any interest in namespace to ensure ccndc bi-directional if behind NAT
+
+/home/lighting/ndn-lighting/ndn/signedInterest/signedNDNClient /ucla.edu/apps/lighting/test &
+
+echo "OK, ccndc route is now bi-directional..."
+
