@@ -6,6 +6,7 @@ import subprocess
 import os
 import commands
 import time
+#from time import time
 try:
     import json
 except ImportError:
@@ -23,6 +24,7 @@ class sequencer(Closure.Closure):
 		#nameCrypto
 		self.state = NameCrypto.new_state()
 		self.cryptoKey = NameCrypto.generate_application_key(self.cfg.fixtureKey, self.cfg.appName)
+		self.count = 0
 		
 	def loadConfigFile(self):
 		command = "import "+self.appConfigFileName+" as appCfg"
@@ -40,13 +42,15 @@ class sequencer(Closure.Closure):
 		
 	def start(self):
 		print "starting "+self.cfg.appName
+		self.startTime = time.time()
 		#self.play()
 		#self.send()
+		self.discoProfile()
 		#self.disco()
 		#self.mobileDisco()
 		#self.discoArt()
 		#self.allWhite()
-		self.allBlack()
+		#self.allBlack()
 		#self.spazz()
 		
 	def spazz(self):
@@ -65,6 +69,7 @@ class sequencer(Closure.Closure):
 			if d['name'] != "incandescent":
 				print d['name']
 				self.buildAndSendInterest(d['name'],0,0,0)
+			self.buildAndSendArtInterest('incandescent',0,)
 		
 	def disco(self):
 		print "fading..."
@@ -89,30 +94,65 @@ class sequencer(Closure.Closure):
 				self.buildAndSendInterest(d['name'],0,0,0)
 				self.buildAndSendInterest(d['name'],255,255,255)
 				self.buildAndSendInterest(d['name'],0,0,0)
+				self.buildAndSendInterest(d['name'],0,0,0)
+		return
+		
+		
+	def discoProfile(self):
+		print "fading..."
+		for d in self.cfg.names:
+			if d['name'] != "incandescent":
+				print d['name']
+				r = b = g = 0
+				#red
+				for i in range(0,85):
+					r=i
+					self.buildAndSendInterest(d['name'],r*3,g*3,b*3)
+				for i in range(0,85):
+					r=0
+					g=i
+					self.buildAndSendInterest(d['name'],r*3,g*3,b*3)
+				for i in range(0,85):
+					g=0
+					b=i
+					self.buildAndSendInterest(d['name'],r*3,g*3,b*3)
+				self.buildAndSendInterest(d['name'],0,0,0)
+				self.buildAndSendInterest(d['name'],255,255,255)
+				self.buildAndSendInterest(d['name'],0,0,0)
+				self.buildAndSendInterest(d['name'],255,255,255)
+				self.buildAndSendInterest(d['name'],0,0,0)
+				self.buildAndSendInterest(d['name'],0,0,0)
+		print "DONE"
+		#self.sendInterest("whatever/profileStop/000000")
+		self.sendSignedInterest("whatever/profileStop/000000")
+		self.endTime = time.time()
+		print "total time is ",(self.endTime - self.startTime)
+		print "number of interests is ",self.count
+		print "average time per interest is ",((self.endTime - self.startTime)/self.count)
 		return
 		
 	def mobileDisco(self):
 		print "fading around"
-		for i in range(0,25):
+		for i in range(0,85):
 				r = b = g = 0
 				#red
-				for i in range(0,25):
+				for i in range(0,85):
 					r=i
-					self.sendValToAllLights(r*10,g*10,b*10)
-				for i in range(0,25):
+					self.sendValToAllLights(r*3,g*3,b*3)
+				for i in range(0,85):
 					r=0
 					g=i
-					self.sendValToAllLights(r*10,g*10,b*10)
-				for i in range(0,25):
+					self.sendValToAllLights(r*3,g*3,b*3)
+				for i in range(0,85):
 					g=0
 					b=i
-					self.sendValToAllLights(r*10,g*10,b*10)	
+					self.sendValToAllLights(r*3,g*3,b*3)	
 				self.sendValToAllLights(0,0,0)
 				self.sendValToAllLights(255,255,255)
 				self.sendValToAllLights(0,0,0)
 				self.sendValToAllLights(255,255,255)
 				self.sendValToAllLights(0,0,0)
-		self.disco()
+		sys.exit()
 		
 		
 	def sendValToAllLights(self,r,g,b):
@@ -150,7 +190,8 @@ class sequencer(Closure.Closure):
 
 		#CLI = self.cfg.interestPrefix+device+"/rgb-8bit-hex/"+rx+gx+bx
 		CLI = device+"/setRGB/"+rx+gx+bx
-		print CLI
+		#print CLI
+		#self.sendInterest(CLI)
 		self.sendSignedInterest(CLI)
 		#living-room-right-wall/rgb-8bit-hex/d2741d
 		#interestPrefix
@@ -165,13 +206,13 @@ class sequencer(Closure.Closure):
 
 		#CLI = self.cfg.interestPrefix+device+"/rgb-8bit-hex/"+rx+gx+bx
 		CLI = device+"/setBrightness/"+rx
-		print CLI
+		#print CLI
 		self.sendSignedInterest(CLI)
 		#living-room-right-wall/rgb-8bit-hex/d2741d
 		#interestPrefix
 		#ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-right-wall/rgb-8bit-hex/d2741d
 
-	def sendInterest(self,command):
+	def putInterest(self,command):
 		
 		n = Name.Name(self.cfg.appPrefix)
 		print("\nInterest espressing for "+str(n))
@@ -183,17 +224,41 @@ class sequencer(Closure.Closure):
 		#n = Name.Name(fullURI)
 		
 		print("Interest sending to "+str(n))
-		co = self.handle.get(n,i,20)
+		co = self.handle.get(n,i,200)
 		if not not co: 
 			#if co is not empty,  print result for debugging
 			print("content: "+str(co.content))
 			
+	def sendInterest(self,command):
+		self.count = self.count +1
+		#n = Name.Name(self.cfg.appPrefix)
+		#print("\nInterest espressing for "+str(n))
+		#n += command
+		fullURI = self.cfg.appPrefix + command
+		#print fullURI
+		i = Interest.Interest()
+		#n = Name.Name([fullURI])	#this does not parse correctly
+		#n = Name.Name(fullURI)
+		
+		
+		n = Name.Name(fullURI)
+		
+		print("Interest sending to "+str(n))
+		
+		
+		co = self.handle.expressInterest(n,self)
+		#co = self.handle.get(n,i,200)
+		#if not not co: 
+			#if co is not empty,  print result for debugging
+		#	print("content: "+str(co.content))
+			
 	def sendSignedInterest(self,command):
-		time.sleep(self.cfg.refreshInterval)
+		self.count = self.count +1
+		#time.sleep(self.cfg.refreshInterval)
 		fullURI = self.cfg.appPrefix + command
 		print fullURI
 		i = Interest.Interest()
-		self.state = NameCrypto.new_state()
+		#self.state = NameCrypto.new_state()
 		#build keyLocator to append to interest for NameCrypto on upcall
 		keyLoc = Key.KeyLocator(self.key)
 		keyLocStr = _pyccn.dump_charbuf(keyLoc.ccn_data)
@@ -201,11 +266,18 @@ class sequencer(Closure.Closure):
 		#print("there are "+str(len(nameAndKeyLoc))+" components")
 		nameAndKeyLoc += keyLocStr
 		#print("there are "+str(len(nameAndKeyLoc))+" components after adding keyLocStr")
+		
+		#symmetric
 		authName = NameCrypto.authenticate_command(self.state, nameAndKeyLoc, self.cfg.appName, self.cryptoKey)
+		
+		#asymmetric
+		#authName = NameCrypto.authenticate_command_sig(self.state, nameAndKeyLoc, self.cfg.appName, self.key)
+		
 		#print authName.components
 		
-		#co = self.handle.get(authName,i,20)
+		
 		co = self.handle.expressInterest(authName,self)
+		#co = self.handle.get(authName,i,200)
 		#if not not co: 
 			#if co is not empty,  print result for debugging
 		#	print("interest "+str(co.content))

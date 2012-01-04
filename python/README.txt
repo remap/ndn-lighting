@@ -65,3 +65,9 @@ misc notes:
 
 	python analyze_stats.py sequencer.profile > sequencer.txt
 	python analyze_stats.py control.profile > control.txt
+	
+	to capture the traffic for later analysis one can run on borges:
+	
+	/usr/sbin/tcpdump -w profile_1.pcap -s 5000 tcp port 55126
+	
+	

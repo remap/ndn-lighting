@@ -21,10 +21,21 @@ class controller(Closure.Closure):
 		self.getApplicationKey()
 		self.iFlex_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		
+		# we really need one of these per sender (pubkey)
 		self.state = NameCrypto.new_state()
 		self.cryptoKey = NameCrypto.generate_application_key(self.cfg.fixtureKey, self.cfg.appName)
 		#self.symmKey = Key.Key().generateRSA(512)
 		#self.symmKey = self.symmKey.generateRSA()
+		
+		# list of sender public keys
+		self.senders = []
+		# list of sender states 
+		self.states = []
+		self.send = False
+		self.count = 0
+		self.avgTime = 0
+		self.startTime =0 
+		self.endTime =0
 
 	def __del__(self):
 		self.iflex_socket.close()
@@ -63,6 +74,7 @@ class controller(Closure.Closure):
 		print "key server thread, listening for "+self.URI
 		self.co = self.makeDefaultContent(self.URI, "default Content")
 		self.handle.setInterestFilter(Name.Name(self.URI), self)
+		self.startTime = time()
 		self.handle.run(self.cfg.runtimeDuration)
 
 	def makeDefaultContent(self, name, content):
@@ -95,7 +107,7 @@ class controller(Closure.Closure):
 		if kind == Closure.UPCALL_INTEREST_TIMED_OUT:
 			return Closure.RESULT_OK
 	
-		#print "received interest "+str(info.Interest.name)
+		print "received interest "+str(info.Interest.name)
 		#print info.Interest.name.components
 		#print "interest has "+str(len(info.Interest.name))+" components"
 		self.state = NameCrypto.new_state()
@@ -108,17 +120,39 @@ class controller(Closure.Closure):
 		#try:
 		capsule = _pyccn.new_charbuf('KeyLocator_ccn_data', keyLocStr2)
 		keyLoc2 = _pyccn.KeyLocator_obj_from_ccn(capsule)
-		result = NameCrypto.verify_command(self.state, n, self.cfg.window, fixture_key=self.cfg.fixtureKey) #, pub_key=keyLoc2.key)
+		
+		### if we know the key
+		### use the state for it
+		
+		### if it's a new key
+		### and we trust it
+		### make a state for it
+		### and use that state
+		
+		#meanwhile, until this is implemented... restart controller if use with a new sender/app
+		
+		self.send = False
+		
+		#symmetric
+		result = NameCrypto.verify_command(self.state, n, self.cfg.window, fixture_key=self.cfg.fixtureKey)
+		
+		#asymmetric
+		#result = NameCrypto.verify_command(self.state, n, self.cfg.window, pub_key=keyLoc2.key)
+		
 		content = result
 		if(result == True):
 			print "Verify "+str(result)
+			self.send = True
 		else:
+			# we don't care about duplicates right now
 			if (result != -4):
-				content = "Verify False : "+str(result)
+				#content = "Verify False : "+str(result)
 				print "Verify False : "+ str(result)+" for "+str(info.Interest.name)
 
-
-		# parse command & send to correct driver/IP
+		# if verified, send interest
+		#if self.send:
+			# parse command & send to correct driver/IP
+			# must ignore right now, still get too many false / 'outside window'
 		self.parseAndSendToLight(info.Interest.name)
 
 
@@ -130,7 +164,9 @@ class controller(Closure.Closure):
 		#print("published content object at "+str(info.Interest.name)+"\n")
 		
 		t1 = time()
-		
+		self.count = self.count+1
+		self.avgTime = ((t1-t0) + (self.avgTime / self.count))
+		#print str(self.avgTime) +" at "+str(self.count)
 		# self.handle.setRunTimeout(-1) # finish run()
 		return Closure.RESULT_INTEREST_CONSUMED
 
@@ -177,6 +213,16 @@ class controller(Closure.Closure):
 			#print "artNet Data: "+ newData
 			self.sendData(newData,UDPPort)
 		
+		#for profile testing	
+		#elif (command=="profileStop"):
+		#	self.endTime = time()
+		#	print "avg upcall time ",self.avgTime
+		#	print "total interests ", self.count
+		#	print "total time ",(self.endTime - self.startTime)
+		#	print "avg time per int ",((self.endTime - self.startTime)/self.count)
+		#	self.handle.setRunTimeout(0) # finish run()
+		#	return
+					
 		else:
 			print"command unknown"
 		

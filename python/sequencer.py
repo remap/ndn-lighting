@@ -14,7 +14,7 @@ except ImportError:
 
 current = 0
 
-class sequencer(Closure.Closure):
+class sequencer():
 
 	def __init__(self, configFileName):
 		self.appConfigFileName = configFileName
@@ -69,52 +69,60 @@ class sequencer(Closure.Closure):
 		#writeStatusFile(analysis)
 		sequence = analysis['analysis'][0]['result']
 		for line in sequence:
+			#print line
+			#i = 0;
+			oldRGB = ""
+			newRGB = ""
+			flexCommand =""
 			for command in line:
+				#print str(i) + " : " + str(command)
+				#i = i + 1
 				if(line[1] != "incandescent"):
 					try:
-						CLIcommand = line[1]+"/setRGB/"+"%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
-						#newRGB = "%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
-						#if(newRGB != oldRGB):
-						#	#flexCommand = /ucla.edu/apps/lighting/fixture/iColorFlex/2/*/rgb-8bit-hex/10101
-						#	flexCommand = "iColorFlex/2/*/rgb-8bit-hex/"+"%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
-						#	oldRGB = newRGB
+						#CLIcommand = replaceNameWithID(line[1])+"/rgb-8bit-hex/"+"%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
+						CLIcommand = line[1]+"/rgb-8bit-hex/"+"%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
+						newRGB = "%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
+						if(newRGB != oldRGB):
+							#flexCommand = /ucla.edu/apps/lighting/fixture/iColorFlex/2/*/rgb-8bit-hex/10101
+							flexCommand = "iColorFlex/2/*/rgb-8bit-hex/"+"%0.2x"%line[2][0]+"%0.2x"%line[2][1]+"%0.2x"% line[2][2]
+							oldRGB = newRGB
 					except:
 						print "bad form, skipping"
-				else:
+				#else:
 					#ARTNET/*/INTENSITY
-					CLIcommand = line[1]+"/setBrightness/"+str(line[3])
+					#CLIcommand = replaceNameWithID(line[1])+"/*/"+str(line[3])
+				#/ucla.edu/cens/nano/lights/1/fixture/1/rgb-8bit-hex/FAFAFA
 				#print CLIcommand
 				#time.sleep(float(line[0])/5)
-				time.sleep(self.cfg.refreshInterval)
+				#time.sleep(1)
 				#self.sendInterest(CLIcommand)
 				self.sendSignedInterest(CLIcommand)
+				#self.actutallySendInterest(CLIcommand)
 				#sendFlexInterest(flexCommand)
 
 	def sendInterest(self,command):
 		
-		n = Name.Name(self.cfg.appPrefix)
+		n = Name.Name(self.cfg.interestPrefix)
 		print("\nInterest espressing for "+str(n))
 		n += command
+		#fullURI = self.cfg.interestPrefix + command
+		#print fullURI
 		i = Interest.Interest()
+		#n = Name.Name([fullURI])	#this does not parse correctly
+		#n = Name.Name(fullURI)
+		
 		print("Interest sending to "+str(n))
-		
-		# for just expressing
-		self.handle.expressInterest(authName,self)
-		
-		# put & block for full round-trip:
-		#co = self.handle.get(n,i,20)
-		#if not not co: 
+		co = self.handle.get(n,i,20)
+		if not not co: 
 			#if co is not empty,  print result for debugging
-		#	print("content: "+str(co.content))
+			print("content: "+str(co.content))
 			
 	def sendSignedInterest(self,command):
-		fullURI = self.cfg.appPrefix + command
+		fullURI = self.cfg.interestPrefix + command
 		print fullURI
 		i = Interest.Interest()
 		
-		self.state = NameCrypto.new_state()
 		#build keyLocator to append to interest for NameCrypto on upcall
-		#
 		keyLoc = Key.KeyLocator(self.key)
 		keyLocStr = _pyccn.dump_charbuf(keyLoc.ccn_data)
 		nameAndKeyLoc = Name.Name(str(fullURI))
@@ -124,28 +132,21 @@ class sequencer(Closure.Closure):
 		authName = NameCrypto.authenticate_command(self.state, nameAndKeyLoc, self.cfg.appName, self.cryptoKey)
 		#print authName.components
 		
-		# send interest
-
-		# for just expressing
-		co = self.handle.expressInterest(authName,self)
-		
-		# put & block for full round-trip:
-		#co = self.handle.get(authName,i,2000)
-		#if not not co: 
+		co = self.handle.get(authName,i,20)
+		if not not co: 
 			#if co is not empty,  print result for debugging
-		#	print("interest "+str(co.content))
-		
-		# for profiling - quit when the controller quits (only works w/ put)
-		#else:
-		#	print "it's done"
-		#	sys.exit(1)
+			print("interest "+str(co.content))
+		# for profiling - quit when the controller quits
+		else:
+			print "it's done"
+			sys.exit(1)
 	
 	# executes interest on remote host (legacy)
 	def sendInterestSSH(command):
 
 		#ssh root@host 
 	
-		fullCLI = cfg.lightHost+" "+cfg.signedInterestCommand+" "+cfg.appPrefix + command
+		fullCLI = cfg.lightHost+" "+cfg.signedInterestCommand+" "+cfg.interestPrefix + command
 		print fullCLI
 		#result = commands.getoutput(fullCLI)
 		#print result

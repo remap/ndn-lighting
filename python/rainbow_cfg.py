@@ -9,7 +9,7 @@ appDescription = "Color test pattern for TV1"
 keyFile = "sequencer.pem"
 
 # for namecrypto
-fixtureKey = "1234"
+fixtureKey = "1234567812345678"
 
 capabilities = {"setRGB", "readRGB"}
 appDeviceNames = {"living-room-front","living-room-right","window-left"}
@@ -58,8 +58,8 @@ dbPort = 27016
 # ssh -v -L 27016:localhost:27016 borges.metwi.ucla.edu
 
 
-#in seconds
-refreshInterval = .2
+#in seconds - performance seems to be between .18 and .2
+refreshInterval = .015
 
 #temporary runtime block (also used by analysis)
 #technically all we need here is name, UDP, and DMX channel
