@@ -1,0 +1,16 @@
+#!/bin/bash
+
+
+if [ -z "$(pgrep -f "faderboard.py")" ]
+then
+		export PYTHONPATH=/usr/local/lib/python2.7/site-packages/
+		export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+		cd /home/lighting/ndn-lighting/python/faders
+		/usr/bin/python faderboard.py &> /home/lighting/faders.log &
+		echo "faderboard started!"
+		exit
+else
+        echo "faderboard controller  already running."
+fi
+
+exit

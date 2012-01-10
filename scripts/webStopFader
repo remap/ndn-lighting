@@ -1,0 +1,7 @@
+#!/bin/bash
+
+/usr/bin/pkill -f faderboard.py
+
+echo "faderboard controller stopped."
+
+exit

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+
+if [ -z "$(pgrep -f "sequencer.py")" ]
+then
+		export PYTHONPATH=/usr/local/lib/python2.7/site-packages/
+		export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+		cd /home/lighting/ndn-lighting/python
+		/usr/bin/python sequencer.py sequencer_cfg &> /home/lighting/interests.log &
+		echo "sequencer started!"
+		exit
+else
+        echo "sequencer already running."
+fi
+
+exit
