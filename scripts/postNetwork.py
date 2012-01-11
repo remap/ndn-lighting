@@ -4,7 +4,7 @@ import commands
 
 server = "borges.metwi.ucla.edu:80" 
 path = "/lighting/devices/devices.py/postData"
-command = "ifconfig"
+command = "/sbin/ifconfig"
 
 result = commands.getoutput(command)
 
