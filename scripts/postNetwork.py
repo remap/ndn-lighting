@@ -2,7 +2,7 @@ import httplib, urllib
 import os
 import commands
 
-server = "bigriver.remap.ucla.edu:80" 
+server = "borges.metwi.ucla.edu:80" 
 path = "/lighting/devices/devices.py/postData"
 command = "ifconfig"
 
