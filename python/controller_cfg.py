@@ -3,9 +3,9 @@
 ###########################
 # this section is needed for configuration manager to authorize the app's namespace
 
-appName = "TV1 Network Controller"
+appName = "controller"
 appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/"
-appDescription = "Color test pattern for performance test of TV1"
+appDescription = "lighting controller"
 keyFile = "controller.pem"
 
 # for namecrypto
@@ -15,12 +15,21 @@ capabilities = {"setRGB", "readRGB"}
 appDeviceNames = {"living-room-front","living-room-right","window-left"}
 
 controlNameSpace = {
-"ccnx:/ndn/ucla.edu/apps/lighting/TV1/living-room-right/readRGB",
-"ccnx:/ndn/ucla.edu/apps/lighting/TV1/window-left/readRGB",
-"ccnx:/ndn/ucla.edu/apps/lighting/TV1/living-room-front/readRGB",
-"ccnx:/ndn/ucla.edu/apps/lighting/TV1/living-room-right/setRGB",
-"ccnx:/ndn/ucla.edu/apps/lighting/TV1/window-left/setRGB",
-"ccnx:/ndn/ucla.edu/apps/lighting/TV1/living-room-front/setRGB"}
+"ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-right/readRGB",
+"ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/window-left/readRGB",
+"ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-front/readRGB",
+"ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-right/setRGB",
+"ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/window-left/setRGB",
+"ccnx:/ndn/ucla.edu/apps/lighting/TV1/fixture/living-room-front/setRGB"
+}
+
+# list of authorized applications - used to determine interest priority. 
+authorizedApplications = {
+"alarm",
+"TV1webSequecner",
+"TV1ArtNetFader",
+"TV1Sequencer"
+}
 
 # simulation of burned in names
 #
@@ -31,7 +40,7 @@ controlNameSpace = {
 numValPerKey = 4 # right now just MAC/UID, IP, MfrTypeComponent, KINET UDP Port
 deviceList = (
 '00:1c:42:00:00:00', '192.168.3.52', 'phillips/ColorBlast', 50009,
-'00:1c:42:00:00:02', '192.168.3.53', 'phillips/ColorBlast', 50010,
+'00:1c:42:00:00:02', '192.168.3.53', 'phillips/ColorBlastTRX', 50011,
 '00:1c:42:00:00:04', '192.168.3.51', 'phillips/ColorBlaze', 50012,
 '00:1c:42:00:00:08', '169.192.0.50', 'phillips/ColorBlaze', 50013,
 '00:1c:42:00:00:10', '131.179.141.17', 'ArtNet', 50010
@@ -49,8 +58,6 @@ deviceList = (
 # the following are not NDN specific / not required for CM 
 # yet still required by app
 
-runtimeDuration = -1
-
 # MongoDB (for image analysis)
 # collection name
 colName = "lighting"
@@ -59,26 +66,40 @@ dbPort = 27016
 #if dev on localhost w/o mongodb, just forward the borges port. ie:
 # ssh -v -L 27016:localhost:27016 borges.metwi.ucla.edu
 
+#length of time (in ms) that 
+window = 3000000
 
-#in seconds - performance seems to be between .18 and .2
-refreshInterval = .015
 
-#temporary runtime block (also used by analysis)
+#temporary runtime block (also for use by analysis)
 #technically all we need here is name, UDP, and DMX channel
 #yet until we decide how/where to merge it:
 
 names=[
 
-{'name':'living-room-left' ,'UID':'######','DMX':1,'MFRTYPE':"ColorBlaze", 'UDP':50013},
-{'name':'living-room-right','UID':'######','DMX':1,'MFRTYPE':"ColorBlaze", 'UDP':50012},
-{'name':'window-right'     ,'UID':'######','DMX':1,'MFRTYPE':"ColorBlast", 'UDP':50009},
-{'name':'entrance-door'    ,'UID':'######','DMX':2,'MFRTYPE':"ColorBlast", 'UDP':50009},
-{'name':'stairs'           ,'UID':'######','DMX':3,'MFRTYPE':"ColorBlast", 'UDP':50009},
-{'name':'bedroom'          ,'UID':'######','DMX':4,'MFRTYPE':"ColorBlast", 'UDP':50009},
-{'name':'incandescent'     ,'UID':'######','DMX':1,'MFRTYPE':"ArtNet"    , 'UDP':50010},
-{'name':'pastel-right-c'   ,'UID':'######','DMX':1,'MFRTYPE':"ColorBlastTRX", 'UDP':50011},
-{'name':'pastel-left-b'    ,'UID':'######','DMX':2,'MFRTYPE':"ColorBlastTRX", 'UDP':50011},
-{'name':'pastel-right-d'   ,'UID':'######','DMX':3,'MFRTYPE':"ColorBlastTRX", 'UDP':50011},
-{'name':'pastel-left-a'    ,'UID':'######','DMX':4,'MFRTYPE':"ColorBlastTRX", 'UDP':50011}
+{'name':'living-room-left' , 'DMX':1,'TYPE':"ColorBlazeL", 'UDP':50013},
+{'name':'living-room-right', 'DMX':1,'TYPE':"ColorBlazeR", 'UDP':50012},
+{'name':'window-right'     , 'DMX':1,'TYPE':"ColorBlast", 'UDP':50009},
+{'name':'entrance-door'    , 'DMX':2,'TYPE':"ColorBlast", 'UDP':50009},
+{'name':'stairs'           , 'DMX':3,'TYPE':"ColorBlast", 'UDP':50009},
+{'name':'bedroom'          , 'DMX':4,'TYPE':"ColorBlast", 'UDP':50009},
+{'name':'incandescent'     , 'DMX':1,'TYPE':"ArtNet"    , 'UDP':50010},
+{'name':'pastel-right-c'   , 'DMX':1,'TYPE':"ColorBlastTRX", 'UDP':50011},
+{'name':'pastel-left-b'    , 'DMX':2,'TYPE':"ColorBlastTRX", 'UDP':50011},
+{'name':'pastel-right-d'   , 'DMX':3,'TYPE':"ColorBlastTRX", 'UDP':50011},
+{'name':'pastel-left-a'    , 'DMX':4,'TYPE':"ColorBlastTRX", 'UDP':50011}
 
 ]
+
+#max number of lights per Data Enabler
+#needed by driver but legacy/to be depricated
+numLights = "4"
+
+
+#depth (from right) of device name
+deviceNameDepth = 5
+#ccnx:/ndn/ucla.edu/apps/lighting/TV1/pastel-left-b/setRGB/000000
+# ideally this should be derived during runtime (once)
+
+# in seconds: -1 is forver
+# for main ccnx run, useful for profiling
+runtimeDuration = -1
