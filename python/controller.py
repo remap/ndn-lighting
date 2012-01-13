@@ -206,6 +206,24 @@ class controller(Closure.Closure):
 			#data = "4|1|250|086|100"
 			self.sendData(newData,UDPPort)
 			
+		if(command=="setRGBAW"):
+
+			r = str(int(rgbVal[0:2],16))
+			g = str(int(rgbVal[2:4],16))
+			b = str(int(rgbVal[4:6],16))
+			a = str(int(rgbVal[6:8],16))
+			w = str(int(rgbVal[8:10],16))
+
+			#print " r is "+r+" g is "+g+" b is "+b
+			newData = self.cfg.numLights+"|"+DMXPort+"|"+r+"|"+g+"|"+b+"|"+a+"|"+w
+
+			#print "like to put data "+newData+" to port "+ str(UDPPort)
+
+		    # NUM LIGHTS | ID1 | R | G | B | ID2 | R | ...
+	    	# send_data = "4|1|250|086|100";
+			#data = "4|1|250|086|100"
+			self.sendData(newData,UDPPort)
+			
 		elif (command=="setBrightness"):
 		
 			r = str(int(rgbVal[0:2],16))
