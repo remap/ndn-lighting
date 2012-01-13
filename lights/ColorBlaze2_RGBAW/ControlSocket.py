@@ -91,7 +91,7 @@ class ControlSocket(Thread):
 				try:
 					self._kinetSender.setPayload(p, self._colorBlast.payload[p-1])
 				except Exception, e:
-					self._log.warning('_processCmd(): Error in updating port %d', port)
+					self._log.warning('_processCmd(): Error in updating port')
 					self._log.warning('_processCmd(): Description - %s:%s', type(e), e)
 
     def run(self):
