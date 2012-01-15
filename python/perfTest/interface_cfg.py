@@ -3,6 +3,8 @@
 ###########################
 # this section is needed for configuration manager to authorize the app's namespace
 
+import logging
+
 appName = "gumstix interface"
 appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/"
 appDescription = "lighting controller on gumstix"
@@ -61,9 +63,13 @@ deviceList = (
 # yet still required by app
 
 #Logging
-logIP = '131.179.141.15' #borges
+#logIP = '131.179.141.15' #borges
 #logIP = '127.0.0.1'
+logIP = '192.168.1.80'
 logPort = 9020
+logBuff = 10*1024
+logDisable = logging.DEBUG	#logging threshold 
+# ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')
 
 # MongoDB (for image analysis)
 # collection name

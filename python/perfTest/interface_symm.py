@@ -65,10 +65,14 @@ class controller(pyccn.Closure):
 		# logging
 		self.log = logging.getLogger(self.cfg.appName)
 		self.log.setLevel(logging.DEBUG)
+		
 		socketHandler = logging.handlers.SocketHandler(self.cfg.logIP,self.cfg.logPort)
-		self.log.addHandler(socketHandler)
-		# un-comment the line below to get detailed logging on logIP
-		# logging.disable("info")
+		memoryHandler = logging.handlers.MemoryHandler(self.cfg.logBuff,logging.DEBUG,socketHandler)
+		
+		#self.log.addHandler(socketHandler)		
+		self.log.addHandler(memoryHandler)
+		
+		logging.disable(self.cfg.logDisable)
 
 	def getApplicationKey(self):
 		#print("getting application key for "+self.appCfg.appName)
