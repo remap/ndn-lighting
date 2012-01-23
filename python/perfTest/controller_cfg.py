@@ -10,6 +10,10 @@ keyFile = "controller.pem"
 
 # for namecrypto
 fixtureKey = "1234567812345678"
+#length of time (in ms) valid
+window = 3000000
+
+
 
 capabilities = {"setRGB", "readRGB"}
 appDeviceNames = {"living-room-front","living-room-right","window-left"}
@@ -48,6 +52,10 @@ deviceList = (
 ############################
 # the following are not NDN specific / not required for CM 
 # yet still required by app
+
+#Logging
+logIP = '131.179.141.15'
+logPort = 9020
 
 # MongoDB (for image analysis)
 # collection name

@@ -1,5 +1,10 @@
 import sys
-from pyccn import CCN,Name,Interest,ContentObject,Key,Closure,_pyccn,NameCrypto
+#from pyccn import CCN,Name,Interest,ContentObject,Key,Closure,_pyccn,NameCrypto
+import pyccn
+from pyccn import Key as Key
+from pyccn import NameCrypto
+from pyccn import Interest
+from pyccn import Name
 import ssl
 #import database as data
 import subprocess
@@ -17,27 +22,38 @@ from trace import writeOut
 
 current = 0
 
-class sequencer(Closure.Closure):
+#logging
+import logging, logging.handlers
+
+class sequencer(pyccn.Closure):
 
 	def __init__(self, configFileName):
 		self.appConfigFileName = configFileName
 		self.loadConfigFile()
-		self.handle = CCN.CCN()
+		self.initLog()
+		self.handle = pyccn.CCN()
 		self.getApplicationKey()
 		#nameCrypto
 		self.state = NameCrypto.new_state()
 		self.cryptoKey = NameCrypto.generate_application_key(self.cfg.fixtureKey, self.cfg.appName)
 		self.count = 0
-		
+
 	def loadConfigFile(self):
 		command = "import "+self.appConfigFileName+" as appCfg"
 		exec(command)
 		self.appCfg = appCfg;
 		self.cfg = appCfg;
+		
+	def initLog(self):
+		# logging
+		self.log = logging.getLogger(self.cfg.appName)
+		self.log.setLevel(logging.DEBUG)
+		socketHandler = logging.handlers.SocketHandler(self.cfg.logIP,self.cfg.logPort)
+		self.log.addHandler(socketHandler)
 
 	def getApplicationKey(self):
 		print("getting application key for "+self.appCfg.appName)
-		key = Key.Key()
+		key = Key()
 		keyFile = self.appCfg.keyFile
 		key.fromPEM(filename=keyFile)
 		self.appKey = key
@@ -60,28 +76,29 @@ class sequencer(Closure.Closure):
 			t0 = str(time.time())
 			
 			#ignore interests
-			if kind == Closure.UPCALL_INTEREST:
-				return Closure.RESULT_OK
+			if kind == pyccn.UPCALL_INTEREST:
+				return pyccn.RESULT_OK
 			
 			#ignore timeouts
-			if kind == Closure.UPCALL_INTEREST_TIMED_OUT:
-				return Closure.RESULT_OK
+			if kind == pyccn.UPCALL_INTEREST_TIMED_OUT:
+				return pyccn.RESULT_OK
 			
 			# make sure content has verified
-			if kind == Closure.UPCALL_CONTENT_BAD:
+			if kind == pyccn.UPCALL_CONTENT_BAD:
 				print "content bad"
 				#trace("now","voila","data")
 				trace(t0,str(info.ContentObject.name),"Content Verify Fail")
-				return Closure.RESULT_OK
+				return pyccn.RESULT_OK
 		
 			# handle verified content object
-			if kind == Closure.UPCALL_CONTENT:
-				print "upcall received ", info.ContentObject.content
+			if kind == pyccn.UPCALL_CONTENT:
+				print "upcall received, content: ", info.ContentObject.content
+				print "upcall received, name: ", info.ContentObject.name
 				trace(t0,str(info.ContentObject.name),info.ContentObject.content)
-				return Closure.RESULT_OK
+				return pyccn.RESULT_OK
 		
 		
-			return Closure.RESULT_INTEREST_CONSUMED
+			return pyccn.RESULT_INTEREST_CONSUMED
 			
 		
 	def spazz(self):
@@ -289,14 +306,14 @@ class sequencer(Closure.Closure):
 		#time.sleep(self.cfg.refreshInterval)
 		fullURI = self.cfg.appPrefix + command
 		#print fullURI
-		i = Interest.Interest()
+		i = Interest()
 		#self.state = NameCrypto.new_state()
 		#build keyLocator to append to interest for NameCrypto on upcall
-		keyLoc = Key.KeyLocator(self.key)
-		keyLocStr = _pyccn.dump_charbuf(keyLoc.ccn_data)
-		nameAndKeyLoc = Name.Name(str(fullURI))
+		keyLoc = pyccn.KeyLocator(self.key)
+		keyLocStr = pyccn._pyccn.dump_charbuf(keyLoc.ccn_data)
+		nameAndKeyLoc = Name(str(fullURI))
 		#print("there are "+str(len(nameAndKeyLoc))+" components")
-		nameAndKeyLoc += keyLocStr
+		nameAndKeyLoc = nameAndKeyLoc.append(keyLocStr)
 		#print("there are "+str(len(nameAndKeyLoc))+" components after adding keyLocStr")
 		
 		#symmetric
@@ -306,7 +323,7 @@ class sequencer(Closure.Closure):
 		#authName = NameCrypto.authenticate_command_sig(self.state, nameAndKeyLoc, self.cfg.appName, self.key)
 		
 		#print authName.components
-		self.handle.setInterestFilter(Name.Name(authName), self)
+		self.handle.setInterestFilter(Name(authName), self)
 		
 		trace(str(time.time()),str(authName),"expressed")
 		

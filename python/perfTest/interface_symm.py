@@ -1,7 +1,15 @@
 import sys
-from pyccn import CCN,Name,Interest,ContentObject,Key,Closure,_pyccn,NameCrypto
+#from pyccn import CCN,Name,Interest,ContentObject,Key,Closure,pyccn._pyccn,NameCrypto
 import ssl
 from time import time
+
+import pyccn
+from pyccn import Key as Key
+from pyccn import NameCrypto
+from pyccn import Interest
+from pyccn import Name
+from pyccn import ContentObject
+from pyccn import Closure
 
 # UDP client
 import socket
@@ -9,15 +17,19 @@ import socket
 # profiler
 import cProfile
 
+#logging
+import logging, logging.handlers
+
 # controller
 # fixture application that receives interests & controls lights
 
-class controller(Closure.Closure):
+class controller(pyccn.Closure):
 	
 	def __init__(self, configFileName):
 		self.appConfigFileName = configFileName
 		self.loadConfigFile()
-		self.handle = CCN.CCN()
+		self.initLog()
+		self.handle = pyccn.CCN()
 		self.getApplicationKey()
 		self.iFlex_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		
@@ -45,10 +57,17 @@ class controller(Closure.Closure):
 		exec(command)
 		self.appCfg = appCfg;
 		self.cfg = appCfg;
+		
+	def initLog(self):
+		# logging
+		self.log = logging.getLogger(self.cfg.appName)
+		self.log.setLevel(logging.DEBUG)
+		socketHandler = logging.handlers.SocketHandler(self.cfg.logIP,self.cfg.logPort)
+		self.log.addHandler(socketHandler)
 
 	def getApplicationKey(self):
 		#print("getting application key for "+self.appCfg.appName)
-		key = Key.Key()
+		key = Key()
 		keyFile = self.appCfg.keyFile
 		key.fromPEM(filename=keyFile)
 		self.appKey = key
@@ -62,9 +81,9 @@ class controller(Closure.Closure):
 		#self.checkKeys()
 		#self.listAppNameSpace()
 		self.key = self.appKey
-		self.keyLocator = Key.KeyLocator(self.key)
+		self.keyLocator = pyccn.KeyLocator(self.key)
 		self.URI = self.appCfg.appPrefix
-		self.name = Name.Name(self.appCfg.appPrefix)
+		self.name = Name(self.appCfg.appPrefix)
 		#print "controller init & listening within "+self.appCfg.appPrefix
 		print "controller init & listening within "+str(self.name)
 		self.listen()
@@ -73,18 +92,18 @@ class controller(Closure.Closure):
 		#listen to requests in namespace
 		print "listening for "+self.URI
 		self.co = self.makeDefaultContent(self.URI, "default Content")
-		self.handle.setInterestFilter(Name.Name(self.URI), self)
+		self.handle.setInterestFilter(Name(self.URI), self)
 		self.startTime = time()
 		self.handle.run(self.cfg.runtimeDuration)
 
 	def makeDefaultContent(self, name, content):
-		co = ContentObject.ContentObject()
+		co = ContentObject()
 		# since they want us to use versions and segments append those to our name
-		co.name = Name.Name(name) # making copy, so any changes to co.name won't change self.name
+		co.name = Name(name) # making copy, so any changes to co.name won't change self.name
 		co.name.appendVersion() # timestamp which is our version
-		co.name += b'\x00' # first segment
+		co.name.append(b'\x00') # first segment
 		co.content = content #"LIGHT OK"
-		si = ContentObject.SignedInfo()
+		si = pyccn.SignedInfo()
 		si.publisherPublicKeyDigest = self.key.publicKeyID
 		si.type = 0x28463F # key type
 		#si.type = 0x0C04C0 # content type
@@ -100,12 +119,12 @@ class controller(Closure.Closure):
 		t0 = time()
 
 		#print self.appCfg.appName +" upcall..."
-		if kind != Closure.UPCALL_INTEREST:
-			return Closure.RESULT_OK
+		if kind != pyccn.UPCALL_INTEREST:
+			return pyccn.RESULT_OK
 		
 		#ignore timeouts
-		if kind == Closure.UPCALL_INTEREST_TIMED_OUT:
-			return Closure.RESULT_OK
+		if kind == pyccn.UPCALL_INTEREST_TIMED_OUT:
+			return pyccn.RESULT_OK
 	
 		#print "received interest "+str(info.Interest.name)
 		#print info.Interest.name.components
@@ -118,8 +137,8 @@ class controller(Closure.Closure):
 		
 		#print "\n ncrypt: "+ keyLocStr2 + "\n"
 		#try:
-		capsule = _pyccn.new_charbuf('KeyLocator_ccn_data', keyLocStr2)
-		keyLoc2 = _pyccn.KeyLocator_obj_from_ccn(capsule)
+		capsule = pyccn._pyccn.new_charbuf('KeyLocator_ccn_data', keyLocStr2)
+		keyLoc2 = pyccn._pyccn.KeyLocator_obj_from_ccn(capsule)
 		
 		### if we know the key
 		### use the state for it
@@ -139,7 +158,8 @@ class controller(Closure.Closure):
 		#asymmetric
 		#result = NameCrypto.verify_command(self.state, n, self.cfg.window, pub_key=keyLoc2.key)
 		
-		content = result
+		content = None
+				
 		if(result == True):
 			print "Verify "+str(result)
 			content = "Verify True"
@@ -147,8 +167,14 @@ class controller(Closure.Closure):
 		else:
 			# we don't care about duplicates right now
 			if (result != -4):
-				content = "Verify False : "+str(result)
+				#content = "Verify False : "+str(result)
 				#print "Verify False : "+ str(result)+" for "+str(info.Interest.name)
+			# nor do we care about bad authenticators either
+				print("-4 expired command")
+			if (result == -2):
+				#content = "Verify False : "+str(result)
+				#print "Verify False : "+ str(result)+" for "+str(info.Interest.name)
+				print("-2 verification fail")
 
 		# if verified, send interest
 		#if self.send:
@@ -161,7 +187,8 @@ class controller(Closure.Closure):
 		# (ideally based on success/fail - yet that's not implicitly supported by current kinet
 		# so perhaps we put a self-verification of new driver state process here
 		# meanwhile just return 'ok'
-		self.handle.put(self.makeDefaultContent(info.Interest.name, content)) # send the prepared data
+		if (content):
+			self.handle.put(self.makeDefaultContent(info.Interest.name, content)) # send the prepared data
 		#print("published content object at "+str(info.Interest.name)+"\n")
 		
 		t1 = time()
@@ -169,7 +196,7 @@ class controller(Closure.Closure):
 		#self.avgTime = ((t1-t0) + (self.avgTime / self.count))
 		#print str(self.avgTime) +" at "+str(self.count)
 		# self.handle.setRunTimeout(-1) # finish run()
-		return Closure.RESULT_INTEREST_CONSUMED
+		return pyccn.RESULT_INTEREST_CONSUMED
 
 	def parseAndSendToLight(self, name):
 		#print "length of interest name is "+ str(len(name))
