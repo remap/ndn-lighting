@@ -1,7 +1,7 @@
 import sys
 #from pyccn import CCN,Name,Interest,ContentObject,Key,Closure,pyccn._pyccn,NameCrypto
 import ssl
-from time import time
+import time
 
 import pyccn
 from pyccn import Key as Key
@@ -48,6 +48,9 @@ class controller(pyccn.Closure):
 		self.avgTime = 0
 		self.startTime =0 
 		self.endTime =0
+		
+		self.badPacket = 0
+		self.goodPacket = 0
 
 	def __del__(self):
 		self.iflex_socket.close()
@@ -93,7 +96,7 @@ class controller(pyccn.Closure):
 		print "listening for "+self.URI
 		self.co = self.makeDefaultContent(self.URI, "default Content")
 		self.handle.setInterestFilter(Name(self.URI), self)
-		self.startTime = time()
+		self.startTime = time.time()
 		self.handle.run(self.cfg.runtimeDuration)
 
 	def makeDefaultContent(self, name, content):
@@ -116,7 +119,7 @@ class controller(pyccn.Closure):
 		return co
 
 	def upcall(self, kind, info):
-		t0 = time()
+		tR = time.time()
 
 		#print self.appCfg.appName +" upcall..."
 		if kind != pyccn.UPCALL_INTEREST:
@@ -133,13 +136,7 @@ class controller(pyccn.Closure):
 	
 		# verify interest
 		n = info.Interest.name
-		keyLocStr2 = n[-2]
-		
-		#print "\n ncrypt: "+ keyLocStr2 + "\n"
-		#try:
-		capsule = pyccn._pyccn.new_charbuf('KeyLocator_ccn_data', keyLocStr2)
-		keyLoc2 = pyccn._pyccn.KeyLocator_obj_from_ccn(capsule)
-		
+
 		### if we know the key
 		### use the state for it
 		
@@ -155,15 +152,35 @@ class controller(pyccn.Closure):
 		#symmetric
 		result = NameCrypto.verify_command(self.state, n, self.cfg.window, fixture_key=self.cfg.fixtureKey)
 		
+		''' 
+		# keyLoc only needs parsing for asymmetric
+		keyLocStr2 = n[-2]
+		
+		#print "\n ncrypt: "+ keyLocStr2 + "\n"
+		#try:
+		capsule = pyccn._pyccn.new_charbuf('KeyLocator_ccn_data', keyLocStr2)
+		keyLoc2 = pyccn._pyccn.KeyLocator_obj_from_ccn(capsule)
+		
+		
 		#asymmetric
 		#result = NameCrypto.verify_command(self.state, n, self.cfg.window, pub_key=keyLoc2.key)
-		
-		content = None
-				
+		'''
+		content = result
+		self.log.info(str(time.time()-self.startTime)+",NC_VERIFY,"+str(content)+","+str(info.Interest.name))
 		if(result == True):
-			print "Verify "+str(result)
-			content = "Verify True"
+			#print "Verify "+str(result)
+			#content = "Verify True"
 			self.send = True
+			self.goodPacket=self.goodPacket+1
+		else:
+			self.badPacket=self.badPacket+1
+			self.send = False
+			#if (result == -2):
+				#content = "Verify False : "+str(result)
+			#	content = "-2=NC Verification Fail"
+				#print "Verify False : "+ str(result)+" for "+str(info.Interest.name)
+				#print("-2 verification fail")
+		'''
 		else:
 			# we don't care about duplicates right now
 			if (result != -4):
@@ -175,23 +192,26 @@ class controller(pyccn.Closure):
 				#content = "Verify False : "+str(result)
 				#print "Verify False : "+ str(result)+" for "+str(info.Interest.name)
 				print("-2 verification fail")
-
+		'''
 		# if verified, send interest
 		#if self.send:
 			# parse command & send to correct driver/IP
 			# must ignore right now, still get too many false / 'outside window'
 		self.parseAndSendToLight(info.Interest.name)
 
-
 		# return content object 
 		# (ideally based on success/fail - yet that's not implicitly supported by current kinet
 		# so perhaps we put a self-verification of new driver state process here
 		# meanwhile just return 'ok'
-		if (content):
+		tS = time.time()
+		if (content>0):
+		#if (self.send):
+		#if(content):
 			self.handle.put(self.makeDefaultContent(info.Interest.name, content)) # send the prepared data
+			self.log.info(str(tS-self.startTime)+",CONTENT_PUT,"+str(content)+","+str(info.Interest.name))
 		#print("published content object at "+str(info.Interest.name)+"\n")
 		
-		t1 = time()
+		t1 = time.time()
 		self.count = self.count+1
 		#self.avgTime = ((t1-t0) + (self.avgTime / self.count))
 		#print str(self.avgTime) +" at "+str(self.count)
@@ -243,11 +263,13 @@ class controller(pyccn.Closure):
 		
 		#for profile testing	
 		elif (command=="profileStop"):
-			self.endTime = time()
+			self.endTime = time.time()
 			print "avg upcall time ",self.avgTime
 			print "total interests ", self.count
 			print "total time ",(self.endTime - self.startTime)
 			print "avg time per int ",((self.endTime - self.startTime)/self.count)
+			print "bad packet count is "+str(self.badPacket)
+			print "good packet count is "+str(self.goodPacket)
 			self.handle.setRunTimeout(0) # finish run()
 			return
 					

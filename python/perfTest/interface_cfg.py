@@ -3,16 +3,15 @@
 ###########################
 # this section is needed for configuration manager to authorize the app's namespace
 
-appName = "controller"
+appName = "gumstix interface"
 appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/"
-appDescription = "lighting controller"
+appDescription = "lighting controller on gumstix"
 keyFile = "controller.pem"
 
 # for namecrypto
 fixtureKey = "1234567812345678"
 #length of time (in ms) valid
 window = 3000000
-
 
 capabilities = {"setRGB", "readRGB"}
 appDeviceNames = {"living-room-front","living-room-right","window-left"}
@@ -62,7 +61,8 @@ deviceList = (
 # yet still required by app
 
 #Logging
-logIP = '131.179.141.15'
+#logIP = '131.179.141.15' #borges
+logIP = '127.0.0.1'
 logPort = 9020
 
 # MongoDB (for image analysis)

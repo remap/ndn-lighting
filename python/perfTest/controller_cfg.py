@@ -3,7 +3,7 @@
 ###########################
 # this section is needed for configuration manager to authorize the app's namespace
 
-appName = "TV1 Network Controller"
+appName = "borges controller"
 appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/"
 appDescription = "Color test pattern for performance test of TV1"
 keyFile = "controller.pem"
@@ -12,8 +12,6 @@ keyFile = "controller.pem"
 fixtureKey = "1234567812345678"
 #length of time (in ms) valid
 window = 3000000
-
-
 
 capabilities = {"setRGB", "readRGB"}
 appDeviceNames = {"living-room-front","living-room-right","window-left"}
@@ -54,7 +52,8 @@ deviceList = (
 # yet still required by app
 
 #Logging
-logIP = '131.179.141.15'
+#logIP = '131.179.141.15' #borges
+logIP = '127.0.0.1'
 logPort = 9020
 
 # MongoDB (for image analysis)
