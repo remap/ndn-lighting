@@ -1,12 +1,17 @@
 import sys
-from pyccn import CCN,Name,Interest,ContentObject,Key,Closure,_pyccn,NameCrypto
+#from pyccn import CCN,Name,Interest,ContentObject,Key,Closure,_pyccn,NameCrypto
+import pyccn
+from pyccn import Key as Key
+from pyccn import NameCrypto
+from pyccn import Interest
+from pyccn import Name
 import ssl
 import database as data
 import subprocess
 import os
 import commands
-
 import time
+#from time import time
 try:
     import json
 except ImportError:
@@ -14,12 +19,12 @@ except ImportError:
 
 current = 0
 
-class sequencer(Closure.Closure):
+class sequencer(pyccn.Closure):
 
 	def __init__(self, configFileName):
 		self.appConfigFileName = configFileName
 		self.loadConfigFile()
-		self.handle = CCN.CCN()
+		self.handle = pyccn.CCN()
 		self.getApplicationKey()
 		#nameCrypto
 		self.state = NameCrypto.new_state()
@@ -33,7 +38,7 @@ class sequencer(Closure.Closure):
 
 	def getApplicationKey(self):
 		print("getting application key for "+self.appCfg.appName)
-		key = Key.Key()
+		key = Key()
 		keyFile = self.appCfg.keyFile
 		key.fromPEM(filename=keyFile)
 		self.appKey = key
@@ -115,11 +120,11 @@ class sequencer(Closure.Closure):
 		self.state = NameCrypto.new_state()
 		#build keyLocator to append to interest for NameCrypto on upcall
 		#
-		keyLoc = Key.KeyLocator(self.key)
-		keyLocStr = _pyccn.dump_charbuf(keyLoc.ccn_data)
-		nameAndKeyLoc = Name.Name(str(fullURI))
+		keyLoc = pyccn.KeyLocator(self.key)
+		keyLocStr = pyccn._pyccn.dump_charbuf(keyLoc.ccn_data)
+		nameAndKeyLoc = Name(str(fullURI))
 		#print("there are "+str(len(nameAndKeyLoc))+" components")
-		nameAndKeyLoc += keyLocStr
+		nameAndKeyLoc = nameAndKeyLoc.append(keyLocStr)
 		#print("there are "+str(len(nameAndKeyLoc))+" components after adding keyLocStr")
 		authName = NameCrypto.authenticate_command(self.state, nameAndKeyLoc, self.cfg.appName, self.cryptoKey)
 		#print authName.components
