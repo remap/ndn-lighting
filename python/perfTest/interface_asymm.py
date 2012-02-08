@@ -131,7 +131,7 @@ class controller(pyccn.Closure):
 		#print "received interest "+str(info.Interest.name)
 		#print info.Interest.name.components
 		#print "interest has "+str(len(info.Interest.name))+" components"
-		self.state = NameCrypto.new_state()
+		#self.state = NameCrypto.new_state()
 	
 		# verify interest
 		n = info.Interest.name
@@ -163,7 +163,7 @@ class controller(pyccn.Closure):
 
 		#asymmetric
 		result = NameCrypto.verify_command(self.state, n, self.cfg.window, pub_key=keyLoc2.key)
-		
+		self.state = NameCrypto.new_state()
 		content = result
 		self.log.info(str(time.time()-self.startTime)+",NC_VERIFY,"+str(content)+","+str(info.Interest.name))
 		if(result == True):
@@ -171,6 +171,7 @@ class controller(pyccn.Closure):
 			#content = "Verify True"
 			self.send = True
 			self.goodPacket=self.goodPacket+1
+			self.state = NameCrypto.new_state()
 		else:
 			self.badPacket=self.badPacket+1
 			self.send = False
@@ -212,7 +213,7 @@ class controller(pyccn.Closure):
 
 		t1 = time.time()
 		self.count = self.count+1
-		#self.avgTime = ((t1-t0) + (self.avgTime / self.count))
+		self.avgTime = ((t1-tR) + (self.avgTime / self.count))
 		#print str(self.avgTime) +" at "+str(self.count)
 		# self.handle.setRunTimeout(-1) # finish run()
 		return pyccn.RESULT_INTEREST_CONSUMED
@@ -267,6 +268,8 @@ class controller(pyccn.Closure):
 			print "total interests ", self.count
 			print "total time ",(self.endTime - self.startTime)
 			print "avg time per int ",((self.endTime - self.startTime)/self.count)
+			print "bad packet count is "+str(self.badPacket)
+			print "good packet count is "+str(self.goodPacket)
 			self.handle.setRunTimeout(0) # finish run()
 			return
 					
@@ -287,7 +290,7 @@ class controller(pyccn.Closure):
 			if(n['name']==devName):
 				dmx = n['DMX']
 				return str(dmx)
-		print "error - no DMX port matches names"
+		#print "error - no DMX port matches names"
 		return str(dmx)
 
 	def getUDPFromName(self,devName):
@@ -297,7 +300,7 @@ class controller(pyccn.Closure):
 			if(n['name']==devName):
 				udp = n['UDP']
 				return str(udp)
-		print "error - no UDP port matches name "+devName
+		#print "error - no UDP port matches name "+devName
 		return str(1000)
 
 def usage():
