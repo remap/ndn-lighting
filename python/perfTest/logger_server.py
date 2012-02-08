@@ -3,7 +3,7 @@ import logging
 import logging.handlers
 import SocketServer as socketserver
 import struct
-
+import sys
 
 class LogRecordStreamHandler(socketserver.StreamRequestHandler):
     """Handler for a streaming logging request.
@@ -74,14 +74,14 @@ class LogRecordSocketReceiver(socketserver.ThreadingTCPServer):
                 self.handle_request()
             abort = self.abort
 
-def main():
+def main(logFileName):
     logging.basicConfig(
         format='%(relativeCreated)5d,%(name)-15s,%(levelname)-8s,%(message)s',
-		filename='lighting_control.log')
+		filename=logFileName)
     tcpserver = LogRecordSocketReceiver()
-    print('About to start TCP server...')
-    print("default  port is %s",logging.handlers.DEFAULT_TCP_LOGGING_PORT)
+    print('python logging to '+logFileName)
+    #print("default  port is %s",logging.handlers.DEFAULT_TCP_LOGGING_PORT)
     tcpserver.serve_until_stopped()
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1])
