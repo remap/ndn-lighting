@@ -62,6 +62,7 @@ class sequencer(pyccn.Closure):
 	def start(self):
 		print "starting "+self.cfg.appName
 		self.startTime = time.time()
+		self.log.info(str(self.startTime)+",CCN_RUN_START, , ")
 		#self.play()
 		#self.send()
 		self.discoProfile()

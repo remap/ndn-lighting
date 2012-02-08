@@ -96,6 +96,7 @@ class controller(pyccn.Closure):
 		self.co = self.makeDefaultContent(self.URI, "default Content")
 		self.handle.setInterestFilter(Name(self.URI), self)
 		self.startTime = time.time()
+		self.log.info(str(self.startTime)+",CCN_RUN_START, , ")
 		self.handle.run(self.cfg.runtimeDuration)
 
 	def makeDefaultContent(self, name, content):
@@ -270,6 +271,11 @@ class controller(pyccn.Closure):
 			print "avg time per int ",((self.endTime - self.startTime)/self.count)
 			print "bad packet count is "+str(self.badPacket)
 			print "good packet count is "+str(self.goodPacket)
+			self.log.info(str(self.endTime )+",End Time, , ")
+			self.log.info(str((self.endTime - self.startTime) )+",Total Time, , ")
+			self.log.info(str(((self.endTime - self.startTime)/self.count) )+",AVG TIME PER INT, , ")
+			self.log.info(str(self.endTime )+",Num Bad Packets,"+str(self.badPacket)+", ")
+			self.log.info(str(self.endTime )+",Num Good Packets,"+str(self.goodPacket)+", ")
 			self.handle.setRunTimeout(0) # finish run()
 			return
 					

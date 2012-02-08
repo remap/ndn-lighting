@@ -311,6 +311,11 @@ class controller(pyccn.Closure):
 			print "total interests ", self.count
 			print "total time ",(self.endTime - self.startTime)
 			print "avg time per int ",((self.endTime - self.startTime)/self.count)
+			self.log.info(str(self.endTime )+",End Time, , ")
+			self.log.info(str((self.endTime - self.startTime) )+",Total Time, , ")
+			self.log.info(str(((self.endTime - self.startTime)/self.count) )+",AVG TIME PER INT, , ")
+			self.log.info(str(self.endTime )+",Num Bad Packets,"+str(self.badPacket)+", ")
+			self.log.info(str(self.endTime )+",Num Good Packets,"+str(self.goodPacket)+", ")
 			self.handle.setRunTimeout(0) # finish run()
 			return
 					
