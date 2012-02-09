@@ -83,14 +83,44 @@ before running:
 		python analyze_stats.py control.profile > control.txt
 
 	
+		you will likely want to stop, rename output, & re-start tcpdump & python_logger between tests
+		
 		
 		note this must be done for:
 		controller_symm	  &	  interface_sym
 		controller_asym	  &	  interface_asym
 		controller_unsigned & interface_unsigned
+		
+		
+########
+# SUMMARY:
 
+	these are the commands, per machine, used per trial:
 
-		you will likely want to stop, rename output, & re-start tcpdump & python_logger between tests
+	borges:
+		ccnrm /ndn/ucla.edu/apps/lighting
+		cd /home/lighting/ndn-lighting/python/perfTest
+		sudo /usr/sbin/tcpdump host 131.179.141.19 -w symmetric_0.pcap -s 5000 -Nf &
+		python logger_server.py symmetric_0.log &
+	gumstix:
+		ccnrm /ndn/ucla.edu/apps/lighting
+		cd /home/lighting/ndn-lighting/python/perfTest
+		python -m cProfile -o symm_interface_0.profile interface_symm.py interface_cfg
+	borges:
+		python -m cProfile -o symm_controller_0.profile controller_symm.py controller_cfg
+
+	upon completion:
+
+	borges:
+		pkill -f logger_server.py (or just ctrl-c or ctrl-\ if in seperate window)
+		sudo pkill tcpdump (or just ctrl-c or ctrl-\ if in seperate window)
+
+	
+	and yes, this must be done for each:
+		controller_symm	  &	  interface_sym
+		controller_asym	  &	  interface_asym
+		controller_unsigned & interface_unsigned
+
 
 #####
 NOTES: 
@@ -104,5 +134,5 @@ NOTES:
 TODO:
 
 	improve timing loops
-	determine why so much verify failure
- 
+	determine why so much verify failure (improved, but can be improved further)
+  
