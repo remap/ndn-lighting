@@ -187,12 +187,13 @@ class controller(pyccn.Closure):
 		if (content):
 		#if (self.send):
 		#if(content):
+			self.count = self.count+1
 			self.handle.put(self.makeDefaultContent(info.Interest.name, content)) # send the prepared data
 			self.log.info(str(tS-self.startTime)+",CONTENT_PUT,"+str(content)+","+str(info.Interest.name))
 		#print("published content object at "+str(info.Interest.name)+"\n")
 		
 		t1 = time.time()
-		self.count = self.count+1
+		
 		self.avgTime = ((t1-tR) + (self.avgTime / self.count))
 		#print str(self.avgTime) +" at "+str(self.count)
 		# self.handle.setRunTimeout(-1) # finish run()
@@ -272,11 +273,11 @@ class controller(pyccn.Closure):
 		rgbVal = str(name[iMax])
 		command = str(name[iMax-1])
 		dName = str(name[iMax-2])
-		DMXPort = self.getDMXFromName(dName)
+		#DMXPort = self.getDMXFromName(dName)
 		
 		#print " device "+dName+" ID : "+DMXPort+" color "+rgbVal +" plus command " + command
 		
-		UDPPort = self.getUDPFromName(dName)
+		#UDPPort = self.getUDPFromName(dName)
 		#UDPPort = 99999
 		
 		#devNum = "0"
@@ -288,14 +289,14 @@ class controller(pyccn.Closure):
 			b = str(int(rgbVal[4:6],16))
 			
 			#print " r is "+r+" g is "+g+" b is "+b
-			newData = self.cfg.numLights+"|"+DMXPort+"|"+r+"|"+g+"|"+b
+			#newData = self.cfg.numLights+"|"+DMXPort+"|"+r+"|"+g+"|"+b
 			
 			#print "like to put data "+newData+" to port "+ str(UDPPort)
 	    	
 		    # NUM LIGHTS | ID1 | R | G | B | ID2 | R | ...
 	    	# send_data = "4|1|250|086|100";
 			#data = "4|1|250|086|100"
-			self.sendData(newData,UDPPort)
+			#self.sendData(newData,UDPPort)
 			
 		elif (command=="setBrightness"):
 		
@@ -314,8 +315,6 @@ class controller(pyccn.Closure):
 			self.log.info(str(self.endTime )+",End Time, , ")
 			self.log.info(str((self.endTime - self.startTime) )+",Total Time, , ")
 			self.log.info(str(((self.endTime - self.startTime)/self.count) )+",AVG TIME PER INT, , ")
-			self.log.info(str(self.endTime )+",Num Bad Packets,"+str(self.badPacket)+", ")
-			self.log.info(str(self.endTime )+",Num Good Packets,"+str(self.goodPacket)+", ")
 			self.handle.setRunTimeout(0) # finish run()
 			return
 					
@@ -331,7 +330,7 @@ class controller(pyccn.Closure):
 	def getDMXFromName(self,devName):
 		dmx = 1
 		for n in self.cfg.names:
-			#print "DMX comparing "+devName+" to "+n['name']
+			print "DMX comparing "+devName+" to "+n['name']
 			if(n['name']==devName):
 				dmx = n['DMX']
 				return str(dmx)
