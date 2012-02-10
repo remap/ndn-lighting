@@ -67,6 +67,8 @@ class controller(pyccn.Closure):
 		self.log.setLevel(logging.DEBUG)
 		socketHandler = logging.handlers.SocketHandler(self.cfg.logIP,self.cfg.logPort)
 		self.log.addHandler(socketHandler)
+		# un-comment the line below to get detailed logging on logIP
+		# logging.disable("info")
 
 	def getApplicationKey(self):
 		#print("getting application key for "+self.appCfg.appName)
@@ -149,6 +151,8 @@ class controller(pyccn.Closure):
 		
 		self.send = False
 		
+		self.state = NameCrypto.new_state()
+		
 		#symmetric
 		result = NameCrypto.verify_command(self.state, n, self.cfg.window, fixture_key=self.cfg.fixtureKey)
 		
@@ -165,7 +169,7 @@ class controller(pyccn.Closure):
 		#asymmetric
 		result = NameCrypto.verify_command(self.state, n, self.cfg.window, pub_key=keyLoc2.key)
 		'''
-		self.state = NameCrypto.new_state()
+
 		#print result
 		content = result
 		self.log.info(str(time.time()-self.startTime)+",NC_VERIFY,"+str(content)+","+str(info.Interest.name))
@@ -202,7 +206,7 @@ class controller(pyccn.Closure):
 			# parse command & send to correct driver/IP
 			# must ignore right now, still get too many false / 'outside window'
 		self.parseAndSendToLight(info.Interest.name)
-
+		#self.state = NameCrypto.new_state()
 		# return content object 
 		# (ideally based on success/fail - yet that's not implicitly supported by current kinet
 		# so perhaps we put a self-verification of new driver state process here
@@ -272,13 +276,13 @@ class controller(pyccn.Closure):
 			print "total interests ", self.count
 			print "total time ",(self.endTime - self.startTime)
 			print "avg time per int ",((self.endTime - self.startTime)/self.count)
-			print "bad packet count is "+str(self.badPacket)
-			print "good packet count is "+str(self.goodPacket)
+			print "Num SI Verify Fail: "+str(self.badPacket)
+			print "Num SI Verify True: "+str(self.goodPacket)
 			self.log.info(str(self.endTime )+",End Time, , ")
 			self.log.info(str((self.endTime - self.startTime) )+",Total Time, , ")
 			self.log.info(str(((self.endTime - self.startTime)/self.count) )+",AVG TIME PER INT, , ")
-			self.log.info(str(self.endTime )+",Num Bad Packets,"+str(self.badPacket)+", ")
-			self.log.info(str(self.endTime )+",Num Good Packets,"+str(self.goodPacket)+", ")
+			self.log.info(str(self.endTime )+",Num SI Verify Fail,"+str(self.badPacket)+", ")
+			self.log.info(str(self.endTime )+",Num SI Verify True,"+str(self.goodPacket)+", ")
 			self.handle.setRunTimeout(0) # finish run()
 			return
 					

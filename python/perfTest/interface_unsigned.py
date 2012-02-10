@@ -64,6 +64,8 @@ class controller(pyccn.Closure):
 		self.log.setLevel(logging.DEBUG)
 		socketHandler = logging.handlers.SocketHandler(self.cfg.logIP,self.cfg.logPort)
 		self.log.addHandler(socketHandler)
+		# un-comment the line below to get detailed logging on logIP
+		# logging.disable("info")
 
 	def getApplicationKey(self):
 		#print("getting application key for "+self.appCfg.appName)
@@ -131,7 +133,7 @@ class controller(pyccn.Closure):
 	
 		#print info.Interest.name.components
 		#print "interest has "+str(len(info.Interest.name))+" components"
-		self.state = NameCrypto.new_state()
+		#self.state = NameCrypto.new_state()
 	
 		# verify interest
 		n = info.Interest.name

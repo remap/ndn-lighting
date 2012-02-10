@@ -66,6 +66,8 @@ class controller(pyccn.Closure):
 		self.log.setLevel(logging.DEBUG)
 		socketHandler = logging.handlers.SocketHandler(self.cfg.logIP,self.cfg.logPort)
 		self.log.addHandler(socketHandler)
+		# un-comment the line below to get detailed logging on logIP
+		# logging.disable("info")
 
 	def getApplicationKey(self):
 		#print("getting application key for "+self.appCfg.appName)
@@ -132,7 +134,7 @@ class controller(pyccn.Closure):
 		#print "received interest "+str(info.Interest.name)
 		#print info.Interest.name.components
 		#print "interest has "+str(len(info.Interest.name))+" components"
-		#self.state = NameCrypto.new_state()
+		self.state = NameCrypto.new_state()
 	
 		# verify interest
 		n = info.Interest.name
@@ -269,13 +271,13 @@ class controller(pyccn.Closure):
 			print "total interests ", self.count
 			print "total time ",(self.endTime - self.startTime)
 			print "avg time per int ",((self.endTime - self.startTime)/self.count)
-			print "bad packet count is "+str(self.badPacket)
-			print "good packet count is "+str(self.goodPacket)
+			print "Num SI Verify Fail: "+str(self.badPacket)
+			print "Num SI Verify True: "+str(self.goodPacket)
 			self.log.info(str(self.endTime )+",End Time, , ")
 			self.log.info(str((self.endTime - self.startTime) )+",Total Time, , ")
 			self.log.info(str(((self.endTime - self.startTime)/self.count) )+",AVG TIME PER INT, , ")
-			self.log.info(str(self.endTime )+",Num Bad Packets,"+str(self.badPacket)+", ")
-			self.log.info(str(self.endTime )+",Num Good Packets,"+str(self.goodPacket)+", ")
+			self.log.info(str(self.endTime )+",Num SI Verify Fail,"+str(self.badPacket)+", ")
+			self.log.info(str(self.endTime )+",Num SI Verify True,"+str(self.goodPacket)+", ")
 			self.handle.setRunTimeout(0) # finish run()
 			return
 					
