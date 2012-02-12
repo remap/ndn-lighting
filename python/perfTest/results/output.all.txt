@@ -1,0 +1,41 @@
+ighting@overo:~/ndn-lighting/python/perfTest$ ccnrm / ; time python -m cProfil
+e -o asymm_interface_0.profile interface_asymm.py interface_cfg
+marked stale: 23
+starting gumstix interface
+controller init & listening within /ndn/ucla.edu/apps/lighting/TV1
+listening for ccnx:/ndn/ucla.edu/apps/lighting/TV1/
+avg upcall time  0.0435959569373
+total interests  2610
+total time  131.475830078
+avg time per int  0.050373881256
+Num SI Verify Fail: 0
+Num SI Verify True: 2611
+108.96user 8.97system 2:12.67elapsed 88%
+
+lighting@overo:~/ndn-lighting/python/perfTest$ ccnrm / ; time python -m cProfil
+e -o unsigned_interface_0.profile interface_unsigned.py interface_cfg
+jmarked stale: 1781
+starting gumstix interface
+controller init & listening within /ndn/ucla.edu/apps/lighting/TV1
+listening for ccnx:/ndn/ucla.edu/apps/lighting/TV1/
+avg upcall time  0.0343752989888
+total interests  2561
+total time  106.018065929
+avg time per int  0.0413971362473
+86.98user 5.00system 1:47.43elapsed 85%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+0minor)pagefaults 0swaps
+
+
+lighting@overo:~/ndn-lighting/python/perfTest$ ccnrm / ; python -m cProfile -o 
+symm_interface_0.profile interface_symm.py interface_cfg
+marked stale: 2612
+starting gumstix interface
+controller init & listening within /ndn/ucla.edu/apps/lighting/TV1
+listening for ccnx:/ndn/ucla.edu/apps/lighting/TV1/
+avg upcall time  0.0359017239599
+total interests  2610
+total time  108.514159918
+avg time per int  0.0415763064819
+Num SI Verify Fail: 26
+Num SI Verify True: 2585
+
