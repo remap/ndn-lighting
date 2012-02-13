@@ -51,6 +51,14 @@ before running:
 		python logger_server.py [logfilename]
 
 		a log file with every app verify and upcall event is created.
+		
+		this assumes that logging ports are open, ie to make sure:
+		
+		[root@borges nano]# /sbin/iptables -I INPUT -p udp -m udp -s 131.179.141.19 --dport 9020 -j ACCEPT
+		[root@borges nano]# /sbin/iptables -I INPUT -p tcp -m tcp -s 131.179.141.19 --dport 9020 -j ACCEPT
+		
+		to analyze these logs, see the python and R scripts in results/analyze
+
 	
 
 ##################
