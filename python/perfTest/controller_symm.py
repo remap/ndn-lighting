@@ -48,8 +48,14 @@ class sequencer(pyccn.Closure):
 		# logging
 		self.log = logging.getLogger(self.cfg.appName)
 		self.log.setLevel(logging.DEBUG)
+		
 		socketHandler = logging.handlers.SocketHandler(self.cfg.logIP,self.cfg.logPort)
-		self.log.addHandler(socketHandler)
+		memoryHandler = logging.handlers.MemoryHandler(self.cfg.logBuff,logging.DEBUG,socketHandler)
+		
+		#self.log.addHandler(socketHandler)		
+		self.log.addHandler(memoryHandler)
+		
+		logging.disable(self.cfg.logDisable)
 
 	def getApplicationKey(self):
 		print("getting application key for "+self.appCfg.appName)
@@ -72,6 +78,13 @@ class sequencer(pyccn.Closure):
 		#self.allWhite()
 		#self.allBlack()
 		#self.spazz()
+		self.listen()
+		
+	def listen(self):
+		self.handle.run(-1)
+		while 1:
+			print "handling wierd"
+			self.handle.run(0)
 		
 	def upcall(self, kind, info):
 			# time received
@@ -83,6 +96,7 @@ class sequencer(pyccn.Closure):
 			
 			#ignore timeouts
 			if kind == pyccn.UPCALL_INTEREST_TIMED_OUT:
+				#self.log.info(str((tR-self.startTime))+", UPCALL_INTEREST_TIMED_OUT, ,"+ str(info.Interest.name))
 				return pyccn.RESULT_OK
 			
 			# make sure content has verified
@@ -90,7 +104,7 @@ class sequencer(pyccn.Closure):
 				print "content bad"
 				#trace("now","voila","data")
 				#trace(t0,str(info.ContentObject.name),"Content Verify Fail")
-				self.log.info(str((tR-self.startTime))+",UPCALL_CONTENT_BAD, "+ info.ContentObject.name)
+				self.log.info(str((tR-self.startTime))+",UPCALL_CONTENT_BAD, , , "+ info.ContentObject.name)
 				return pyccn.RESULT_OK
 		
 			# handle verified content object
@@ -358,3 +372,4 @@ if __name__ == '__main__':
 	
 	runtime = sequencer(sys.argv[1])
 	runtime.start()
+	runtime.handle.run(-1)
