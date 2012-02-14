@@ -58,6 +58,7 @@ before running:
 		[root@borges nano]# /sbin/iptables -I INPUT -p tcp -m tcp -s 131.179.141.19 --dport 9020 -j ACCEPT
 		
 		to analyze these logs, see the python and R scripts in results/analyze
+		ie, analyzePacketLogs.py (editing config.py w/ correct db name)
 
 	
 

@@ -91,14 +91,13 @@ for interest in allInterests:
 
 # just a dump of all RTT values:
 
-'''
+
 c=0
 for co in borgesCo:
 	#print co['Name']
 	c=c+1
 	rec = data.getExpressedWithName(co['Name']);
 	print co['logTime'] - rec[0]['logTime']
-'''
 
 
 #gstixCO = data.getInterfaceCO()

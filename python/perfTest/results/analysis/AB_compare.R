@@ -5,14 +5,12 @@ baseFile <- read.table("results.asymm.forR.txt", header = FALSE,  col.names= c("
 testFile <- read.table("results.symm.forR.txt", header = FALSE,  col.names= c("testdata"))
 attach(baseFile)
 attach(testFile)
-basedata
-testdata
 summary(basedata)
 summary(testdata)
 library(psych)
 describe(basedata)
 describe(testdata)
-boxplot(basedata,testdata)
+boxplot(basedata,testdata, main="Box plot of Asymm (L) and Symm (R) RTT")
 #plot(basedata[0:41],testdata[0:41], main="Asymmetric vs Symmetric RTT")
 plot.new()
 par(mfcol=c(1,2) )  # to plot side by
@@ -20,18 +18,18 @@ barplot(basedata, xlab="Iteration", ylab="Result",ylim=c(0,datamax*1.1))
 barplot(testdata, xlab="Iteration", ylab="Result",ylim=c(0,datamax*1.1))
 dev.off(2)
 plot.new()
-stripchart(basedata, method="stack", col="red", xlab = "Seconds", ylab = "asymm")
-stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1, ylab = "symm")
+stripchart(basedata, method="stack", group.names="asymm, symm", col="red",xlab="time (s)",main = "RTT Data Object distribution - Asymm vs Symmetric (blue)",pch=21)
+stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1,pch=21)
 dev.off(2)
 
 # test outliers:
-install.packages("outliers")
 library(outliers)
 grubbs.test(basedata)
 # if 1, no outliers
 
 # test normality:
 shapiro.test(basedata)
+shapiro.test(testdata)
 # if < .5, cannot use T test, instead use wilcoxon
 
 # test to make sure we have enough data

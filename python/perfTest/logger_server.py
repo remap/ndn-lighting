@@ -4,6 +4,7 @@ import logging.handlers
 import SocketServer as socketserver
 import struct
 import sys
+import loggerConfig as cfg
 
 class LogRecordStreamHandler(socketserver.StreamRequestHandler):
     """Handler for a streaming logging request.
@@ -55,7 +56,7 @@ class LogRecordSocketReceiver(socketserver.ThreadingTCPServer):
 
     allow_reuse_address = 1
 
-    def __init__(self, host='127.0.0.1',
+    def __init__(self, host=cfg.logIP,
                  port=9020,
                  handler=LogRecordStreamHandler):
         socketserver.ThreadingTCPServer.__init__(self, (host, port), handler)
