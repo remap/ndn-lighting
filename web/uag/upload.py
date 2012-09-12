@@ -1,5 +1,5 @@
 import sys
-sys.path.append("/var/www/html/lighting/app")
+sys.path.append("/srv/www/htdocs/lighting/app")
 
 import os
 # this wasn't necessary on original install (bigriver)
@@ -80,7 +80,7 @@ def uploadNoInput(req):
 		message += 'The file "%s" was uploaded, resized, and analyzed successfully' % fname
 		#message += 'go <a href="#" onClick = "history.back()"> back </a>
 		message += '\n<img src="'+cfg.imageWebPath+fname+'">'
-		f = open("/var/www/html/lighting/app/control.html",'r')
+		f = open("/srv/www/htdocs/lighting/app/control.html",'r')
 		message += f.read()
 		
 		#message += '<br>debug of DB object: <br>'

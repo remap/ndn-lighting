@@ -8,16 +8,16 @@ emailPass = "l!ghting2011"
 emailLabel = "TFTInstall"
 
 #path to email files (temporary)
-emailImagePath = "/var/www/html/lighting/app/emailFiles/"
+emailImagePath = "/srv/www/htdocs/lighting/app/emailFiles/"
 
 # path to images
-imageFilePath = "/var/www/html/lighting/app/files/"
+imageFilePath = "/srv/www/htdocs/lighting/app/files/"
 # web path to images
 imageWebPath = "http://borges.metwi.ucla.edu/lighting/app/files/"
 
 # mongodb collection name
 colName = "lighting"
-dbPort = 27016 #27017 is default
+dbPort = 27017 #27017 is default
 
 #with trailing slash
 interestPrefix = "/ucla.edu/apps/lighting/TV1/fixture/"
