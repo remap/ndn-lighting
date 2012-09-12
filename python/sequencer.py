@@ -100,7 +100,7 @@ class sequencer(pyccn.Closure):
 		n = Name.Name(self.cfg.appPrefix)
 		print("\nInterest espressing for "+str(n))
 		n += command
-		i = Interest.Interest()
+		i = Interest()
 		print("Interest sending to "+str(n))
 
 		# for just expressing
@@ -115,7 +115,7 @@ class sequencer(pyccn.Closure):
 	def sendSignedInterest(self,command):
 		fullURI = self.cfg.appPrefix + command
 		print fullURI
-		i = Interest.Interest()
+		i = Interest()
 
 		self.state = NameCrypto.new_state()
 		#build keyLocator to append to interest for NameCrypto on upcall

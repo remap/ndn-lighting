@@ -1,7 +1,7 @@
 import SocketServer, sys
 from ArtNetPacket import ArtNetPacket            
 from time import strftime, time
-
+import pyccn
 from pyccn import CCN,Name,Interest,ContentObject,Key,Closure,_pyccn, NameCrypto
 
 
@@ -26,7 +26,7 @@ class ArtNetHandler(SocketServer.BaseRequestHandler):
 		packet = ArtNetPacket.from_buffer(bytearray(self.request[0])) 
 		# make sure packet is coming from TV1      
 		if (self.client_address[0] == "131.179.141.17"):
-			
+			print packet.payload
 			if (packet.payload[9]!=lastr or packet.payload[10]!=lastg or packet.payload[11]!=lastb):
 				T = strftime("%Y-%m-%d %H:%M:%S")
 				print T		
@@ -42,7 +42,7 @@ class ArtNetHandler(SocketServer.BaseRequestHandler):
 	    	#self.finish()
 	        #
 
-class sequencer(Closure.Closure):
+class sequencer(Closure):
 
 	#ensure singleton
 	_instance = None
@@ -54,7 +54,7 @@ class sequencer(Closure.Closure):
 	def __init__(self, configFileName):
 		self.appConfigFileName = configFileName
 		self.loadConfigFile()
-		self.handle = CCN.CCN()
+		self.handle = CCN()
 		self.getApplicationKey()
 		#nameCrypto
 		self.state = NameCrypto.new_state()
@@ -68,7 +68,7 @@ class sequencer(Closure.Closure):
 
 	def getApplicationKey(self):
 		print("getting application key for "+self.appCfg.appName)
-		key = Key.Key()
+		key = Key()
 		keyFile = self.appCfg.keyFile
 		key.fromPEM(filename=keyFile)
 		self.appKey = key
@@ -139,12 +139,12 @@ class sequencer(Closure.Closure):
 	def sendSignedInterest(self,command):
 		fullURI = self.cfg.appPrefix + command
 		#print fullURI
-		i = Interest.Interest()
+		i = Interest()
 		
 		#build keyLocator to append to interest for NameCrypto on upcall
-		keyLoc = Key.KeyLocator(self.key)
+		keyLoc = pyccn.KeyLocator(self.key)
 		keyLocStr = _pyccn.dump_charbuf(keyLoc.ccn_data)
-		nameAndKeyLoc = Name.Name(str(fullURI))
+		nameAndKeyLoc = Name(str(fullURI))
 		#print("there are "+str(len(nameAndKeyLoc))+" components")
 		nameAndKeyLoc += keyLocStr
 		#print("there are "+str(len(nameAndKeyLoc))+" components after adding keyLocStr")

@@ -52,7 +52,7 @@ deviceList = (
 # collection name
 colName = "lighting"
 dbHost = "localhost"
-dbPort = 27016
+dbPort = 27017
 #if dev on localhost w/o mongodb, just forward the borges port. ie:
 # ssh -v -L 27016:localhost:27016 borges.metwi.ucla.edu
 

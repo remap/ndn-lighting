@@ -1,4 +1,5 @@
 import sys
+import pyccn
 from pyccn import CCN,Name,Interest,ContentObject,Key,Closure,_pyccn,NameCrypto
 import ssl
 #import database as data
@@ -14,12 +15,12 @@ except ImportError:
 
 current = 0
 
-class sequencer(Closure.Closure):
+class sequencer(Closure):
 
 	def __init__(self, configFileName):
 		self.appConfigFileName = configFileName
 		self.loadConfigFile()
-		self.handle = CCN.CCN()
+		self.handle = CCN()
 		self.getApplicationKey()
 		#nameCrypto
 		self.state = NameCrypto.new_state()
@@ -34,7 +35,7 @@ class sequencer(Closure.Closure):
 
 	def getApplicationKey(self):
 		#print("getting application key for "+self.appCfg.appName)
-		key = Key.Key()
+		key = Key()
 		keyFile = self.appCfg.keyFile
 		key.fromPEM(filename=keyFile)
 		self.appKey = key
@@ -67,7 +68,7 @@ class sequencer(Closure.Closure):
 	def allBlack(self):
 		for d in self.cfg.names:
 			if d['name'] != "incandescent":
-				#print d['name']
+				print d['name']
 				self.buildAndSendInterest(d['name'],0,0,0)
 			self.buildAndSendArtInterest('incandescent',0,)
 		
@@ -212,7 +213,7 @@ class sequencer(Closure.Closure):
 
 	def sendInterest(self,command):
 		
-		n = Name.Name(self.cfg.appPrefix)
+		n = Name(self.cfg.appPrefix)
 		print("\nInterest espressing for "+str(n))
 		n += command
 		#fullURI = self.cfg.interestPrefix + command
@@ -232,12 +233,12 @@ class sequencer(Closure.Closure):
 		time.sleep(self.cfg.refreshInterval)
 		fullURI = self.cfg.appPrefix + command
 		#print fullURI
-		i = Interest.Interest()
+		i = Interest()
 		#self.state = NameCrypto.new_state()
 		#build keyLocator to append to interest for NameCrypto on upcall
-		keyLoc = Key.KeyLocator(self.key)
+		keyLoc = pyccn.KeyLocator(self.key)
 		keyLocStr = _pyccn.dump_charbuf(keyLoc.ccn_data)
-		nameAndKeyLoc = Name.Name(str(fullURI))
+		nameAndKeyLoc = Name(str(fullURI))
 		#print("there are "+str(len(nameAndKeyLoc))+" components")
 		nameAndKeyLoc += keyLocStr
 		#print("there are "+str(len(nameAndKeyLoc))+" components after adding keyLocStr")
