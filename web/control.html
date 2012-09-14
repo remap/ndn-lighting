@@ -1,0 +1,43 @@
+<html><body>
+
+<form enctype="multipart/form-data" action="http://borges.metwi.ucla.edu/lighting/app/control.py/startSequencer" method="post">
+	  <p><input type="submit" value="Start Sequencer"></p>
+</form>
+
+<form enctype="multipart/form-data" action="http://borges.metwi.ucla.edu/lighting/app/control.py/stopSequencer" method="post">
+	  <p><input type="submit" value="Stop Sequencer"></p>
+</form>
+
+<hr>
+
+<form enctype="multipart/form-data" action="http://borges.metwi.ucla.edu/lighting/app/control.py/turnOffAllLights" method="post">
+	  <p><input type="submit" value="Turn Off All Lights"></p>
+</form>
+
+<hr>
+
+<form enctype="multipart/form-data" action="http://borges.metwi.ucla.edu/lighting/app/upload.py/uploadNoInput" method="post">
+	<!--
+      Name:    <input type="text" name="name" value="Name"><br>
+      Email:   <input type="text" name="email" value="name@email.com"><br>
+      Project Title:    <input type="text" name="title" value="Title"><br>
+      Project Description / Comments:<br> <textarea name="comment" rows=4 cols=20>Default Text...</textarea><br>
+      -->
+	  <p>Image: <input type="file" name="file"></p>
+	  <p><input type="submit" value="Upload"></p>
+</form>
+
+<hr>
+
+<form enctype="multipart/form-data" action="http://borges.metwi.ucla.edu/lighting/app/control.py/startFader" method="post">
+	  <p><input type="submit" value="Start FaderBoard"></p>
+</form>
+
+<form enctype="multipart/form-data" action="http://borges.metwi.ucla.edu/lighting/app/control.py/stopFader" method="post">
+	  <p><input type="submit" value="Stop FaderBoard"></p>
+</form>
+
+
+
+
+</body></html>
