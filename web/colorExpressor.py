@@ -341,7 +341,7 @@ class sequencer(pyccn.Closure):
 
 def webExpressColor(name,r,g,b):	    
 	runtime = sequencer("colorExpressor_cfg")
-	runetime.buildAndSendInterest(name,r,g,b)
+	runtime.buildAndSendInterest(name,int(r),int(g),int(b))
 
 if __name__ == '__main__':
 

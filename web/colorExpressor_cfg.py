@@ -6,7 +6,7 @@
 appName = "controller"
 appPrefix = "ccnx:/ndn/ucla.edu/apps/lighting/TV1/"
 appDescription = "lighting controller"
-keyFile = "colorExpressor.pem"
+keyFile = "/home/lighting/ndn-lighting/web/colorExpressor.pem"
 
 # for namecrypto
 fixtureKey = "1234567812345678"

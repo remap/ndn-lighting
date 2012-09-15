@@ -124,8 +124,7 @@
         });
 
 		function postData(rr, gg, bb){
-			$.post("http://borges.metwi.ucla.edu/lighting/app/expressColor.py/webExpressColor", { name: "living-room-right", r:rr, g:gg ,b:bb } );
-		//$.post("http://borges.metwi.ucla.edu/lighting/app/expressColor.py/webExpressColor", data: {clr.r,clr.g,clr.b}; } );
+			$.post("http://borges.metwi.ucla.edu/lighting/app/colorExpressor.py/webExpressColor", { name: "living-room-right", r:rr, g:gg ,b:bb } );
 		//	alert("color: "+r+" "+g+" "+b);
 			
 		}
