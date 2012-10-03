@@ -124,9 +124,9 @@
         });
 
 		function postData(rr, gg, bb){
-			$.post("http://borges.metwi.ucla.edu/lighting/app/colorExpressor.py/webExpressColor", { name: "living-room-right", r:rr, g:gg ,b:bb } );
-		//	alert("color: "+r+" "+g+" "+b);
-			
+			$.post("http://borges.metwi.ucla.edu/lighting/app/colorExpressor.py/webExpressColor", { name: $('#light').val(), r:rr, g:gg ,b:bb } );
+			//alert('light:'+$("#light").val()+' color: '+r+' '+g+' '+b);
+			//alert("light:"+$('#light').val())
 		}
         </script>
     </head>
@@ -162,14 +162,12 @@
             <input type="text" id="output" value="#eeeeee">
             <p id="copy">
             </p>
-			<select name="menu">
-			<option value="all" selected>all lights (or):</option>
+			<select name="menu" id="light">
 			<option value="living-room-left">living-room-left</option>
 			<option value="living-room-right">living-room-right</option>
 			<option value="window-right">window-right</option>
 			<option value="stairs">stairs</option>
 			<option value="bedroom">bedroom</option>
-			<option value="incandescent">incandescent</option>
 			<option value="window-right">window-right</option>
 			<option value="pastel-right-c">pastel-right-c:</option>
 			<option value="pastel-left-b">pastel-left-b</option>
