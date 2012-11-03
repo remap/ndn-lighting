@@ -18,11 +18,11 @@ CFLAGS = -Wall -g
 
 # define any directories containing header files other than /usr/include
 
-INCLUDES = -I/home/root/ccn/ccnx/include/ -I/home/root/ccn/ccnx/include/ccn/
+INCLUDES = -I/Users/nano/NDN/ccnx/include/ -I/Users/nano/NDN/ccnx/include/ccn/
 
 # define library paths in addition to /usr/lib
 
-LFLAGS = -L../lib -L/home/root/ccn/ccnx/lib -L/home/root/ccn/ccnx/csrc 
+LFLAGS = -L/Users/nano/NDN/ccnx/lib -L/Users/nano/NDN/ccnx/csrc 
 
 # define any libraries to link into executable:
 #  link in libraries (libx.so or libx.a) use the -llibname 

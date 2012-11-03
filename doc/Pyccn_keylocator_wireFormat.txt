@@ -1,0 +1,82 @@
+>>> from pyccn import _pyccn
+>>> from pyccn import Name
+>>> name = Name.Name('/hello/world')
+>>> name.ccn_data
+<capsule object "Name_ccn_data" at 0x10049b810>
+>>> _pyccn.dump_charbuf(name.ccn_data)
+'\xf2\xfa\xadhello\x00\xfa\xadworld\x00\x00'
+>>> dir(_pyccn)
+['CCNContentObjectError', 'CCNError', 'CCNExclusionFilterError', 'CCNInterestError', 'CCNKeyError', 'CCNKeyLocatorError', 'CCNNameError', 'CCNSignatureError', 'CCNSignedInfoError', 'ContentObject_obj_from_ccn', 'DER_read_key', 'DER_write_key', 'ExclusionFilter_names_to_ccn', 'ExclusionFilter_obj_from_ccn', 'Interest_obj_from_ccn', 'Interest_obj_to_ccn', 'KeyLocator_obj_from_ccn', 'KeyLocator_to_ccn', 'Key_obj_from_ccn', 'PEM_read_key', 'PEM_write_key', 'Signature_obj_from_ccn', 'Signature_obj_to_ccn', 'SignedInfo_obj_from_ccn', 'SignedInfo_to_ccn', '__doc__', '__file__', '__name__', '__package__', 'compare_names', 'connect', 'content_matches_interest', 'content_to_bytearray', 'content_to_bytes', 'create', 'digest_contentobject', 'disconnect', 'dump_charbuf', 'encode_ContentObject', 'express_interest', 'generate_RSA_key', 'get', 'get_connection_fd', 'get_default_key', 'is_upcall_executing', 'name_comps_from_ccn', 'name_comps_to_ccn', 'name_from_uri', 'name_to_uri', 'nc_app_id', 'nc_app_key', 'nc_authenticate_command', 'nc_authenticate_command_sig', 'nc_new_state', 'nc_verify_command', 'output_is_pending', 'process_scheduled_operations', 'put', 'run', 'set_interest_filter', 'set_run_timeout', 'verify_content', 'verify_signature']
+
+
+KeyLocator_obj_from_ccn
+
+
+
+The command is like this:
+r = _pyccn.new_charbuf('KeyLocator_ccn_data',
+'\x01\xe2\x01\xea\xf2\xfa\xadhello\x00\xfa\xadworld\x00\x00\x00\x00')
+
+Right now the first argument is fixed and it needs to be keylocator,
+since that's what you need, later I'll add ability to define other
+types.
+
+After you call this command you can get the keylocator object by typing:
+r2 = _pyccn.KeyLocator_obj_from_ccn(r)
+
+Which (assuming there are no errors in my code) should be same as the
+original.
+
+
+
+
+
+from pyccn import _pyccn, NameCrypto
+from pyccn import *
+h = CCN.CCN()
+key = h.getDefaultKey()
+del h
+fullURI = Name.Name('/ndn/ucla.edu/apps/lighting/TV1/fixture/kitchen/rgb-8bit-hex/090909')
+print fullURI
+/ndn/ucla.edu/apps/lighting/TV1/fixture/kitchen/rgb-8bit-hex/090909
+keyLoc = Key.KeyLocator(key)
+
+serializing it:
+keyLocStr = _pyccn.dump_charbuf(keyLoc.ccn_data)
+
+appending to the name:
+fullURI += keyLocStr
+fullURI.components
+['ndn', 'ucla.edu', 'apps', 'lighting', 'TV1', 'fixture', 'kitchen', 'rgb-8bit-hex', '090909', '\x01\xe2\x01\xda\n\x950\x81\x9f0\r\x06\t*\x86H\x86\xf7\r\x01\x01\x01\x05\x00\x03\x81\x8d\x000\x81\x89\x02\x81\x81\x00\xc5v\t\xa9\xf8\xd6\xbf)tsS\xee16\xf9\x95G\tP\xfa\xcf\xa3f\x8a\xb9\x8b\xd1\x01C\xbc&\xfd\x86\xdd\x064\xb8@\xf4\xc1,{\x82\x95P3\xe6\xd0V\xd3\xc7\xcfH\x942\xe8\xf21`c\x93P@\xcc\x1fH\xd7tYcD\xfd\xb2`\x18M\xfamo\xbfrpU\x11m\x11\xaf\xe27\xe7\xa0G\\$\xb7\xbe\xc0?\xaf\xc1\xd5\xa8\x18G\x0e/\xb7\xe1"\x17\x99i \xac\xa9\nm\x81\x19c\x8dV\xa9G\x1a\xee\xf6\x87\x02\x03\x01\x00\x01\x00\x00']
+print fullURI
+/ndn/ucla.edu/apps/lighting/TV1/fixture/kitchen/rgb-8bit-hex/090909/%01%E2%01%DA%0A%950%81%9F0%0D%06%09%2A%86H%86%F7%0D%01%01%01%05%00%03%81%8D%000%81%89%02%81%81%00%C5v%09%A9%F8%D6%BF%29tsS%EE16%F9%95G%09P%FA%CF%A3f%8A%B9%8B%D1%01C%BC%26%FD%86%DD%064%B8%40%F4%C1%2C%7B%82%95P3%E6%D0V%D3%C7%CFH%942%E8%F21%60c%93P%40%CC%1FH%D7tYcD%FD%B2%60%18M%FAmo%BFrpU%11m%11%AF%E27%E7%A0G%5C%24%B7%BE%C0%3F%AF%C1%D5%A8%18G%0E%2F%B7%E1%22%17%99i%20%AC%A9%0Am%81%19c%8DV%A9G%1A%EE%F6%87%02%03%01%00%01%00%00
+
+signing:
+>>> state = NameCrypto.new_state()
+>>> appname = '/some/app/name'
+>>> fixture_key = '0123456789'
+>>> app_key = NameCrypto.generate_application_key(fixture_key, appname)
+>>> authName = NameCrypto.authenticate_command(state, fullURI, appname, app_key)
+>>> print authName
+/ndn/ucla.edu/apps/lighting/TV1/fixture/kitchen/rgb-8bit-hex/090909/%01%E2%01%DA%0A%950%81%9F0%0D%06%09%2A%86H%86%F7%0D%01%01%01%05%00%03%81%8D%000%81%89%02%81%81%00%C5v%09%A9%F8%D6%BF%29tsS%EE16%F9%95G%09P%FA%CF%A3f%8A%B9%8B%D1%01C%BC%26%FD%86%DD%064%B8%40%F4%C1%2C%7B%82%95P3%E6%D0V%D3%C7%CFH%942%E8%F21%60c%93P%40%CC%1FH%D7tYcD%FD%B2%60%18M%FAmo%BFrpU%11m%11%AF%E27%E7%A0G%5C%24%B7%BE%C0%3F%AF%C1%D5%A8%18G%0E%2F%B7%E1%22%17%99i%20%AC%A9%0Am%81%19c%8DV%A9G%1A%EE%F6%87%02%03%01%00%01%00%00/%40%96%1CQ%00%0E%2Fsome%2Fapp%2Fname%F6N%A6NDo%04%00%01%00%00%00%00%00%00%00%9C%0E%3B%15Q%AC%A2%80%CB%11J%7B%BC%9D%CA%97X%C4%F8%A7%8A%FEa%40%22%5E%D7a%E6%1F%C5w
+>>> authName.components
+['ndn', 'ucla.edu', 'apps', 'lighting', 'TV1', 'fixture', 'kitchen', 'rgb-8bit-hex', '090909', '\x01\xe2\x01\xda\n\x950\x81\x9f0\r\x06\t*\x86H\x86\xf7\r\x01\x01\x01\x05\x00\x03\x81\x8d\x000\x81\x89\x02\x81\x81\x00\xc5v\t\xa9\xf8\xd6\xbf)tsS\xee16\xf9\x95G\tP\xfa\xcf\xa3f\x8a\xb9\x8b\xd1\x01C\xbc&\xfd\x86\xdd\x064\xb8@\xf4\xc1,{\x82\x95P3\xe6\xd0V\xd3\xc7\xcfH\x942\xe8\xf21`c\x93P@\xcc\x1fH\xd7tYcD\xfd\xb2`\x18M\xfamo\xbfrpU\x11m\x11\xaf\xe27\xe7\xa0G\\$\xb7\xbe\xc0?\xaf\xc1\xd5\xa8\x18G\x0e/\xb7\xe1"\x17\x99i \xac\xa9\nm\x81\x19c\x8dV\xa9G\x1a\xee\xf6\x87\x02\x03\x01\x00\x01\x00\x00', '@\x96\x1cQ\x00\x0e/some/apautpp/name\xf6N\xa6NDo\x04\x00\x01\x00\x00\x00\x00\x00\x00\x00\x9c\x0e;\x15Q\xac\xa2\x80\xcb\x11J{\xbc\x9d\xca\x97X\xc4\xf8\xa7\x8a\xfea@"^\xd7a\xe6\x1f\xc5w']
+
+
+
+Now the reverse (-2 is the second component from the end):
+>>> authName[-2]
+'\x01\xe2\x01\xda\n\x950\x81\x9f0\r\x06\t*\x86H\x86\xf7\r\x01\x01\x01\x05\x00\x03\x81\x8d\x000\x81\x89\x02\x81\x81\x00\xc5v\t\xa9\xf8\xd6\xbf)tsS\xee16\xf9\x95G\tP\xfa\xcf\xa3f\x8a\xb9\x8b\xd1\x01C\xbc&\xfd\x86\xdd\x064\xb8@\xf4\xc1,{\x82\x95P3\xe6\xd0V\xd3\xc7\xcfH\x942\xe8\xf21`c\x93P@\xcc\x1fH\xd7tYcD\xfd\xb2`\x18M\xfamo\xbfrpU\x11m\x11\xaf\xe27\xe7\xa0G\\$\xb7\xbe\xc0?\xaf\xc1\xd5\xa8\x18G\x0e/\xb7\xe1"\x17\x99i \xac\xa9\nm\x81\x19c\x8dV\xa9G\x1a\xee\xf6\x87\x02\x03\x01\x00\x01\x00\x00'
+>>> keyLocStr2 = authName[-2]
+
+Checking (just for me) whether the data changed along the way:
+>>> keyLocStr == keyLocStr2
+True
+
+
+>>> capsule = _pyccn.new_charbuf('KeyLocator_ccn_data', keyLocStr2)
+>>> keyLoc2 = _pyccn.KeyLocator_obj_from_ccn(capsule)
+
+Checking (just for me) whether the data changed along the way:
+>>> key.publicToDER() == keyLoc2.key.publicToDER()
+True

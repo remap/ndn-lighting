@@ -1,0 +1,87 @@
+baseFile <- read.table("results.asymm.forR.txt", header = FALSE,  col.names= c("basedata"))
+baseFile <- read.table("results.asymm.forR.txt", header = FALSE,  col.names= c("basedata"))#
+testFile <- read.table("results.symm.forR.txt", header = FALSE,  col.names= c("testdata"))
+summary(basedata)#
+summary(testdata)
+attach(baseFile)#
+attach(testFile)
+summary(basedata)#
+summary(testdata)
+summary(basedata)
+summary(testdata)
+baseFile <- read.table("results.asymm.forR.txt", header = FALSE,  col.names= c("basedata"))#
+testFile <- read.table("results.symm.forR.txt", header = FALSE,  col.names= c("testdata"))#
+attach(baseFile)#
+attach(testFile)#
+summary(basedata)#
+summary(testdata)
+baseFile <- read.table("results.asymm.forR.txt", header = FALSE,  col.names= c("basedata"))#
+testFile <- read.table("results.symm.forR.txt", header = FALSE,  col.names= c("testdata"))#
+attach(baseFile)#
+attach(testFile)#
+summary(basedata)#
+summary(testdata)
+boxplot(basedata,testdata)
+boxplot(basedata,testdata, title="Box plot of Asymm (1) and Symm (2) RTT")
+boxplot(basedata,testdata, main="Box plot of Asymm (1) and Symm (2) RTT")
+boxplot(basedata,testdata, names=("Asymm","Symm"), main="Box plot of Asymm (1) and Symm (2) RTT")
+boxplot(basedata,testdata, names=["Asymm","Symm"], main="Box plot of Asymm (1) and Symm (2) RTT")
+boxplot(basedata,testdata, main="Box plot of Asymm (1) and Symm (2) RTT")
+boxplot(basedata,testdata, main="Box plot of Asymm (L) and Symm (R) RTT")
+plot.new()#
+stripchart(basedata, method="stack", col="red", xlab = "Seconds", ylab = "asymm")#
+stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1, ylab = "symm")
+plot.new()#
+stripchart(basedata, method="stack", col="red", xlab = "Seconds", dlab = "asymm")#
+stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1, dlab = "symm")
+plot.new(main = "stripchart(OrchardSprays)")#
+stripchart(basedata, method="stack", col="red", xlab = "Seconds", dlab = "asymm")#
+stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1, dlab = "symm")
+plot.new(main = "stripchart(OrchardSprays)")
+plot.new(main = "stripchart(OrchardSprays)")#
+stripchart(basedata, method="stack", col="red", dlab = "asymm")#
+stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1, dlab = "symm")
+stripchart(basedata, method="stack", col="red", dlab = "asymm",main = "stripchart(OrchardSprays)")
+plot.new()#
+stripchart(basedata, method="stack", col="red", dlab = "asymm",main = "stripchart(OrchardSprays)")#
+stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1, dlab = "symm")
+stripchart(testdata, method="overplot", add=TRUE, at=0.8, col="blue", offset=1, dlab = "symm")
+plot.new()#
+stripchart(basedata, method="overplot", col="red", dlab = "asymm",main = "stripchart(OrchardSprays)")#
+stripchart(testdata, method="overplot", add=TRUE, at=0.8, col="blue", offset=1, dlab = "symm")
+plot.new()#
+stripchart(basedata, method="stack", group.names="asymm", col="red", dlab = "asymm",main = "stripchart(OrchardSprays)")#
+stripchart(testdata, method="stack", group.names="symm", add=TRUE, at=0.8, col="blue", offset=1, dlab = "symm")
+stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1, dlab = "symm")
+plot.new()#
+stripchart(basedata, method="stack", group.names="asymm, symm", col="red", dlab = "asymm",main = "stripchart(OrchardSprays)")#
+stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1, dlab = "symm")
+plot.new()#
+stripchart(basedata, method="stack", group.names="asymm, symm", col="red",xlab="time (s)",main = "RTT Data Object distribution - Asymm vs Symmetric (blue)")#
+stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1)
+plot.new()#
+stripchart(basedata, method="stack", group.names="asymm, symm", col="red",xlab="time (s)",main = "RTT Data Object distribution - Asymm vs Symmetric (blue)",pch=20)#
+stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1,pch=20)
+plot.new()#
+stripchart(basedata, method="stack", group.names="asymm, symm", col="red",xlab="time (s)",main = "RTT Data Object distribution - Asymm vs Symmetric (blue)",pch=20)#
+stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1,pch=21)
+plot.new()#
+stripchart(basedata, method="stack", group.names="asymm, symm", col="red",xlab="time (s)",main = "RTT Data Object distribution - Asymm vs Symmetric (blue)",pch=21)#
+stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1,pch=21)
+plot.new()#
+stripchart(basedata, method="stack", group.names="asymm, symm", col="red",xlab="time (s)",main = "RTT Data Object distribution - Asymm vs Symmetric (blue)",pch=21)
+plot.new()#
+stripchart(basedata, method="stack", group.names="asymm, symm", col="red",xlab="time (s)",main = "RTT Data Object distribution - Asymm vs Symmetric (blue)",pch=21)#
+stripchart(testdata, method="stack", add=TRUE, at=0.8, col="blue", offset=1,pch=21)
+install.packages("outliers")#
+library(outliers)#
+grubbs.test(basedata)
+shapiro.test(basedata)
+shapiro.test(testdata)
+library(psych)#
+describe(basedata)#
+describe(testdata)
+plot(basedata,testdata)
+plot(basedata[:42],testdata[:42])
+plot(basedata[,0:41],testdata[,0:41])
+plot(basedata[0:41],testdata[0:41])

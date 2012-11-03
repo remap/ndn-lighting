@@ -20,7 +20,8 @@
 #include <ccn/signing.h>
 
 //#define URI "/ucla.edu/building/boelter/floor/3/room/3551/supply/1/fixture/1/R/250/G/000/B/000"
-#define URI "/ucla.edu/building/boelter/floor/3/room/3551/supply/1/"
+//#define URI "/ucla.edu/building/boelter/floor/3/room/3551/supply/1/"
+#define URI "/ucla.edu/apps/lighting/test/nosign"
 #define NUM_LIGHTS '4'
 //#define URI "ccnx:/blah/blah"
 //#define NAMEPREFIX "UCLA/REMAP/"
@@ -56,33 +57,40 @@ incoming_interest(
 {
 		int udpClient(char *data);
         printf("Received request (kind: %d).\n", kind);
-
-        char suffix[4098] = "";  // starts with NUM LIGHTS = 4;
-        suffix[0] = NUM_LIGHTS;  //NUM_LIGHTS;
-        int i;
-//      if (ccn_name_comp_to_str(info->interest_ccnb, info->interest_comps, 10) == 1) {
-        for (i=10; i< info->pi->prefix_comps; i=i+2) {
-                char *str;
-                str = ccn_name_comp_to_str(info->interest_ccnb, info->interest_comps, i);
-                printf("*** before good, i = %d, str = %s\n", i, str);
-                strcat(suffix, "|");
-                //printf("*** in the mid, i = %d\n", i);
-                strcat(suffix, str);
-                printf("*** good here, i = %d\n", i);
-                free(str);
-        }
-//      }
-        printf("suffix is %s\n", suffix);
-        if (info->pi->prefix_comps+1 > info->interest_comps->n) {
-                printf("how did this happen? comps->n is %d and prefix_comps is %d\n", (int)info->pi->prefix_comps);
-        }
-        printf("*********** here...\n");
-
-        char *data = suffix;
+        
+        
         int res;
-        res = udpClient(data);
-        printf("************ res = %d\n", res);
+        struct ccn *ccn = NULL;
+        struct ccn_charbuf *name = NULL;
+    	struct ccn_charbuf *result;
+    	size_t length;
+    	char buf[128];
+        //sp.sp_flags |= CCN_SP_FINAL_BLOCK;
+        name = ccn_charbuf_create();
 
+    	res = ccn_name_from_uri(name, URI);
+        
+        sprintf(buf, "Hello World!\n");
+    	length = name->length;
+
+    	//sp.sp_flags |= CCN_SP_FINAL_BLOCK;
+
+    	result = ccn_charbuf_create();
+    	res = ccn_sign_content(ccn, result, name, &sp, buf, length);
+    	if (res < 0) {
+    		ccn_perror(ccn, "ccn_sign_content");
+    		exit(1);
+    	}
+    	ccn_charbuf_destroy(&name);
+
+    	printf("Sending the data...\n");
+
+    	res = ccn_put(ccn, result->buf, result->length);
+    	if (res < 0) {
+    		ccn_perror(ccn, "ccn_put");
+    		exit(1);
+    	}
+        
         return CCN_UPCALL_RESULT_OK;
 }
 
@@ -126,18 +134,18 @@ int main(void)
 
 // implement a function that search the csv file and get name (--> put in "buf") according to serial number @ here
 
-/*#if 1
+if (res == 1) {
 	sprintf(buf, "Hello World!\n");
 	length = name->length;
 
 	sp.sp_flags |= CCN_SP_FINAL_BLOCK;
 
 	result = ccn_charbuf_create();
-	res = ccn_sign_content(ccn, result, name, &sp, buf, length);
-	if (res < 0) {
-		ccn_perror(ccn, "ccn_sign_content");
-		exit(1);
-	}
+	//res = ccn_sign_content(ccn, result, name, &sp, buf, length);
+	//if (res < 0) {
+	//	ccn_perror(ccn, "ccn_sign_content");
+	//	exit(1);
+	//}
 	ccn_charbuf_destroy(&name);
 
 	printf("Sending the data...\n");
@@ -148,17 +156,17 @@ int main(void)
 		exit(1);
 	}
 	ccn_charbuf_destroy(&result);
-#endif
-*/
+}
 
 	printf("Event loop ....\n");
 	ccn_run(ccn, -1);
-	printf("******** here... \n");
 
 	ccn_destroy(&ccn);
 	printf("******** after ccn_destroy... n");
 
 	return 0;
+	
+	
 }
 
 int udpClient(char *send_data) {

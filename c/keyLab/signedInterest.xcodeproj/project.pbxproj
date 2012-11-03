@@ -1,0 +1,158 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		3EEC99F013AFA6CC004F4F9A /* ccn_internal_structs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ccn_internal_structs.h; sourceTree = "<group>"; };
+		3EEC99F113AFA6CC004F4F9A /* ccn_signed_interest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ccn_signed_interest.c; sourceTree = "<group>"; };
+		3EEC99F213AFA6CC004F4F9A /* ccn_signed_interest.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ccn_signed_interest.o; sourceTree = "<group>"; };
+		3EEC99F313AFA6CC004F4F9A /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		3EEC99F413AFA6CC004F4F9A /* ndnSignedInterest.bak.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ndnSignedInterest.bak.c; sourceTree = "<group>"; };
+		3EEC99F513AFA6CC004F4F9A /* ndnSignedInterest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ndnSignedInterest.c; sourceTree = "<group>"; };
+		3EEC99F613AFA6CC004F4F9A /* ndnSignedInterest.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ndnSignedInterest.o; sourceTree = "<group>"; };
+		3EEC99F713AFA6CC004F4F9A /* ndnSignedInterest.preUn.bak.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ndnSignedInterest.preUn.bak.c; sourceTree = "<group>"; };
+		3EEC99F813AFA6CC004F4F9A /* perfTest */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = perfTest; sourceTree = "<group>"; };
+		3EEC99F913AFA6CC004F4F9A /* signed_interest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = signed_interest.h; sourceTree = "<group>"; };
+		3EEC99FA13AFA6CC004F4F9A /* signedNDNClient */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = signedNDNClient; sourceTree = "<group>"; };
+		3EEC99FB13AFA6CC004F4F9A /* test_signed_interest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = test_signed_interest.c; sourceTree = "<group>"; };
+		3EEC99FC13AFA6CC004F4F9A /* testSignedInterest */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = testSignedInterest; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		3EEC99E813AFA6CC004F4F9A = {
+			isa = PBXGroup;
+			children = (
+				3EEC99F013AFA6CC004F4F9A /* ccn_internal_structs.h */,
+				3EEC99F113AFA6CC004F4F9A /* ccn_signed_interest.c */,
+				3EEC99F213AFA6CC004F4F9A /* ccn_signed_interest.o */,
+				3EEC99F313AFA6CC004F4F9A /* Makefile */,
+				3EEC99F413AFA6CC004F4F9A /* ndnSignedInterest.bak.c */,
+				3EEC99F513AFA6CC004F4F9A /* ndnSignedInterest.c */,
+				3EEC99F613AFA6CC004F4F9A /* ndnSignedInterest.o */,
+				3EEC99F713AFA6CC004F4F9A /* ndnSignedInterest.preUn.bak.c */,
+				3EEC99F813AFA6CC004F4F9A /* perfTest */,
+				3EEC99F913AFA6CC004F4F9A /* signed_interest.h */,
+				3EEC99FA13AFA6CC004F4F9A /* signedNDNClient */,
+				3EEC99FB13AFA6CC004F4F9A /* test_signed_interest.c */,
+				3EEC99FC13AFA6CC004F4F9A /* testSignedInterest */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		3EEC99EF13AFA6CC004F4F9A /* signedInterest */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 3EEC99FD13AFA6CC004F4F9A /* Build configuration list for PBXLegacyTarget "signedInterest" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "/Users/nano/Documents/UCLA/apps/lighting/ndn-lighting/ndn/signedInterest";
+			dependencies = (
+			);
+			name = signedInterest;
+			passBuildSettingsInEnvironment = 1;
+			productName = signedInterest;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		3EEC99EA13AFA6CC004F4F9A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 3EEC99ED13AFA6CC004F4F9A /* Build configuration list for PBXProject "signedInterest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 3EEC99E813AFA6CC004F4F9A;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3EEC99EF13AFA6CC004F4F9A /* signedInterest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		3EEC99EB13AFA6CC004F4F9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		3EEC99EC13AFA6CC004F4F9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+		3EEC99FE13AFA6CC004F4F9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = signedInterest;
+			};
+			name = Debug;
+		};
+		3EEC99FF13AFA6CC004F4F9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = signedInterest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3EEC99ED13AFA6CC004F4F9A /* Build configuration list for PBXProject "signedInterest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3EEC99EB13AFA6CC004F4F9A /* Debug */,
+				3EEC99EC13AFA6CC004F4F9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3EEC99FD13AFA6CC004F4F9A /* Build configuration list for PBXLegacyTarget "signedInterest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3EEC99FE13AFA6CC004F4F9A /* Debug */,
+				3EEC99FF13AFA6CC004F4F9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3EEC99EA13AFA6CC004F4F9A /* Project object */;
+}

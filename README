@@ -7,9 +7,10 @@ Version history:
 2.0 - 4.2011-10.2011 	python overhaul w/ PyCCN
 2.5 - 10.2011-5.2012	continued operational refinement, performance tests
 
-next up (10.2012):
+next up (10.2012 & beyond):
 
 DMX lighting driver integration
+RGBAW 16-bit lighting control of ColorBlaze fixtures in TV1 (currently they're all 8 bit)
 another lighting instance (red team / honeypot)
 elliptic curve signing (on controller - 4x faster)
 HMAC support (hundreds of times faster - only avail currently via ccnx patch)
@@ -19,17 +20,17 @@ Organization:
 #############
 
 /old/ 
-	old C stuff is great for reference, but has depricated as we've focused on python.
+	old C stuff is great for reference, but has deprecated as we've focused on python.
 
 /python 
 	is where the current TV1 build is.
 
 /python/perfTest
-	is where the performance tests, methodology, results
+	is the performance tests, methodology, and past results
 	
 /lights	
 	are the lighting drivers, used for controlling LEDs from NDN
-	mostly Kinet, but also includes the new DMX controller (not used in TV1 but for local testing & potential app box deployment)
+	(mostly Kinet, but also includes the new DMX controller (not used in TV1 but for local testing & potential app box deployment)
 
 /scripts 
 	a collection of scripts used on the various platforms to automate things. 
@@ -42,16 +43,3 @@ Organization:
 	meanwhile the controller part is very useful:
 	http://borges.metwi.ucla.edu/lighting/app/control.html controls TV1 sequencer
 
-#####################
-Implementation Notes:
-#####################
-
-	major remaining differences between tech report & current implementation:
-
-	the 'configuration manager' publishes application keys in control namespace, but the 'first check' that the app key is signed by root trust is not actually performed on the controller. This nonrepudiation and runtime key hash must be added.
-
-	namecrypto (signed interest library) as implemented still fails to verify consistently enough to allow verification to control side effect (light control) - thus we use it, but perform side effect anyway. The fix may be something simple - it may also be something deeper in the pyccn namecrypto bindings. It's possible but unlikely the problem is with namecrypto itself.
-
-	the 'bootstrapping' as indicated in the tech report is not possible (key not burned-in @ mfr, not all lighting devices can be discovered), but we speak to that with a single config file that can be populated partially automatically. In practice we just edit the config files by hand.
-
-	the lights have only one name, across applications. The design specifies and implementation allows more than one name (one namespace per application) - but the lighting controller currently only registers prefix for a single namespace. When multiple names per light controller are implemented, the multiple names must live on the lighting controller - likely periodic discovery of names & prefix registrations is preferable to manual copying & instance re-starting of controller instance.

@@ -1,0 +1,160 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		3EEC99D713AFA6CC004F4F9A /* .DS_Store */ = {isa = PBXFileReference; lastKnownFileType = file; path = .DS_Store; sourceTree = "<group>"; };
+		3EEC99D813AFA6CC004F4F9A /* ccn_internal_structs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ccn_internal_structs.h; sourceTree = "<group>"; };
+		3EEC99D913AFA6CC004F4F9A /* ccn_signed_interest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ccn_signed_interest.c; sourceTree = "<group>"; };
+		3EEC99DA13AFA6CC004F4F9A /* ccn_signed_interest.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ccn_signed_interest.o; sourceTree = "<group>"; };
+		3EEC99DB13AFA6CC004F4F9A /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
+		3EEC99DC13AFA6CC004F4F9A /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		3EEC99DD13AFA6CC004F4F9A /* Makefile.bak */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.bak; sourceTree = "<group>"; };
+		3EEC99DE13AFA6CC004F4F9A /* ndnData.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ndnData.c; sourceTree = "<group>"; };
+		3EEC99DF13AFA6CC004F4F9A /* signed_interest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = signed_interest.h; sourceTree = "<group>"; };
+		3EEC99E013AFA6CC004F4F9A /* signedNDNServer */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = signedNDNServer; sourceTree = "<group>"; };
+		3EEC99E113AFA6CC004F4F9A /* signedNDNServer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = signedNDNServer.c; sourceTree = "<group>"; };
+		3EEC99E213AFA6CC004F4F9A /* signedNDNServer.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = signedNDNServer.o; sourceTree = "<group>"; };
+		3EEC99E313AFA6CC004F4F9A /* test_signed_interest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = test_signed_interest.c; sourceTree = "<group>"; };
+		3EEC99E413AFA6CC004F4F9A /* testSignedInterest */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = testSignedInterest; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		3EEC99CF13AFA6CC004F4F9A = {
+			isa = PBXGroup;
+			children = (
+				3EEC99D713AFA6CC004F4F9A /* .DS_Store */,
+				3EEC99D813AFA6CC004F4F9A /* ccn_internal_structs.h */,
+				3EEC99D913AFA6CC004F4F9A /* ccn_signed_interest.c */,
+				3EEC99DA13AFA6CC004F4F9A /* ccn_signed_interest.o */,
+				3EEC99DB13AFA6CC004F4F9A /* lib */,
+				3EEC99DC13AFA6CC004F4F9A /* Makefile */,
+				3EEC99DD13AFA6CC004F4F9A /* Makefile.bak */,
+				3EEC99DE13AFA6CC004F4F9A /* ndnData.c */,
+				3EEC99DF13AFA6CC004F4F9A /* signed_interest.h */,
+				3EEC99E013AFA6CC004F4F9A /* signedNDNServer */,
+				3EEC99E113AFA6CC004F4F9A /* signedNDNServer.c */,
+				3EEC99E213AFA6CC004F4F9A /* signedNDNServer.o */,
+				3EEC99E313AFA6CC004F4F9A /* test_signed_interest.c */,
+				3EEC99E413AFA6CC004F4F9A /* testSignedInterest */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		3EEC99D613AFA6CC004F4F9A /* signedData */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 3EEC99E513AFA6CC004F4F9A /* Build configuration list for PBXLegacyTarget "signedData" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "/Users/nano/Documents/UCLA/apps/lighting/ndn-lighting/ndn/signedData";
+			dependencies = (
+			);
+			name = signedData;
+			passBuildSettingsInEnvironment = 1;
+			productName = signedData;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		3EEC99D113AFA6CC004F4F9A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 3EEC99D413AFA6CC004F4F9A /* Build configuration list for PBXProject "signedData" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 3EEC99CF13AFA6CC004F4F9A;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3EEC99D613AFA6CC004F4F9A /* signedData */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		3EEC99D213AFA6CC004F4F9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		3EEC99D313AFA6CC004F4F9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+		3EEC99E613AFA6CC004F4F9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = signedData;
+			};
+			name = Debug;
+		};
+		3EEC99E713AFA6CC004F4F9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = signedData;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3EEC99D413AFA6CC004F4F9A /* Build configuration list for PBXProject "signedData" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3EEC99D213AFA6CC004F4F9A /* Debug */,
+				3EEC99D313AFA6CC004F4F9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3EEC99E513AFA6CC004F4F9A /* Build configuration list for PBXLegacyTarget "signedData" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3EEC99E613AFA6CC004F4F9A /* Debug */,
+				3EEC99E713AFA6CC004F4F9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3EEC99D113AFA6CC004F4F9A /* Project object */;
+}

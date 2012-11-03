@@ -10,6 +10,8 @@ Features:
 2) to allow always-on web control of sequencer:
 		turn on / turn off sequencer on borges
 3) to allow expression of interests from web client
+4) to start/stop listening of TV1 faderboard script
+5) to allow individual light control (via colorpicker)
 
 
 dependencies:
@@ -26,12 +28,14 @@ Overview:
 
 
 control:
-	http://borges.metwi.ucla.edu/lighting/app/control.html
+	http://borges.metwi.ucla.edu/lighting/app/control.html (u/p tv1/tv1)
 	to upload a single image
 	to clear a pattern
-	to stop & start the sequencer on brogues
+	to stop & start the sequencer on borges
 	to stap & start the fader
 	to turn off all lights
+	to view the TV1 camera
+	to control individual light color (via color picker)
 	
 
 upload:
@@ -68,14 +72,12 @@ sequence:
 
 	start/stop sequencer using 'control', above.
 
-	current state can be seen at http://borges.metwi.ucla.edu/lighting/status.html
-
 
 how to clear patterns:
 
 	delete all documents in database manually:
 	
-	use db admin tool at http://borges.meti.ucla.edu/lighting/db/
+	use db admin tool at http://borges.metwi.ucla.edu/lighting/db/
 	u/p: admin/l!ghting2011
 
 	can also be done by using 'control.html' above
@@ -87,10 +89,7 @@ The application/data analysis object is an array of objects, each differentiated
 also note the config.py imported as cfg - please place any constants in here.
 
 
-
-
 VERSION HISTORY
-
 
 v1   5/21/2011
 
@@ -101,3 +100,8 @@ v1.5 11/04/2011
 sequence now uses python version
 added web control UI to start & stop sequencer & faders
 added web control to turn off lights
+
+v2 6-9/2012
+
+added color picker control
+improved web control
