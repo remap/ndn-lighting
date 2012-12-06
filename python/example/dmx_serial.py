@@ -91,7 +91,7 @@ class serialSender(Thread):
                     try:
                         te = self.elapsed() 
                         if te > self.DMXFRAME:
-                                print te
+                                #print te
                                 self.stTime = time.time()
                                 self.test_dmx_send1()
                         else:
@@ -107,35 +107,50 @@ class serialSender(Thread):
         
         def test_dmx_send1(self):
                 #print "send1"
-                print self.int_data[2]
+                #print self.int_data[2]
                 msg_data = [chr(self.int_data[j]) for j in range(len(self.int_data))]  
                 self.transmit_to_widget(self.OUTPUT_ONLY_SEND_DMX_LABEL, msg_data, len(msg_data))
                 #print len(msg_data)
 
+# if it's used as a module - ie
+# import dmx_serial
+if __name__ == "dmx_serial":
+    print("dmx usb driver intializing...")
+    # when it's
+    port_num = "/dev/tty.usbserial-ENQBGFZT" #"/dev/ttyUSB0"
+    serialsender = serialSender(port_num)
+    N=0
+    serialsender.int_data = [0]+[210]+[0]+[0]+[0]
+    
+    #sys.exit(1)
 
-port_num = get_command_line()
-serialsender = serialSender(port_num)
+# if it's called as standalone app - ie
+# python dmx_serial [port#]
+if __name__ == "__main__":
+    port_num = get_command_line()
+    port_num = "/dev/tty.usbserial-ENQBGFZT" #"/dev/ttyUSB0"
+    serialsender = serialSender(port_num)
 
-N=0
-serialsender.int_data = [0]+[210]+[0]+[0]+[0]       
-for r in range (0, 256,3):
-    try: 
-        serialsender.int_data[3] = r  
-        time.sleep(0.1)  
+    N=0
+    serialsender.int_data = [0]+[210]+[0]+[0]+[0]       
+    for r in range (0, 256,3):
+        try: 
+            serialsender.int_data[3] = r  # 2=R, 3=G, 4=B
+            time.sleep(0.1)  
 
-    except Exception, e:
-        print "exception ",e
+        except Exception, e:
+            print "exception ",e
 
-for r in range (255, 0,3):
-    try:
-        serialsender.int_data[2] = r
-        time.sleep(0.1)
+    for r in range (255, 0,3):
+        try:
+            serialsender.int_data[2] = r
+            time.sleep(0.1)
 
-    except Exception, e:
-        print "exception ",e
+        except Exception, e:
+            print "exception ",e
 
-serialsender.stop = True
-serialsender.complete.wait()
-serialsender.close_serial_port()
-sys.exit(1)
+    serialsender.stop = True
+    serialsender.complete.wait()
+    serialsender.close_serial_port()
+    sys.exit(1)
 

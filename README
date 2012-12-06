@@ -1,4 +1,4 @@
-ndn-lighting v2.5
+ndn-lighting v2.7
 ##################
 
 Version history:
@@ -6,14 +6,16 @@ Version history:
 1.0 - 2010  - 3.2011 	early c version, triggered lights
 2.0 - 4.2011-10.2011 	python overhaul w/ PyCCN
 2.5 - 10.2011-5.2012	continued operational refinement, performance tests
+2.7 - 11.2012			basic 'example' version w/ DMX
 
-next up (10.2012 & beyond):
+next up (11.2012 & beyond):
 
-DMX lighting driver integration
-RGBAW 16-bit lighting control of ColorBlaze fixtures in TV1 (currently they're all 8 bit)
 another lighting instance (red team / honeypot)
 elliptic curve signing (on controller - 4x faster)
 HMAC support (hundreds of times faster - only avail currently via ccnx patch)
+unified driver (DMX, artnet, kinet)
+RGBAW 16-bit lighting control of ColorBlaze fixtures in TV1 (currently they're all 8 bit)
+
 
 #############
 Organization:
@@ -24,6 +26,9 @@ Organization:
 
 /python 
 	is where the current TV1 build is.
+	
+/python/example
+	is a basic example, start here if new to this project
 
 /python/perfTest
 	is the performance tests, methodology, and past results
