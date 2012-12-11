@@ -14,7 +14,7 @@ def get_command_line():
             sys.exit(0)
     else:
         # Default serial port number
-        port_num = "/dev/ttyUSB0"
+        port_num = "/dev/tty.usbserial-ENQBGFZT" #"/dev/ttyUSB0"
     return port_num
 
 
@@ -113,29 +113,34 @@ class serialSender(Thread):
                 #print len(msg_data)
 
 
-port_num = get_command_line()
-serialsender = serialSender(port_num)
+if __name__ == "dmx_usb":
+    print("dmx driver instantiating...")
+    sys.exit(1)
+    
+if __name__ == "__main__":
+    port_num = get_command_line()
+    serialsender = serialSender(port_num)
 
-N=0
-serialsender.int_data = [0]+[210]+[0]+[0]+[0]       
-for r in range (0, 256,3):
-    try: 
-        serialsender.int_data[2] = r  
-        time.sleep(0.1)  
+    N=0
+    serialsender.int_data = [0]+[210]+[0]+[0]+[0]       
+    for r in range (0, 256,3):
+        try: 
+            serialsender.int_data[3] = r  
+            time.sleep(0.1)  
 
-    except Exception, e:
-        print "exception ",e
+        except Exception, e:
+            print "exception ",e
 
-for r in range (255, 0,3):
-    try:
-        serialsender.int_data[2] = r
-        time.sleep(0.1)
+    for r in range (255, 0,3):
+        try:
+            serialsender.int_data[2] = r
+            time.sleep(0.1)
 
-    except Exception, e:
-        print "exception ",e
+        except Exception, e:
+            print "exception ",e
 
-serialsender.stop = True
-serialsender.complete.wait()
-serialsender.close_serial_port()
-sys.exit(1)
+    serialsender.stop = True
+    serialsender.complete.wait()
+    serialsender.close_serial_port()
+    sys.exit(1)
 

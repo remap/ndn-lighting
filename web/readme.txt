@@ -28,7 +28,7 @@ Overview:
 
 
 control:
-	http://borges.metwi.ucla.edu/lighting/app/control.html (u/p tv1/tv1)
+	http://borges.metwi.ucla.edu/lighting/app/control.html (password removed - ask maintainer if needed)
 	to upload a single image
 	to clear a pattern
 	to stop & start the sequencer on borges
@@ -50,8 +50,7 @@ eMail:
 	also note there is some undocumented gmail IMAP data rate limit, seems to be around 50/MB pull an hr. 
 	upload requires manual moderation of images - tag them 'tftinstall' and they'll end up in the sequencer.
 	currently email account is uclaremap@gmail.com
-	u: uclaremap
-	p: l!ghting2011
+	(password removed - ask maintainer if needed)
 
 analyze:
 	to find unanalyzed records, analyze them, and store result in db object
@@ -75,12 +74,7 @@ sequence:
 
 how to clear patterns:
 
-	delete all documents in database manually:
-	
-	use db admin tool at http://borges.metwi.ucla.edu/lighting/db/
-	u/p: admin/l!ghting2011
-
-	can also be done by using 'control.html' above
+		using 'control.html' above
 
 Notes:
 
