@@ -1,0 +1,78 @@
+<?xml version = "1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"DTD/xhtml1-strict.dtd">
+<!-- 
+	See COPYING for copyright and distribution information.
+-->
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<meta charset="UTF-8">
+
+<head>
+	<title>NDN.JS Lighting Control</title>
+	
+	<script type="text/javascript" src="ndn-js.js"></script>
+	<script type="text/javascript" src="NameCrypto.js"></script>
+
+	<script type="text/javascript">
+		var ndn = new NDN({port:9696,host:"ndnucla-staging.dyndns.org"});
+        
+        ndn.onopen = function() {
+        	document.getElementById("testBtn").disabled = false;
+        	//document.getElementById("name").innerHTML = b64tohex(globalKeyManager.certificate);
+        };
+        
+		ndn.transport.connectWebSocket(ndn);
+		
+		function send() {
+			var template = new Interest();
+			template.interestLifetime = 100;
+			
+			var rgb_val = document.getElementById('rgb').value;
+			var name = new Name('/ndn/ucla.edu/apps/lighting/TV1/stairs/setRGB/' + rgb_val);
+			
+			var publicKeyBytes = DataUtils.toNumbers(globalKeyManager.publicKey);
+			var locator = new KeyLocator(publicKeyBytes, KeyLocatorType.KEY);
+			var enc = new BinaryXMLEncoder();
+			locator.to_ccnb(enc);
+			var n_loc = enc.getReducedOstream();
+			name.add(n_loc);
+			
+			var app_code = "TV1 Sequencer";
+			
+			var rsa = new RSAKey();
+			rsa.readPrivateKeyFromPEMString(globalKeyManager.privateKey);
+			
+			var state = new NameCryptoState();
+			
+			NameCrypto.authenticate_name_asymm(state, name, app_code, rsa);
+			
+			ndn.expressInterest(name, null, template);
+			
+			document.getElementById("name").innerHTML = name.getName();
+			
+			//var ret1 = NameCrypto.verify_name_asymm(name);
+			
+			//document.getElementById("name").innerHTML += '<p>' + ret1 + '</p>';
+		}
+		
+	</script>
+	
+</head>
+<body >
+
+	<div>
+		<p>
+			Enter RGB value in hex (without '0x' prefix): 
+			<input id="rgb" type="text" name="rgb" size="10" value="000000" />
+			<button id="testBtn" onclick="send()" disabled="disabled">Send Command</button>
+		</P>
+		<p>
+			Interest is sent with the name:<br/>
+			<div id="name">
+				
+			</div>
+		</p>
+	</div>
+	
+</body>
+</html>
