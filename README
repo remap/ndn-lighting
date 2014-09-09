@@ -1,4 +1,4 @@
-ndn-lighting v2.7
+ndn-lighting v2.9
 ##################
 
 Version history:
@@ -7,8 +7,13 @@ Version history:
 2.0 - 4.2011-10.2011 	python overhaul w/ PyCCN
 2.5 - 10.2011-5.2012	continued operational refinement, performance tests
 2.7 - 11.2012			basic 'example' version w/ DMX
+2.9 - 9.2014            mu-lighting addded
 
-next up (11.2012 & beyond):
+##################
+News
+##################
+
+ongoing work from 2012-2013:
 
 another lighting instance (red team / honeypot)
 elliptic curve signing (on controller - 4x faster)
@@ -16,10 +21,28 @@ HMAC support (hundreds of times faster - only avail currently via ccnx patch)
 unified driver (DMX, artnet, kinet)
 RGBAW 16-bit lighting control of ColorBlaze fixtures in TV1 (currently they're all 8 bit)
 
+meanwhile, far more fun, is the new 'mu-lighting'. 
+
+it requires NFD (unlike the others, which required ccnd or ndnd)
+
+##################
+Publications
+##################
+
+papers and reports based on NDN lighting control:
+
+http://named-data.net/publications/techreports/trlighting/
+http://named-data.net/publications/nomen13/
+http://named-data.net/publications/lighting-security-evaluation/
+
 
 #############
 Organization:
 #############
+
+/mu-lighting
+    A 'music visualizer' built with NDN on Raspberry Pi - https://github.com/remap/ndn-pi
+    see /mu-lighting/Readme for more details. 
 
 /old/ 
 	old C stuff is great for reference, but has deprecated as we've focused on python.
