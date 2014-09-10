@@ -1,0 +1,25 @@
+message LightCommandMessage {
+// there's no byte type, phooey
+  message LightCommand {
+	  message Color {
+		required uint32 r = 137;
+		required uint32 g = 138;
+		required uint32 b = 139;
+	  }
+
+	  message ColorPattern {
+		repeated Color colors = 135;
+	  }
+
+	  message MixInfo {
+		 required ColorPattern mixColors = 132;
+		 required float mixProportion = 136;
+	  }
+
+	  required ColorPattern pattern = 132;
+	  optional bool repeat = 133; 
+	  optional MixInfo mixPattern = 134;
+  }
+  required LightCommand command = 131;
+}
+
